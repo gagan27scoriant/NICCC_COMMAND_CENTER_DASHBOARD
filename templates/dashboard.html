@@ -1,0 +1,2767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NICCC - Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #020b14;
+    --panel: rgba(4, 20, 38, 0.78);
+    --panel-strong: rgba(5, 27, 49, 0.94);
+    --border: rgba(0, 220, 255, 0.16);
+    --border-strong: rgba(0, 220, 255, 0.28);
+    --cyan: #00dcff;
+    --cyan-dim: rgba(0, 220, 255, 0.08);
+    --teal: #00ffc3;
+    --red: #ff3b5c;
+    --amber: #ffb300;
+    --text: #d6edf8;
+    --muted: rgba(214, 237, 248, 0.55);
+    --muted-2: rgba(214, 237, 248, 0.35);
+    --font-hud: 'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-ui: 'Inter', sans-serif;
+    --radius: 8px;
+    --radius-sm: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+  body {
+    font-family: var(--font-ui);
+    color: var(--text);
+    background:
+      radial-gradient(circle at 20% 15%, rgba(0, 220, 255, 0.12), transparent 28%),
+      radial-gradient(circle at 80% 18%, rgba(0, 255, 195, 0.08), transparent 24%),
+      linear-gradient(180deg, #02111e 0%, #020b14 100%);
+  }
+
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0, 220, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 220, 255, 0.04) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+  }
+
+  .scan-line {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: -2px;
+    height: 2px;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0, 220, 255, 0.34), transparent);
+    animation: scan 9s linear infinite;
+  }
+  @keyframes scan { from { top: -2px; } to { top: 100%; } }
+
+  #app {
+    position: relative;
+    z-index: 5;
+    width: 100vw;
+    height: 100vh;
+    padding: 8px;
+    display: grid;
+    grid-template-rows: 56px 1fr;
+    gap: 8px;
+  }
+
+  #topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-hud);
+    color: var(--cyan);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(0, 220, 255, 0.35);
+    white-space: nowrap;
+  }
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 14px var(--teal);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .top-tabs {
+    display: flex;
+    gap: 6px;
+    margin-left: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .tab {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.16s ease;
+  }
+  .tab:hover { color: var(--text); background: rgba(0, 220, 255, 0.06); }
+  .tab.active {
+    color: var(--cyan);
+    background: rgba(0, 220, 255, 0.12);
+    border-color: rgba(0, 220, 255, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(0, 220, 255, 0.06);
+  }
+
+  .top-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(0, 220, 255, 0.08);
+    border: 1px solid rgba(0, 220, 255, 0.14);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .status-chip.danger {
+    background: rgba(255, 59, 92, 0.12);
+    border-color: rgba(255, 59, 92, 0.24);
+    color: #ffd2da;
+  }
+  .status-chip.neutral {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+  }
+  #clock {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 1.8px;
+    padding: 6px 8px;
+  }
+  .user-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 220, 255, 0.1);
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    color: var(--cyan);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+
+  #workspace {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .rail {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(14px);
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    overflow: auto;
+  }
+  .rail-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--font-hud);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    transition: all 0.16s ease;
+  }
+  .rail-btn:hover { color: var(--text); background: rgba(0, 220, 255, 0.07); }
+  .rail-btn.active {
+    color: var(--cyan);
+    background: rgba(0, 220, 255, 0.12);
+    border-color: rgba(0, 220, 255, 0.2);
+  }
+  .rail-rule {
+    width: 20px;
+    height: 1px;
+    background: rgba(0, 220, 255, 0.14);
+    margin: 2px 0;
+  }
+  .rail-spacer { flex: 1; min-height: 14px; }
+
+  #screen-stack {
+    position: relative;
+    min-height: 0;
+  }
+
+  .screen {
+    display: none;
+    min-height: 0;
+    height: 100%;
+  }
+  .screen.visible { display: flex; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    position: relative;
+  }
+  .panel::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 220, 255, 0.65), transparent);
+    opacity: 0.5;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+  }
+  .panel-title {
+    font-family: var(--font-hud);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(214, 237, 248, 0.72);
+    margin-bottom: 4px;
+  }
+  .panel-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .panel-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .mini-chip {
+    padding: 6px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 220, 255, 0.14);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--text);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .mini-chip.muted {
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .map-screen {
+    flex: 1;
+    min-width: 0;
+  }
+  .map-shell {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .map-layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-rows: 1fr;
+    gap: 8px;
+    padding: 8px;
+    overflow: auto;
+  }
+  .map-main {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
+  }
+  .city-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    align-content: start;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    grid-column: 1;
+    grid-row: auto;
+  }
+  #chatbot-wrap {
+    width: 100%;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  #main-alert-wrap {
+    width: 100%;
+    grid-column: auto;
+    grid-row: auto;
+    flex: 1;
+    min-height: 220px;
+  }
+  .map-side {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
+  }
+  #city-quick-wrap {
+    display: none;
+    width: 100%;
+    grid-column: auto;
+    grid-row: auto;
+    flex: 1;
+    min-height: 0;
+  }
+  .map-layout.chat-active .city-grid {
+    display: none;
+  }
+  .map-layout.chat-active #city-quick-wrap {
+    display: flex;
+    flex-direction: column;
+  }
+  /* Chatbot Interface Styles */
+  .chatbot-container {
+    background: var(--panel-strong);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: auto;
+    min-height: 220px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .chatbot-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+    background: rgba(0, 220, 255, 0.03);
+  }
+  .chatbot-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 220, 255, 0.12);
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .ai-status-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+  }
+  .avatar-text {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .chatbot-header-text {
+    flex: 1;
+  }
+  .chatbot-title {
+    font-family: var(--font-hud);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text);
+  }
+  .chatbot-subtitle {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .chatbot-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .chat-clear-btn {
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chat-clear-btn:hover {
+    color: var(--text);
+    border-color: rgba(0, 220, 255, 0.3);
+    background: rgba(0, 220, 255, 0.15);
+  }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .chat-messages::-webkit-scrollbar {
+    width: 4px;
+  }
+  .chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(0, 220, 255, 0.1);
+    border-radius: 2px;
+  }
+  .chat-message {
+    display: flex;
+    max-width: 80%;
+  }
+  .chat-message.bot {
+    align-self: flex-start;
+  }
+  .chat-message.user {
+    align-self: flex-end;
+  }
+  .message-bubble {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .chat-message.bot .message-bubble {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(0, 220, 255, 0.08);
+    color: var(--text);
+    border-top-left-radius: 2px;
+  }
+  .chat-message.user .message-bubble {
+    background: rgba(0, 220, 255, 0.12);
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    color: var(--cyan);
+    border-top-right-radius: 2px;
+  }
+  .chat-quick-suggestions {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-top: 1px solid rgba(0, 220, 255, 0.04);
+  }
+  .chat-quick-suggestions::-webkit-scrollbar {
+    height: 3px;
+  }
+  .chat-quick-suggestions::-webkit-scrollbar-thumb {
+    background: rgba(0, 220, 255, 0.1);
+    border-radius: 2px;
+  }
+  .suggest-btn {
+    font-size: 10px;
+    color: var(--cyan);
+    background: rgba(0, 220, 255, 0.06);
+    border: 1px solid rgba(0, 220, 255, 0.14);
+    border-radius: 999px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .suggest-btn:hover {
+    background: rgba(0, 220, 255, 0.12);
+    border-color: rgba(0, 220, 255, 0.25);
+  }
+  .chat-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid rgba(0, 220, 255, 0.08);
+    background: rgba(0, 0, 0, 0.15);
+  }
+  .chat-input-area input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(0, 220, 255, 0.14);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 8px 12px;
+    font-size: 12px;
+    outline: none;
+  }
+  .chat-input-area input::placeholder {
+    color: var(--muted-2);
+  }
+  .chatbot-send-btn {
+    background: rgba(0, 220, 255, 0.14);
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    color: var(--cyan);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chatbot-send-btn:hover {
+    background: rgba(0, 220, 255, 0.2);
+    border-color: rgba(0, 220, 255, 0.35);
+    box-shadow: 0 0 8px rgba(0, 220, 255, 0.15);
+  }
+
+  /* Typing animation */
+  .typing-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: typing 1.4s infinite both;
+    margin: 0 1px;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .map-stage,
+  .map-sidebar,
+  .area-panel,
+  .cam-grid-wrap,
+  .cam-side {
+    min-height: 0;
+  }
+
+  .map-stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - 1px);
+    background:
+      url('/static/maps/india_locator_blank.svg') center center / contain no-repeat,
+      radial-gradient(circle at 50% 48%, rgba(0, 220, 255, 0.06), transparent 34%),
+      linear-gradient(180deg, #071324 0%, #04101d 100%);
+    border: 1px solid rgba(0, 220, 255, 0.08);
+    isolation: isolate;
+  }
+  #national-map {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .map-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: auto;
+  }
+  .legend-box {
+    fill: rgba(2, 11, 20, 0.84);
+    stroke: rgba(0, 220, 255, 0.12);
+    stroke-width: 1;
+  }
+  .map-label {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    fill: rgba(214, 237, 248, 0.78);
+  }
+  .map-subtle {
+    font-family: var(--font-ui);
+    font-size: 9px;
+    fill: rgba(214, 237, 248, 0.42);
+  }
+  .city-dot {
+    cursor: pointer;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .city-dot:hover { filter: drop-shadow(0 0 10px rgba(0, 220, 255, 0.3)); }
+  .city-dot circle.base { transition: transform 0.16s ease, r 0.16s ease; }
+  .city-dot:hover circle.base { r: 7; }
+  .city-dot.selected circle.base {
+    stroke-width: 2;
+    filter: drop-shadow(0 0 8px rgba(0, 220, 255, 0.24));
+  }
+  .pulse-ring {
+    animation: ring 2.2s ease-out infinite;
+    transform-origin: center;
+  }
+  @keyframes ring { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(2.4); } }
+
+  .map-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stack-card {
+    background: var(--panel-strong);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+  .live-alert-panel {
+    min-height: 0;
+  }
+  .stack-head {
+    font-family: var(--font-hud);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(214, 237, 248, 0.72);
+  }
+  .city-list,
+  .area-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+  }
+  .city-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    min-height: 0;
+    overflow: auto;
+  }
+  .city-quick-card {
+    cursor: pointer;
+    transition: all 0.16s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 74px;
+    padding: 10px 11px;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    background: rgba(0, 220, 255, 0.06);
+  }
+  .city-quick-card:hover {
+    background: rgba(0, 220, 255, 0.1);
+    border-color: rgba(0, 220, 255, 0.22);
+  }
+  .city-quick-card.active {
+    background: rgba(0, 220, 255, 0.14);
+    border-color: rgba(0, 220, 255, 0.3);
+  }
+  .city-quick-card.active.alert {
+    background: rgba(255, 59, 92, 0.14);
+    border-color: rgba(255, 59, 92, 0.3);
+  }
+  .city-quick-card.active.watch {
+    background: rgba(255, 179, 0, 0.14);
+    border-color: rgba(255, 179, 0, 0.3);
+  }
+  .city-quick-card.active.connected {
+    background: rgba(0, 255, 195, 0.12);
+    border-color: rgba(0, 255, 195, 0.3);
+  }
+  .city-quick-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .city-quick-name {
+    font-family: var(--font-hud);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .city-quick-meta {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .city-quick-chip {
+    flex: 0 0 auto;
+    padding: 3px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .city-quick-chip.alert {
+    border-color: rgba(255, 59, 92, 0.28);
+    background: rgba(255, 59, 92, 0.12);
+    color: #ffb8c3;
+  }
+  .city-quick-chip.watch {
+    border-color: rgba(255, 179, 0, 0.28);
+    background: rgba(255, 179, 0, 0.12);
+    color: #ffe08a;
+  }
+  .city-quick-chip.connected {
+    border-color: rgba(0, 255, 195, 0.24);
+    background: rgba(0, 255, 195, 0.1);
+    color: #8fffe2;
+  }
+  .area-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .area-row,
+  .area-card,
+  .summary-row,
+  .command-chip,
+  .focus-card {
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    background: rgba(0, 220, 255, 0.06);
+  }
+  .area-card {
+    cursor: pointer;
+    transition: all 0.16s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 176px;
+    position: relative;
+    overflow: hidden;
+  }
+  .area-card-title {
+    font-family: var(--font-hud);
+    font-size: 17px;
+    line-height: 1.15;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.04em;
+    position: relative;
+    z-index: 1;
+  }
+  .area-card-subtitle {
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+  .area-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 220, 255, 0.08), transparent 44%);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .area-card:hover {
+    background: rgba(0, 220, 255, 0.09) !important;
+    border-color: rgba(0, 220, 255, 0.22) !important;
+  }
+  .area-card.active {
+    background: rgba(0, 220, 255, 0.12) !important;
+    border-color: rgba(0, 220, 255, 0.28) !important;
+    box-shadow: 0 0 10px rgba(0, 220, 255, 0.16);
+  }
+  .area-card.active.alert {
+    background: rgba(255, 59, 92, 0.14) !important;
+    border-color: var(--red) !important;
+  }
+  .area-card.active.watch {
+    background: rgba(255, 179, 0, 0.14) !important;
+    border-color: var(--amber) !important;
+  }
+  .area-card.active.connected {
+    background: rgba(0, 255, 195, 0.12) !important;
+    border-color: var(--teal) !important;
+  }
+  .area-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .area-status-chip {
+    flex: 0 0 auto;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .area-status-chip.alert {
+    border-color: rgba(255, 59, 92, 0.28);
+    background: rgba(255, 59, 92, 0.12);
+    color: #ffb8c3;
+  }
+  .area-status-chip.watch {
+    border-color: rgba(255, 179, 0, 0.28);
+    background: rgba(255, 179, 0, 0.12);
+    color: #ffe08a;
+  }
+  .area-status-chip.connected {
+    border-color: rgba(0, 255, 195, 0.24);
+    background: rgba(0, 255, 195, 0.1);
+    color: #8fffe2;
+  }
+  .area-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .area-metric {
+    padding: 8px 9px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    min-height: 54px;
+  }
+  .area-metric .label {
+    display: block;
+    font-size: 10px;
+    color: var(--muted-2);
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .area-metric .value {
+    display: block;
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .area-metric .value.small {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .area-focus-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .area-focus-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .area-focus-hint {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .city-card {
+    cursor: pointer;
+    transition: all 0.16s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 176px;
+    position: relative;
+    overflow: hidden;
+  }
+  .city-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 220, 255, 0.08), transparent 44%);
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .city-card:hover {
+    background: rgba(0, 220, 255, 0.09) !important;
+    border-color: rgba(0, 220, 255, 0.24) !important;
+  }
+  .city-card.active {
+    background: rgba(0, 220, 255, 0.14) !important;
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 10px rgba(0, 220, 255, 0.2);
+  }
+  .city-card.active.alert {
+    background: rgba(255, 59, 92, 0.14) !important;
+    border-color: var(--red) !important;
+    box-shadow: 0 0 10px rgba(255, 59, 92, 0.25);
+  }
+  .city-card.active.watch {
+    background: rgba(255, 179, 0, 0.14) !important;
+    border-color: var(--amber) !important;
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.25);
+  }
+  .city-card.active.connected {
+    background: rgba(0, 255, 195, 0.12) !important;
+    border-color: var(--teal) !important;
+    box-shadow: 0 0 10px rgba(0, 255, 195, 0.22);
+  }
+  .city-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .city-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .city-meta {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .city-name.alert::after {
+    content: '  \25CF';
+    color: var(--red);
+    font-size: 9px;
+    vertical-align: middle;
+  }
+  .city-status-chip {
+    flex: 0 0 auto;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .city-status-chip.alert {
+    border-color: rgba(255, 59, 92, 0.28);
+    background: rgba(255, 59, 92, 0.12);
+    color: #ffb8c3;
+  }
+  .city-status-chip.watch {
+    border-color: rgba(255, 179, 0, 0.28);
+    background: rgba(255, 179, 0, 0.12);
+    color: #ffe08a;
+  }
+  .city-status-chip.connected {
+    border-color: rgba(0, 255, 195, 0.24);
+    background: rgba(0, 255, 195, 0.1);
+    color: #8fffe2;
+  }
+  .city-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .city-metric {
+    padding: 8px 9px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    min-height: 54px;
+  }
+  .city-metric .label {
+    display: block;
+    font-size: 10px;
+    color: var(--muted-2);
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .city-metric .value {
+    display: block;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .city-metric .value.small {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .focus-card {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .focus-title {
+    font-family: var(--font-hud);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.06em;
+  }
+  .focus-subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .focus-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .focus-metric {
+    padding: 8px 9px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .focus-metric .label {
+    display: block;
+    font-size: 10px;
+    color: var(--muted-2);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .focus-metric .value {
+    font-family: var(--font-hud);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .focus-action {
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .city-screen {
+    flex: 1;
+    min-width: 0;
+  }
+  .city-shell {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .city-topbar {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+    flex-wrap: wrap;
+  }
+  .back-btn {
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb .sep { color: var(--muted-2); }
+  .breadcrumb .current { color: var(--text); font-weight: 600; }
+  .city-summary {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .summary-row {
+    padding: 7px 10px;
+    font-size: 11px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .city-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 8px;
+    padding: 8px;
+    overflow: auto;
+  }
+  #city-alert-wrap {
+    min-height: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .city-body .city-grid {
+    grid-column: 1;
+    grid-row: 1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .cam-grid-wrap,
+  .cam-side {
+    border-radius: var(--radius);
+  }
+  .area-panel {
+    background: var(--panel-strong);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: auto;
+  }
+  .zone-node {
+    cursor: pointer;
+  }
+  .zone-node:hover .zone-box { stroke: rgba(0, 220, 255, 0.45); }
+  .zone-box {
+    fill: rgba(0, 220, 255, 0.06);
+    stroke: rgba(0, 220, 255, 0.16);
+    stroke-width: 1;
+    rx: 8;
+  }
+  .zone-box.alert { fill: rgba(255, 59, 92, 0.1); stroke: rgba(255, 59, 92, 0.35); }
+  .zone-box.warn { fill: rgba(255, 179, 0, 0.1); stroke: rgba(255, 179, 0, 0.28); }
+  .zone-box.ok { fill: rgba(0, 255, 195, 0.08); stroke: rgba(0, 255, 195, 0.25); }
+  .zone-label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    fill: rgba(214, 237, 248, 0.88);
+  }
+  .zone-meta {
+    font-family: var(--font-ui);
+    font-size: 8px;
+    fill: rgba(214, 237, 248, 0.46);
+  }
+  .zone-node.active .zone-box {
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px rgba(0, 220, 255, 0.16));
+  }
+
+  .area-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 11px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+  }
+  .area-row:hover { background: rgba(0, 220, 255, 0.09); border-color: rgba(0, 220, 255, 0.22); }
+  .area-row.active { background: rgba(0, 220, 255, 0.12); border-color: rgba(0, 220, 255, 0.28); }
+  .area-name {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .area-meta {
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .area-status {
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .area-status.ok { background: rgba(0, 255, 195, 0.12); color: #89ffd8; }
+  .area-status.warn { background: rgba(255, 179, 0, 0.14); color: #ffd67a; }
+  .area-status.alert { background: rgba(255, 59, 92, 0.14); color: #ffbcc8; }
+
+  .cam-screen {
+    flex: 1;
+    min-width: 0;
+  }
+  .cam-shell {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .cam-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .cam-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .cam-title h2 {
+    font-family: var(--font-hud);
+    color: var(--text);
+    font-size: 20px;
+    letter-spacing: 0.04em;
+  }
+  .cam-title p {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .cam-header .spacer { margin-left: auto; }
+  .mode-chip {
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.08);
+    color: var(--cyan);
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .ghost-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 8px 11px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cam-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 284px;
+    gap: 8px;
+    padding: 8px;
+  }
+  .cam-grid-wrap {
+    background: var(--panel-strong);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: auto;
+  }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .stat-card {
+    background: rgba(0, 220, 255, 0.05);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: 12px;
+    padding: 10px 11px;
+    min-height: 86px;
+  }
+  .stat-card.red { border-color: rgba(255, 59, 92, 0.3); }
+  .stat-card.amber { border-color: rgba(255, 179, 0, 0.24); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: var(--font-hud);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--text);
+    font-weight: 700;
+  }
+  .stat-sub {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .cam-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .cam-tile {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    background: rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    transition: transform 0.16s ease, border-color 0.16s ease;
+  }
+  .cam-tile:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 220, 255, 0.3);
+  }
+  .cam-feed {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #0d1117;
+  }
+  .cam-feed svg { width: 100%; height: 100%; display: block; }
+  .rec-dot {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 8px rgba(255, 59, 92, 0.5);
+    animation: pulse 1.1s linear infinite;
+  }
+  .alert-badge {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(255, 59, 92, 0.14);
+    border: 1px solid rgba(255, 59, 92, 0.24);
+    color: #ffc1cb;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .cam-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 9px;
+    background: rgba(0, 0, 0, 0.16);
+  }
+  .cam-name {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .cam-tag {
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .cam-side {
+    background: var(--panel-strong);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .side-section {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .side-section:last-child { border-bottom: 0; }
+  .side-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-hud);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(214, 237, 248, 0.72);
+  }
+  .alert-log {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 240px;
+    overflow: auto;
+    padding-right: 2px;
+  }
+  .alert-item {
+    background: rgba(255, 59, 92, 0.06);
+    border-left: 2px solid var(--red);
+    border-radius: 0 8px 8px 0;
+    padding: 8px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: var(--text);
+  }
+  .alert-item.info {
+    background: rgba(0, 220, 255, 0.05);
+    border-left-color: var(--cyan);
+  }
+  .alert-item.ok {
+    background: rgba(0, 255, 195, 0.05);
+    border-left-color: var(--teal);
+  }
+  .alert-time {
+    color: var(--muted-2);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+  }
+
+  .assistant-bubble {
+    border-radius: 14px;
+    padding: 12px;
+    background: rgba(0, 220, 255, 0.08);
+    border: 1px solid rgba(0, 220, 255, 0.14);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 12px;
+  }
+  .command-log {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 160px;
+    overflow: auto;
+  }
+  .command-chip {
+    padding: 7px 9px;
+    font-size: 11px;
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .quick-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .quick-btn {
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.06);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 6px 9px;
+    font-size: 10px;
+    cursor: pointer;
+  }
+  .genih-input-row {
+    display: flex;
+    gap: 6px;
+  }
+  .genih-input-row input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 0, 0, 0.24);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 9px 10px;
+    font-size: 12px;
+    outline: none;
+  }
+  .genih-input-row input::placeholder { color: var(--muted-2); }
+  .send-btn {
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    background: rgba(0, 220, 255, 0.12);
+    color: var(--cyan);
+    border-radius: 12px;
+    padding: 0 12px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .footnote {
+    color: var(--muted-2);
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 1200px) {
+    #workspace { grid-template-columns: 1fr; }
+    .rail {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      min-height: 58px;
+    }
+    .rail-spacer { display: none; }
+    .rail-btn { flex: 0 0 auto; }
+  }
+
+  @media (max-width: 1024px) {
+    #topbar {
+      flex-wrap: wrap;
+      align-items: flex-start;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    .top-tabs { order: 3; width: 100%; margin-left: 0; }
+    .top-status { width: 100%; justify-content: space-between; }
+    .map-layout,
+    .city-body {
+      flex-direction: column;
+      grid-template-columns: 1fr;
+    }
+    .map-main,
+    .map-side,
+    #city-alert-wrap,
+    .city-body .city-grid {
+      grid-column: 1;
+      grid-row: auto;
+    }
+    .cam-body {
+      grid-template-columns: 1fr;
+    }
+    .area-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .area-panel,
+    .cam-side { max-height: 340px; }
+    .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cam-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .city-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 700px) {
+    .city-grid,
+    .city-quick-grid { grid-template-columns: 1fr; }
+    .area-list { grid-template-columns: 1fr; }
+    .map-main,
+    .map-side,
+    #city-alert-wrap,
+    .city-body .city-grid { grid-column: 1; grid-row: auto; }
+    #app { padding: 6px; gap: 6px; }
+    .brand { font-size: 16px; letter-spacing: 2px; }
+    .tab { padding: 7px 10px; font-size: 11px; }
+    #clock { font-size: 11px; letter-spacing: 1px; }
+    .status-chip { font-size: 10px; padding: 5px 8px; }
+    .panel-head,
+    .city-topbar,
+    .cam-header { padding-left: 11px; padding-right: 11px; }
+    .cam-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+    .focus-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="grid-overlay"></div>
+<div class="scan-line"></div>
+
+<div id="app">
+  <header id="topbar">
+    <div class="brand"><span class="brand-dot"></span> NICCC</div>
+    <div class="top-tabs">
+      <button class="tab active" onclick="switchTab('map', this)">National map</button>
+    </div>
+    <div class="top-status">
+      <span class="status-chip danger" id="alert-chip">3 active alerts</span>
+      <span class="status-chip neutral" id="camera-chip">8 camera zones online</span>
+      <span class="status-chip neutral" id="node-chip">Nodes: --</span>
+      <div id="clock">00:00:00</div>
+      <div class="user-badge" title="Admin">AD</div>
+    </div>
+  </header>
+
+  <div id="workspace">
+    <aside class="rail" aria-label="Primary navigation">
+      <button class="rail-btn active" title="Map" onclick="goToScreen('map-screen')">M</button>
+      <button class="rail-btn" title="Cities" onclick="goToScreen('city-screen')">C</button>
+      <button class="rail-btn" title="Camera feeds" onclick="goToScreen('cam-screen')">V</button>
+      <div class="rail-rule"></div>
+      <button class="rail-btn" title="Alerts" onclick="goToScreen('cam-screen'); sendPrompt('Show me the live alerts panel for the current city and area')">A</button>
+      <button class="rail-btn" title="Vehicles" onclick="sendPrompt('Show me the vehicle tracking dashboard for the NICCC system')">V</button>
+      <button class="rail-btn" title="Watchlist" onclick="sendPrompt('Show me the facial recognition watchlist dashboard')">W</button>
+      <button class="rail-btn" title="GENIH AI" onclick="goToScreen('cam-screen'); sendPrompt('Open the GENIH assistant for the current city and area')">G</button>
+      <button class="rail-btn" title="Reports" onclick="sendPrompt('Show me the PDF reports and investigation summaries view')">R</button>
+      <div class="rail-spacer"></div>
+      <button class="rail-btn" title="Settings" onclick="sendPrompt('Show me the RBAC and audit log settings')">S</button>
+    </aside>
+
+    <div id="screen-stack">
+      <section class="screen map-screen visible" id="map-screen">
+        <div class="panel map-shell">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">India Surveillance Grid</div>
+              <div class="panel-subtitle">Click any city to drill down into the city and area views.</div>
+            </div>
+          <div class="panel-actions">
+              <span class="mini-chip" id="map-hint">Mumbai selected</span>
+              <span class="mini-chip muted">Live telemetry</span>
+            </div>
+          </div>
+          <div class="map-layout" id="map-layout">
+            <div class="map-main">
+              <div class="city-grid" id="city-list"></div>
+              <div class="chatbot-container" id="chatbot-wrap" onclick="activateChatMode()">
+                <div class="chatbot-header">
+                  <div class="chatbot-avatar">
+                    <span class="ai-status-dot"></span>
+                    <span class="avatar-text">AI</span>
+                  </div>
+                  <div class="chatbot-header-text">
+                    <div class="chatbot-title">GENIH Command Assistant</div>
+                    <div class="chatbot-subtitle">Ready to query surveillance telemetry</div>
+                  </div>
+                  <div class="chatbot-actions" id="chat-header-actions" style="display: none;">
+                    <button class="chat-clear-btn" onclick="deactivateChatMode()">Grid View</button>
+                    <button class="chat-clear-btn" onclick="clearChat()">Clear</button>
+                  </div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                  <div class="chat-message bot">
+                    <div class="message-bubble">
+                      Hello! I am the GENIH Command Assistant. You can ask me to analyze active alerts, query camera status, or check live telemetry. How can I help you today?
+                    </div>
+                  </div>
+                </div>
+                <div class="chat-quick-suggestions">
+                  <button class="suggest-btn" onclick="suggestPrompt('Summarize all active threats')">Summarize active threats</button>
+                  <button class="suggest-btn" onclick="suggestPrompt('Show camera breakdown by status')">Camera breakdown</button>
+                  <button class="suggest-btn" onclick="suggestPrompt('Check traffic congestion trends')">Traffic trends</button>
+                </div>
+                <div class="chat-input-area">
+                  <input type="text" placeholder="Ask GENIH anything..." id="chatbot-input" onfocus="activateChatMode()" onkeydown="if(event.key==='Enter') sendChatPrompt()" />
+                  <button class="chatbot-send-btn" onclick="sendChatPrompt()">Send</button>
+                </div>
+              </div>
+            </div>
+            <div class="map-side">
+              <div class="stack-card live-alert-panel" id="main-alert-wrap">
+                <div class="stack-head">Live Alerts</div>
+                <div class="panel-subtitle">High severity alerts across the national dashboard.</div>
+                <div class="alert-log" id="main-alert-log"></div>
+              </div>
+              <div class="stack-card" id="city-quick-wrap">
+                <div class="stack-head">Cities</div>
+                <div class="panel-subtitle">Quick city access from GENIH.</div>
+                <div class="city-quick-grid" id="city-quick-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen city-screen" id="city-screen">
+        <div class="panel city-shell">
+          <div class="city-topbar">
+            <button class="back-btn" onclick="goToScreen('map-screen')">Back to map</button>
+            <div class="breadcrumb">
+              <span>India</span>
+              <span class="sep">/</span>
+              <span class="current" id="city-name-label">Mumbai</span>
+              <span class="sep">/</span>
+              <span id="city-area-label">Kurla</span>
+            </div>
+            <div class="city-summary" id="city-summary"></div>
+          </div>
+          <div class="city-body">
+            <div class="city-grid" id="area-list"></div>
+            <div class="stack-card live-alert-panel" id="city-alert-wrap">
+              <div class="stack-head">Live Alerts</div>
+              <div class="panel-subtitle">City-scoped alerts and status updates.</div>
+              <div class="alert-log" id="city-alert-log"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen cam-screen" id="cam-screen">
+        <div class="panel cam-shell">
+          <div class="cam-header">
+            <button class="back-btn" onclick="goToScreen('city-screen')">Back to city</button>
+            <div class="cam-title">
+              <h2 id="cam-title">Mumbai / Kurla</h2>
+              <p id="cam-subtitle">13 cameras online with live AI overlays and alert tracking.</p>
+            </div>
+            <div class="spacer"></div>
+            <span class="mode-chip" id="mode-chip">LIVE MODE</span>
+            <button class="ghost-btn" onclick="sendPrompt('Show me a 2x2 expanded view of the current camera feeds with AI overlay annotations')">Expand view</button>
+            <button class="ghost-btn" onclick="sendPrompt('Export the current camera and alert snapshot as a report')">Export snapshot</button>
+          </div>
+          <div class="cam-body">
+            <div class="cam-grid-wrap">
+              <div class="stats-row">
+                <div class="stat-card">
+                  <div class="stat-label">Cameras</div>
+                  <div class="stat-value">13</div>
+                  <div class="stat-sub">12 live · 1 offline</div>
+                </div>
+                <div class="stat-card red">
+                  <div class="stat-label">Active alerts</div>
+                  <div class="stat-value" id="stat-alerts">3</div>
+                  <div class="stat-sub">Watchlist, crowd, and face match</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Crowd count</div>
+                  <div class="stat-value">247</div>
+                  <div class="stat-sub">Up 12 percent vs average</div>
+                </div>
+                <div class="stat-card amber">
+                  <div class="stat-label">Vehicles</div>
+                  <div class="stat-value">89</div>
+                  <div class="stat-sub">3 ANPR matches</div>
+                </div>
+              </div>
+              <div class="cam-grid" id="cam-grid"></div>
+            </div>
+
+            <aside class="cam-side">
+              <div class="side-section">
+                <div class="side-title">Live alerts</div>
+                <div class="alert-log" id="alert-log"></div>
+              </div>
+              <div class="side-section" style="flex:1">
+                <div class="side-title">GENIH assistant</div>
+                <div class="assistant-bubble" id="assistant-bubble">
+                  Found 3 vehicles with KA registration in the last 2 hours - KA05MN8821 (Parking, 14:22), KA01CF3310 (LBS Rd, 13:58), KA09ZZ0012 (Station, 13:31).
+                </div>
+                <div class="quick-actions">
+                  <button class="quick-btn" onclick="sendPrompt('How many white cars were detected in the current area today?')">White cars today</button>
+                  <button class="quick-btn" onclick="sendPrompt('Track this person across all current cameras')">Track person</button>
+                  <button class="quick-btn" onclick="sendPrompt('Show watchlist matches for the current city')">Watchlist matches</button>
+                </div>
+                <div class="command-log" id="command-log"></div>
+                <div class="genih-input-row">
+                  <input placeholder="Ask GENIH..." id="genih-input" onkeydown="if(event.key==='Enter') askGenih()" />
+                  <button class="send-btn" onclick="askGenih()">Send</button>
+                </div>
+                <div class="footnote">Prompts stay in the local dashboard log so the homepage behaves like a live operational shell.</div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const CITY_DATA = [
+  { name: 'Delhi', lat: 28.6139, lon: 77.2090, fill: '#00dcff', glow: '#93c5fd', cameras: 15, zones: 6, alerts: 0, status: 'Monitored', alertCriteria: 'Perimeter + crowd', cameraModes: { live: 68, ai: 22, record: 10 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Mumbai', lat: 19.0760, lon: 72.8777, fill: '#ff3b5c', glow: '#fca5a5', cameras: 12, zones: 7, alerts: 3, status: 'Alert', alertCriteria: 'Watchlist + crowd', cameraModes: { live: 61, ai: 27, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, fill: '#00ffc3', glow: '#6ee7b7', cameras: 10, zones: 5, alerts: 1, status: 'Watch', alertCriteria: 'ANPR + crowd', cameraModes: { live: 64, ai: 24, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Chennai', lat: 13.0827, lon: 80.2707, fill: '#00dcff', glow: '#93c5fd', cameras: 9, zones: 5, alerts: 0, status: 'Monitored', alertCriteria: 'Perimeter + face match', cameraModes: { live: 70, ai: 18, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Hyderabad', lat: 17.3850, lon: 78.4867, fill: '#ffb300', glow: '#fcd34d', cameras: 11, zones: 6, alerts: 0, status: 'Watch', alertCriteria: 'Traffic + crowd', cameraModes: { live: 66, ai: 21, record: 13 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Kolkata', lat: 22.5726, lon: 88.3639, fill: '#00dcff', glow: '#93c5fd', cameras: 8, zones: 4, alerts: 1, status: 'Monitored', alertCriteria: 'Watchlist + access', cameraModes: { live: 59, ai: 29, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Pune', lat: 18.5204, lon: 73.8567, fill: '#7f77dd', glow: '#c4b5fd', cameras: 7, zones: 4, alerts: 0, status: 'Connected', alertCriteria: 'ANPR + perimeter', cameraModes: { live: 73, ai: 17, record: 10 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+  { name: 'Ahmedabad', lat: 23.0225, lon: 72.5714, fill: '#7f77dd', glow: '#c4b5fd', cameras: 8, zones: 4, alerts: 0, status: 'Connected', alertCriteria: 'Transit + crowd', cameraModes: { live: 69, ai: 19, record: 12 }, labelDx: -16, labelDy: -4, anchor: 'end' }
+];
+
+const INDIA_MAP_EXTENTS = { west: 67.0, east: 99.0, north: 37.5, south: 5.0 };
+const INDIA_MAP_SIZE = { width: 1500, height: 1614.844 };
+
+const MUMBAI_AREAS = [
+  { name: 'Kurla', cameras: 3, zones: 4, status: 'Alert', tone: 'alert', alertCriteria: 'Watchlist + station entry', cameraModes: { live: 58, ai: 30, record: 12 }, x: 70, y: 84, w: 94, h: 64, hint: 'Watchlist match at station entry' },
+  { name: 'Andheri W', cameras: 3, zones: 3, status: 'OK', tone: 'ok', alertCriteria: 'Perimeter + footfall', cameraModes: { live: 66, ai: 22, record: 12 }, x: 182, y: 84, w: 94, h: 64, hint: 'Normal footfall' },
+  { name: 'CST Station', cameras: 4, zones: 5, status: 'Watch', tone: 'warn', alertCriteria: 'Crowd + platform queue', cameraModes: { live: 54, ai: 34, record: 12 }, x: 294, y: 84, w: 94, h: 64, hint: 'Crowd growing at platform' },
+  { name: 'Bandra', cameras: 2, zones: 3, status: 'OK', tone: 'ok', alertCriteria: 'Harbor access + traffic', cameraModes: { live: 69, ai: 18, record: 13 }, x: 70, y: 176, w: 94, h: 64, hint: 'Harbor corridor stable' },
+  { name: 'Powai', cameras: 2, zones: 3, status: 'OK', tone: 'ok', alertCriteria: 'Campus perimeter + ANPR', cameraModes: { live: 67, ai: 20, record: 13 }, x: 182, y: 176, w: 94, h: 64, hint: 'Campus approach stable' },
+  { name: 'Dadar', cameras: 2, zones: 2, status: 'OK', tone: 'ok', alertCriteria: 'Transit interchange + crowd', cameraModes: { live: 64, ai: 24, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Transit interchange monitored' },
+  { name: 'Thane', cameras: 2, zones: 2, status: 'OK', tone: 'ok', alertCriteria: 'Perimeter + vehicle flow', cameraModes: { live: 72, ai: 16, record: 12 }, x: 70, y: 268, w: 94, h: 64, hint: 'Perimeter quiet' },
+  { name: 'Colaba', cameras: 2, zones: 2, status: 'OK', tone: 'ok', alertCriteria: 'Harbor access + crowd', cameraModes: { live: 70, ai: 18, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Harbor access clear' },
+  { name: 'Dharavi', cameras: 2, zones: 3, status: 'OK', tone: 'ok', alertCriteria: 'Street grid + watchlist', cameraModes: { live: 61, ai: 27, record: 12 }, x: 294, y: 268, w: 94, h: 64, hint: 'Street grid covered' },
+  { name: 'Lower Parel', cameras: 2, zones: 2, status: 'OK', tone: 'ok', alertCriteria: 'Business district + traffic', cameraModes: { live: 68, ai: 20, record: 12 }, x: 126, y: 360, w: 168, h: 40, hint: 'Business district steady' }
+];
+
+const DEFAULT_AREA_NAMES = ['North Gate', 'Central Junction', 'Market Belt', 'Transit Hub', 'Civic Core', 'Outer Ring'];
+const AREA_PREFIX = {
+  'Kurla': 'KR',
+  'Andheri W': 'AW',
+  'CST Station': 'CS',
+  'Bandra': 'BD',
+  'Powai': 'PW',
+  'Dadar': 'DD',
+  'Thane': 'TH',
+  'Colaba': 'CB',
+  'Dharavi': 'DH',
+  'Lower Parel': 'LP'
+};
+
+let state = {
+  city: 'Mumbai',
+  area: 'Kurla',
+  mode: 'map',
+  alerts: 3,
+  camerasOnline: 8,
+  nodes: 152,
+  lastPrompt: ''
+};
+
+function updateClock() {
+  const now = new Date();
+  $('clock').textContent = [now.getHours(), now.getMinutes(), now.getSeconds()]
+    .map((n) => String(n).padStart(2, '0')).join(':');
+}
+
+function getAreasForCity(city) {
+  if (city === 'Mumbai') return MUMBAI_AREAS;
+
+  return DEFAULT_AREA_NAMES.map((name, index) => ({
+    name: `${city} ${name}`,
+    cameras: 2 + (index % 3),
+    zones: 2 + (index % 4),
+    status: index === 1 ? 'Alert' : index === 2 ? 'Watch' : 'OK',
+    tone: index === 1 ? 'alert' : index === 2 ? 'warn' : 'ok',
+    alertCriteria: index === 1 ? 'Watchlist + access' : index === 2 ? 'Crowd + ANPR' : 'Perimeter + traffic',
+    cameraModes: {
+      live: 62 + (index % 3) * 4,
+      ai: 20 + (index % 2) * 4,
+      record: 100 - (62 + (index % 3) * 4) - (20 + (index % 2) * 4)
+    },
+    x: 62 + (index % 3) * 108,
+    y: 84 + Math.floor(index / 3) * 92,
+    w: 84,
+    h: 52,
+    hint: `${city} ${name} coverage`
+  }));
+}
+
+function getCurrentCityData() {
+  return CITY_DATA.find((city) => city.name === state.city) || CITY_DATA[1];
+}
+
+function getCityTone(city) {
+  if (city.alerts > 0 || city.status === 'Alert') return 'alert';
+  if (city.status === 'Watch') return 'watch';
+  if (city.status === 'Connected') return 'connected';
+  return 'neutral';
+}
+
+function formatModeMix(city) {
+  const modes = city.cameraModes || { live: 66, ai: 22, record: 12 };
+  return `Live ${modes.live}% · AI ${modes.ai}% · Record ${modes.record}%`;
+}
+
+function getAreaTone(area) {
+  if (area.status === 'Alert') return 'alert';
+  if (area.status === 'Watch') return 'watch';
+  return 'connected';
+}
+
+function formatAreaModeMix(area) {
+  const modes = area.cameraModes || { live: 66, ai: 22, record: 12 };
+  return `Live ${modes.live}% · AI ${modes.ai}% · Record ${modes.record}%`;
+}
+
+function projectIndia(lat, lon) {
+  const x = ((lon - INDIA_MAP_EXTENTS.west) / (INDIA_MAP_EXTENTS.east - INDIA_MAP_EXTENTS.west)) * INDIA_MAP_SIZE.width;
+  const y = ((INDIA_MAP_EXTENTS.north - lat) / (INDIA_MAP_EXTENTS.north - INDIA_MAP_EXTENTS.south)) * INDIA_MAP_SIZE.height;
+  return { x, y };
+}
+
+function getCurrentAreas() {
+  return getAreasForCity(state.city);
+}
+
+function ensureValidArea() {
+  const areas = getCurrentAreas();
+  if (!areas.some((area) => area.name === state.area)) {
+    state.area = areas[0].name;
+  }
+}
+
+function setTopbarState() {
+  $('alert-chip').textContent = `${state.alerts} active alerts`;
+  $('camera-chip').textContent = `${state.camerasOnline} camera zones online`;
+  $('node-chip').textContent = `Nodes: ${state.nodes}`;
+  $('map-hint').textContent = `${state.city} selected`;
+  $('city-name-label').textContent = state.city;
+  $('city-area-label').textContent = state.area;
+  $('cam-title').textContent = `${state.city} / ${state.area}`;
+  $('cam-subtitle').textContent = '13 cameras online with live AI overlays and alert tracking.';
+  $('mode-chip').textContent = `${state.mode.toUpperCase()} MODE`;
+  $('stat-alerts').textContent = String(state.alerts);
+}
+
+function setActiveRail(screenId) {
+  const buttons = document.querySelectorAll('.rail-btn');
+  buttons.forEach((btn) => btn.classList.remove('active'));
+  if (screenId === 'map-screen' || screenId === 'city-screen') {
+    buttons[0].classList.add('active');
+  } else if (screenId === 'cam-screen') {
+    buttons[2].classList.add('active');
+  }
+}
+
+function setActiveTab(tabName) {
+  document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+  const active = Array.from(document.querySelectorAll('.tab')).find((tab) => tab.textContent.toLowerCase().includes(tabName));
+  if (active) active.classList.add('active');
+}
+
+function goToScreen(id) {
+  document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('visible'));
+  const screen = $(id);
+  if (screen) screen.classList.add('visible');
+  setActiveRail(id);
+  if (id === 'map-screen') {
+    state.mode = 'map';
+  } else if (id === 'city-screen') {
+    state.mode = 'city';
+  } else if (id === 'cam-screen') {
+    if (state.mode === 'map' || state.mode === 'city') state.mode = 'live';
+  }
+  setTopbarState();
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach((button) => button.classList.remove('active'));
+  el.classList.add('active');
+
+  if (tab === 'map') {
+    state.mode = 'map';
+    goToScreen('map-screen');
+    return;
+  }
+
+  if (tab === 'analytics') {
+    state.mode = 'analytics';
+    goToScreen('cam-screen');
+    sendPrompt('Show me the analytics dashboard with person count trends, vehicle count trends, and watchlist match statistics');
+    return;
+  }
+
+  if (tab === 'investigate') {
+    state.mode = 'investigate';
+    goToScreen('cam-screen');
+    sendPrompt('Open the investigation panel for cross-camera tracking and ANPR search');
+    return;
+  }
+}
+
+function renderNationalMap() {
+  const layer = $('national-city-layer');
+  if (!layer) return;
+  layer.innerHTML = CITY_DATA.map((city) => {
+    const selected = city.name === state.city ? 'selected' : '';
+    const point = projectIndia(city.lat, city.lon);
+    return `
+      <g class="city-dot ${selected}" data-city="${city.name}" transform="translate(${point.x}, ${point.y})">
+        <circle class="pulse-ring" cx="0" cy="0" r="${city.alerts > 0 ? 10 : 8}" fill="${city.fill}" opacity="0.25"></circle>
+        <circle class="base" cx="0" cy="0" r="${city.alerts > 0 ? 6 : 5}" fill="${city.fill}" stroke="rgba(255,255,255,0.1)" stroke-width="1"></circle>
+        <text x="${city.labelDx}" y="${city.labelDy}" font-size="10" fill="${city.glow}" font-family="Inter, sans-serif" text-anchor="${city.anchor}">${city.name}</text>
+      </g>
+    `;
+  }).join('');
+}
+
+function renderCityListLegacy() {
+  const list = $('city-list');
+  list.innerHTML = CITY_DATA.map((city) => {
+    const isActive = city.name === state.city ? 'active' : '';
+    let statusClass = '';
+    if (city.alerts > 0) {
+      statusClass = 'red';
+    } else if (city.status === 'Watch') {
+      statusClass = 'amber';
+    }
+    
+    return `
+      <div class="stat-card city-card ${isActive} ${statusClass}" data-city="${city.name}">
+        <div class="stat-label">${city.status}</div>
+        <div class="stat-value">${city.name}</div>
+        <div class="stat-sub">${city.cameras} cameras · ${city.alerts} alerts</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCityList() {
+  const list = $('city-list');
+  list.innerHTML = CITY_DATA.map((city) => {
+    const isActive = city.name === state.city ? 'active' : '';
+    const tone = getCityTone(city);
+
+    return `
+      <div class="stat-card city-card ${isActive} ${tone}" data-city="${city.name}">
+        <div class="city-card-head">
+          <div>
+            <div class="stat-label">${city.status}</div>
+            <div class="stat-value">${city.name}</div>
+          </div>
+          <span class="city-status-chip ${tone}">${city.alerts > 0 ? `${city.alerts} alert${city.alerts === 1 ? '' : 's'}` : 'Stable'}</span>
+        </div>
+        <div class="city-metric-grid">
+          <div class="city-metric">
+            <span class="label">Total zones</span>
+            <span class="value">${city.zones}</span>
+          </div>
+          <div class="city-metric">
+            <span class="label">Total cameras</span>
+            <span class="value">${city.cameras}</span>
+          </div>
+          <div class="city-metric">
+            <span class="label">Alert criteria</span>
+            <span class="value small">${city.alertCriteria}</span>
+          </div>
+          <div class="city-metric">
+            <span class="label">Camera modes</span>
+            <span class="value small">${formatModeMix(city)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCityQuickList() {
+  const list = $('city-quick-list');
+  if (!list) return;
+  list.innerHTML = CITY_DATA.map((city) => {
+    const isActive = city.name === state.city ? 'active' : '';
+    const tone = getCityTone(city);
+    const chipText = city.alerts > 0 ? `${city.alerts} alert${city.alerts === 1 ? '' : 's'}` : city.status;
+
+    return `
+      <div class="city-quick-card ${isActive} ${tone}" data-city="${city.name}">
+        <div class="city-quick-top">
+          <div class="city-quick-name">${city.name}</div>
+          <span class="city-quick-chip ${tone}">${city.status}</span>
+        </div>
+        <div class="city-quick-meta">${city.cameras} cameras · ${chipText}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderFocusCard() {
+  const focusCard = $('focus-card');
+  if (!focusCard) return;
+  const city = getCurrentCityData();
+  const areas = getCurrentAreas();
+  const selectedArea = areas.find((area) => area.name === state.area) || areas[0];
+
+  focusCard.innerHTML = `
+    <div>
+      <div class="stack-head" style="margin-bottom:8px">Selected city</div>
+      <div class="focus-title">${city.name}</div>
+      <div class="focus-subtitle">${city.alerts} alerts, ${city.cameras} cameras, and a live route into ${selectedArea.name}.</div>
+    </div>
+    <div class="focus-grid">
+      <div class="focus-metric">
+        <span class="label">Alerts</span>
+        <span class="value">${city.alerts}</span>
+      </div>
+      <div class="focus-metric">
+        <span class="label">Cameras</span>
+        <span class="value">${city.cameras}</span>
+      </div>
+      <div class="focus-metric">
+        <span class="label">Status</span>
+        <span class="value" style="font-size:16px">${selectedArea.status}</span>
+      </div>
+      <div class="focus-metric">
+        <span class="label">Area</span>
+        <span class="value" style="font-size:14px">${selectedArea.name}</span>
+      </div>
+    </div>
+    <button class="focus-action" onclick="openCity('${city.name}')">Open city drilldown</button>
+  `;
+}
+
+function renderCitySummary() {
+  const city = getCurrentCityData();
+  const areas = getCurrentAreas();
+  const summaryEl = $('city-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML = `
+      <div class="summary-row">${areas.length} zones</div>
+      <div class="summary-row">${city.cameras} cameras</div>
+      <div class="summary-row">${city.alerts} alerts</div>
+    `;
+  }
+  const summaryTextEl = $('city-summary-text');
+  if (summaryTextEl) {
+    summaryTextEl.textContent = `${city.name} is showing ${areas.length} active zones with ${city.alerts} alert markers and ${city.cameras} connected cameras.`;
+  }
+}
+
+function renderAreaList() {
+  const areas = getCurrentAreas();
+  const areaListEl = $('area-list');
+  if (!areaListEl) return;
+  areaListEl.innerHTML = areas.map((area) => {
+    const isActive = area.name === state.area ? 'active' : '';
+    const tone = getAreaTone(area);
+
+    return `
+      <div class="stat-card area-card ${isActive} ${tone}" data-area="${area.name}">
+        <div class="city-card-head">
+          <div>
+            <div class="stat-label">${area.status}</div>
+            <div class="stat-value">${area.name}</div>
+          </div>
+          <span class="city-status-chip ${tone}">${area.status === 'Alert' ? 'Alert Active' : area.status === 'Watch' ? 'Under Watch' : 'Stable'}</span>
+        </div>
+        <div class="city-metric-grid">
+          <div class="city-metric">
+            <span class="label">Total zones</span>
+            <span class="value">${area.zones}</span>
+          </div>
+          <div class="city-metric">
+            <span class="label">Total cameras</span>
+            <span class="value">${area.cameras}</span>
+          </div>
+          <div class="city-metric">
+            <span class="label">Alert criteria</span>
+            <span class="value small">${area.alertCriteria}</span>
+          </div>
+          <div class="city-metric">
+            <span class="label">Camera modes</span>
+            <span class="value small">${formatAreaModeMix(area)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function cameraPrefixForArea(areaName) {
+  if (AREA_PREFIX[areaName]) return AREA_PREFIX[areaName];
+  const base = areaName.replace(/[^A-Za-z]/g, '').toUpperCase();
+  return base.slice(0, 2) || 'CC';
+}
+
+function cameraSvg(kind) {
+  if (kind === 'watchlist') {
+    return `
+      <svg viewBox="0 0 160 90" preserveAspectRatio="none">
+        <rect width="160" height="90" fill="#111827"/>
+        <rect x="12" y="16" width="136" height="58" rx="4" fill="#0f172a"/>
+        <rect x="20" y="20" width="34" height="42" rx="2" fill="#1f2937"/>
+        <rect x="62" y="24" width="28" height="34" rx="2" fill="#293240"/>
+        <rect x="97" y="20" width="36" height="42" rx="2" fill="#1f2937"/>
+        <rect x="65" y="22" width="22" height="32" fill="none" stroke="#00ffc3" stroke-width="1"/>
+        <text x="65" y="19" font-size="5" fill="#00ffc3" font-family="monospace">Person 0.94</text>
+        <rect x="98" y="42" width="20" height="14" fill="none" stroke="#ff3b5c" stroke-width="1"/>
+        <text x="98" y="40" font-size="5" fill="#ff3b5c" font-family="monospace">WATCH</text>
+        <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
+        <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Crowd: 38 | Vehicles: 5 | 14:32:07</text>
+      </svg>
+    `;
+  }
+  if (kind === 'crowd') {
+    return `
+      <svg viewBox="0 0 160 90" preserveAspectRatio="none">
+        <rect width="160" height="90" fill="#0f172a"/>
+        <rect x="0" y="50" width="160" height="40" fill="#1f2937"/>
+        <circle cx="34" cy="42" r="6" fill="#374151"/>
+        <circle cx="54" cy="42" r="6" fill="#374151"/>
+        <circle cx="74" cy="42" r="6" fill="#374151"/>
+        <circle cx="94" cy="42" r="6" fill="#374151"/>
+        <circle cx="114" cy="42" r="6" fill="#374151"/>
+        <rect x="30" y="36" width="18" height="26" fill="none" stroke="#ffb300" stroke-width="1"/>
+        <text x="30" y="34" font-size="5" fill="#ffb300" font-family="monospace">Crowd 0.91</text>
+        <rect x="110" y="62" width="34" height="12" fill="#00ffc3" opacity="0.8" rx="1"/>
+        <text x="112" y="71" font-size="6" fill="#fff" font-family="monospace">MH01AB1234</text>
+        <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
+        <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Crowd: 52 | Vehicles: 11 | 14:32:07</text>
+      </svg>
+    `;
+  }
+  if (kind === 'face') {
+    return `
+      <svg viewBox="0 0 160 90" preserveAspectRatio="none">
+        <rect width="160" height="90" fill="#0f172a"/>
+        <rect x="0" y="45" width="160" height="45" fill="#111827"/>
+        <rect x="60" y="10" width="40" height="55" fill="#1f2937" rx="3"/>
+        <rect x="65" y="12" width="18" height="22" fill="none" stroke="#00dcff" stroke-width="1" rx="1"/>
+        <text x="65" y="10" font-size="5" fill="#00dcff" font-family="monospace">Face 0.87</text>
+        <circle cx="74" cy="18" r="4" fill="none" stroke="#ffb300" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
+        <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Faces: 3 | Match: VIP | 14:32:09</text>
+      </svg>
+    `;
+  }
+  if (kind === 'traffic') {
+    return `
+      <svg viewBox="0 0 160 90" preserveAspectRatio="none">
+        <rect width="160" height="90" fill="#111827"/>
+        <line x1="0" y1="55" x2="160" y2="55" stroke="#1f2937" stroke-width="8"/>
+        <line x1="0" y1="65" x2="160" y2="65" stroke="#374151" stroke-width="8"/>
+        <rect x="30" y="40" width="18" height="10" fill="#374151" rx="1"/>
+        <rect x="80" y="38" width="22" height="12" fill="#374151" rx="1"/>
+        <rect x="120" y="36" width="18" height="14" fill="#374151" rx="1"/>
+        <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
+        <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Traffic: Moderate | 14:32:10</text>
+      </svg>
+    `;
+  }
+  if (kind === 'offline') {
+    return `
+      <svg viewBox="0 0 160 90" preserveAspectRatio="none">
+        <rect width="160" height="90" fill="#0a0a0a"/>
+        <text x="80" y="40" text-anchor="middle" font-size="9" fill="#374151" font-family="Inter, sans-serif">OFFLINE</text>
+        <line x1="60" y1="30" x2="100" y2="60" stroke="#374151" stroke-width="1"/>
+        <line x1="100" y1="30" x2="60" y2="60" stroke="#374151" stroke-width="1"/>
+      </svg>
+    `;
+  }
+
+  return `
+    <svg viewBox="0 0 160 90" preserveAspectRatio="none">
+      <rect width="160" height="90" fill="#111827"/>
+      <rect x="20" y="20" width="35" height="20" fill="#1e3a5f" rx="2"/>
+      <rect x="55" y="25" width="35" height="20" fill="#374151" rx="2"/>
+      <rect x="100" y="18" width="40" height="22" fill="#1e3a5f" rx="2"/>
+      <rect x="20" y="18" width="35" height="22" fill="none" stroke="#7f77dd" stroke-width="1"/>
+      <text x="20" y="16" font-size="5" fill="#7f77dd" font-family="monospace">ANPR</text>
+      <rect x="100" y="16" width="40" height="24" fill="none" stroke="#00ffc3" stroke-width="1"/>
+      <text x="100" y="14" font-size="5" fill="#00ffc3" font-family="monospace">MATCH</text>
+      <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
+      <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Vehicles: 14 | ANPR: 2 | 14:32:08</text>
+    </svg>
+  `;
+}
+
+function renderCamGrid() {
+  const prefix = cameraPrefixForArea(state.area);
+  const tiles = [
+    { suffix: '01', name: 'Station entry', tone: '#ff3b5c', badge: 'Watchlist match', kind: 'watchlist', tag: 'Alert' },
+    { suffix: '02', name: 'Market area', tone: '#ffb300', badge: '', kind: 'crowd', tag: 'Crowd high' },
+    { suffix: '03', name: 'Parking lot', tone: '#00ffc3', badge: '', kind: 'anpr', tag: 'Normal' },
+    { suffix: '04', name: 'Platform', tone: '#ffb300', badge: 'VIP detected', kind: 'face', tag: 'Face match' },
+    { suffix: '05', name: 'Main road', tone: '#00ffc3', badge: '', kind: 'traffic', tag: 'Normal' },
+    { suffix: '06', name: 'Substation', tone: '#888888', badge: '', kind: 'offline', tag: 'Offline' }
+  ];
+
+  $('cam-grid').innerHTML = tiles.map((tile) => {
+    const promptMap = {
+      'watchlist': `Show me detailed AI analysis for camera ${prefix}-${tile.suffix} at ${state.area} station entrance`,
+      'crowd': `Show AI analytics for camera ${prefix}-${tile.suffix} in ${state.area} market area`,
+      'anpr': `Show AI analytics for camera ${prefix}-${tile.suffix} in ${state.area} parking`,
+      'face': `Show cross-camera tracking for person detected at ${prefix}-${tile.suffix}`,
+      'traffic': `Show traffic analytics for camera ${prefix}-${tile.suffix}`,
+      'offline': `Show the offline camera diagnostics for ${prefix}-${tile.suffix}`
+    };
+    return `
+      <div class="cam-tile" data-prompt="${encodeURIComponent(promptMap[tile.kind])}">
+        <div class="cam-feed">
+          ${cameraSvg(tile.kind)}
+          <div class="rec-dot"></div>
+          ${tile.badge ? `<div class="alert-badge">${tile.badge}</div>` : ''}
+        </div>
+        <div class="cam-footer">
+          <span class="cam-name">${prefix}-${tile.suffix} - ${tile.name}</span>
+          <span class="cam-tag" style="color:${tile.tone}">${tile.tag}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatAlertTime(baseTime, offsetMinutes) {
+  const d = new Date(baseTime.getTime() - offsetMinutes * 60000);
+  return [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, '0')).join(':');
+}
+
+function renderAlertLog(logId, items) {
+  const log = $(logId);
+  if (!log) return;
+  log.innerHTML = items.map((item) => `
+    <div class="alert-item ${item.kind}">
+      <span class="alert-time">${item.time}</span>
+      <div>${item.text}</div>
+    </div>
+  `).join('');
+}
+
+function buildMainAlertFeed() {
+  const now = new Date();
+  const activeCities = CITY_DATA.filter((city) => city.alerts > 0 || city.status === 'Alert');
+  const cities = activeCities.length ? activeCities : [getCurrentCityData()];
+
+  return cities.slice(0, 4).map((city, index) => {
+    const areas = getAreasForCity(city.name);
+    const leadArea = areas.find((area) => area.status === 'Alert' || area.status === 'Watch') || areas[0];
+    const count = Math.max(city.alerts, 1);
+    return {
+      kind: 'alert',
+      time: formatAlertTime(now, index * 2 + 1),
+      text: `${city.name} / ${leadArea.name}: high alert with ${count} active signal${count === 1 ? '' : 's'}`
+    };
+  });
+}
+
+function buildCityAlertFeed() {
+  const now = new Date();
+  const city = getCurrentCityData();
+  const areas = getCurrentAreas();
+  const hotArea = areas.find((area) => area.status === 'Alert') || areas.find((area) => area.status === 'Watch') || areas[0];
+  const secondArea = areas.find((area) => area.name !== hotArea.name) || hotArea;
+  const clearCount = areas.filter((area) => area.status === 'OK').length;
+  const watchCount = areas.filter((area) => area.status === 'Watch').length;
+
+  return [
+    {
+      kind: hotArea.status === 'Alert' ? 'alert' : 'info',
+      time: formatAlertTime(now, 1),
+      text: `${city.name} / ${hotArea.name}: live feed under review`
+    },
+    {
+      kind: 'info',
+      time: formatAlertTime(now, 3),
+      text: `${city.name}: ${city.cameras} cameras online across ${city.zones} zones`
+    },
+    {
+      kind: watchCount > 0 ? 'info' : 'ok',
+      time: formatAlertTime(now, 5),
+      text: `${city.name}: ${watchCount} watch zone${watchCount === 1 ? '' : 's'} and ${clearCount} clear zone${clearCount === 1 ? '' : 's'}`
+    },
+    {
+      kind: secondArea.status === 'Alert' ? 'alert' : 'ok',
+      time: formatAlertTime(now, 7),
+      text: `${city.name} / ${secondArea.name}: ${secondArea.status.toLowerCase()} status preserved`
+    }
+  ];
+}
+
+function renderLiveAlerts() {
+  renderAlertLog('main-alert-log', buildMainAlertFeed());
+  renderAlertLog('city-alert-log', buildCityAlertFeed());
+  renderAlertLog('alert-log', buildCityAlertFeed());
+}
+
+function buildAssistantReply(prompt) {
+  const p = prompt.toLowerCase();
+  if (p.includes('analytics')) return 'Analytics mode queued. The map, alert log, and camera overlays are synced to the current city.';
+  if (p.includes('investigation')) return 'Investigation panel ready. Cross-camera tracking and ANPR search are now focused on the current area.';
+  if (p.includes('watchlist')) return 'Watchlist filters applied. The lead camera has been marked and the current area is under review.';
+  if (p.includes('vehicle')) return 'Vehicle matching is running now. I am highlighting ANPR hits and related camera lanes.';
+  if (p.includes('reports')) return 'Report bundle prepared. Investigation notes and camera snapshots are attached to the current case.';
+  if (p.includes('settings')) return 'RBAC and audit log controls are available. Permissions can be reviewed from this dashboard.';
+  if (p.includes('white cars')) return `White car search started for ${state.city} / ${state.area}. I am scanning the current feed set for matches.`;
+  if (p.includes('track')) return `Tracking started across the current city grid. I am following the highlighted subject through linked cameras.`;
+  return `Acknowledged: ${prompt}. The selected city is ${state.city} and the active area is ${state.area}.`;
+}
+
+function addCommandLog(prompt) {
+  const log = $('command-log');
+  const time = new Date();
+  const stamp = [time.getHours(), time.getMinutes(), time.getSeconds()].map((n) => String(n).padStart(2, '0')).join(':');
+  const el = document.createElement('div');
+  el.className = 'command-chip';
+  el.textContent = `[${stamp}] ${prompt}`;
+  log.prepend(el);
+  while (log.children.length > 6) log.removeChild(log.lastChild);
+}
+
+function sendPrompt(prompt) {
+  state.lastPrompt = prompt;
+  addCommandLog(prompt);
+  $('assistant-bubble').textContent = buildAssistantReply(prompt);
+
+  const lower = prompt.toLowerCase();
+  if (lower.includes('analytics')) state.mode = 'analytics';
+  else if (lower.includes('investigat')) state.mode = 'investigate';
+  else if (lower.includes('watchlist')) state.mode = 'watchlist';
+  else if (lower.includes('vehicle')) state.mode = 'vehicle';
+  else if (lower.includes('report')) state.mode = 'reports';
+  else if (lower.includes('settings')) state.mode = 'settings';
+  else if (lower.includes('genih')) state.mode = 'live';
+
+  setTopbarState();
+}
+
+function askGenih() {
+  const input = $('genih-input');
+  const value = input.value.trim();
+  if (!value) return;
+  sendPrompt(`GENIH query for ${state.city} / ${state.area}: ${value}`);
+  input.value = '';
+}
+
+function activateChatMode() {
+  const layout = $('map-layout');
+  if (layout && !layout.classList.contains('chat-active')) {
+    layout.classList.add('chat-active');
+    $('chat-header-actions').style.display = 'flex';
+    renderCityQuickList();
+  }
+}
+
+function deactivateChatMode() {
+  const layout = $('map-layout');
+  if (layout && layout.classList.contains('chat-active')) {
+    layout.classList.remove('chat-active');
+    $('chat-header-actions').style.display = 'none';
+    renderCityQuickList();
+  }
+}
+
+function suggestPrompt(text) {
+  $('chatbot-input').value = text;
+  activateChatMode();
+  sendChatPrompt();
+}
+
+function clearChat() {
+  const messages = $('chat-messages');
+  messages.innerHTML = `
+    <div class="chat-message bot">
+      <div class="message-bubble">
+        Hello! I am the GENIH Command Assistant. You can ask me to analyze active alerts, query camera status, or check live telemetry. How can I help you today?
+      </div>
+    </div>
+  `;
+  deactivateChatMode();
+}
+
+function getBotReplyText(query) {
+  const q = query.toLowerCase();
+  if (q.includes('threat') || q.includes('alert')) {
+    return `**Telemetry Alert Summary:**<br>
+    - **Mumbai (Alert):** 3 active threats at ${state.area || 'Kurla'} (watchlist match at station entry).<br>
+    - **Bengaluru (Watch):** 1 active threat (face confidence 0.87 at platform).<br>
+    - **Delhi & Chennai (Monitored):** 0 active alerts, security normal.`;
+  }
+  if (q.includes('camera') || q.includes('cams') || q.includes('online')) {
+    return `**Camera Breakdown:**<br>
+    - Delhi: 15 connected nodes<br>
+    - Mumbai: 12 connected nodes<br>
+    - Bengaluru: 10 connected nodes<br>
+    - Chennai: 9 connected nodes<br>
+    - Hyderabad: 11 connected nodes<br>
+    - Kolkata: 8 connected nodes<br>
+    - Pune: 7 connected nodes<br>
+    - Ahmedabad: 8 connected nodes<br>
+    - Total Monitored: **80 cameras active** across the surveillance grid.`;
+  }
+  if (q.includes('traffic') || q.includes('congestion') || q.includes('vehicles')) {
+    return `**Traffic Hub Report:**<br>
+    - Transit density: **Moderate** on Bandra harbor corridors.<br>
+    - LBS Road hub check: **ANPR match pending** on KA registration vehicle (KA05MN8821).<br>
+    - Traffic flow: Normal across other active grids.`;
+  }
+  return `Acknowledged. I have logged your query: *"${query}"* targeting **${state.city} / ${state.area}** grid. Live telemetry shows node latency at 12ms and system integrity is green.`;
+}
+
+function sendChatPrompt() {
+  const input = $('chatbot-input');
+  const query = input.value.trim();
+  if (!query) return;
+
+  activateChatMode();
+
+  // 1. Add user message
+  const chatMessages = $('chat-messages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-message user';
+  userMsg.innerHTML = `<div class="message-bubble">${query}</div>`;
+  chatMessages.appendChild(userMsg);
+  input.value = '';
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  // 2. Add typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-message bot typing';
+  typing.id = 'chat-typing';
+  typing.innerHTML = `
+    <div class="message-bubble">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+    </div>
+  `;
+  chatMessages.appendChild(typing);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  // 3. Delayed reply
+  setTimeout(() => {
+    const indicator = $('chat-typing');
+    if (indicator) indicator.remove();
+
+    const botMsg = document.createElement('div');
+    botMsg.className = 'chat-message bot';
+    botMsg.innerHTML = `<div class="message-bubble">${getBotReplyText(query)}</div>`;
+    chatMessages.appendChild(botMsg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 750);
+}
+
+function renderAll() {
+  ensureValidArea();
+  state.alerts = getCurrentCityData().alerts;
+  renderNationalMap();
+  renderCityList();
+  renderCityQuickList();
+  renderFocusCard();
+  renderCitySummary();
+  renderAreaList();
+  renderCamGrid();
+  renderLiveAlerts();
+  setTopbarState();
+}
+
+function openCity(city) {
+  state.city = city;
+  const areas = getCurrentAreas();
+  state.area = areas[0].name;
+  state.alerts = getCurrentCityData().alerts;
+  state.mode = 'city';
+  deactivateChatMode();
+  renderAll();
+  goToScreen('city-screen');
+}
+
+function openArea(area) {
+  state.area = area;
+  state.alerts = getCurrentCityData().alerts;
+  state.mode = 'live';
+  renderAll();
+  goToScreen('cam-screen');
+}
+
+function wireInteractivity() {
+  $('city-list').addEventListener('click', (event) => {
+    const card = event.target.closest('[data-city]');
+    if (!card) return;
+    openCity(card.dataset.city);
+  });
+
+  const cityQuickList = $('city-quick-list');
+  if (cityQuickList) {
+    cityQuickList.addEventListener('click', (event) => {
+      const card = event.target.closest('[data-city]');
+      if (!card) return;
+      openCity(card.dataset.city);
+    });
+  }
+
+  const nationalCityLayer = $('national-city-layer');
+  if (nationalCityLayer) {
+    nationalCityLayer.addEventListener('click', (event) => {
+      const node = event.target.closest('[data-city]');
+      if (!node) return;
+      openCity(node.dataset.city);
+    });
+  }
+
+  $('area-list').addEventListener('click', (event) => {
+    const row = event.target.closest('[data-area]');
+    if (!row) return;
+    openArea(row.dataset.area);
+  });
+
+  $('cam-grid').addEventListener('click', (event) => {
+    const tile = event.target.closest('[data-prompt]');
+    if (!tile) return;
+    sendPrompt(decodeURIComponent(tile.dataset.prompt));
+  });
+}
+
+function refreshMetrics() {
+  fetch('/api/metrics')
+    .then((res) => res.json())
+    .then((data) => {
+      state.nodes = data.active_nodes;
+      state.alerts = Math.max(data.threats, state.alerts);
+      setTopbarState();
+      renderFocusCard();
+      renderLiveAlerts();
+    })
+    .catch((error) => console.warn('metrics fetch failed', error));
+}
+
+function refreshCameras() {
+  fetch('/api/camera_feed')
+    .then((res) => res.json())
+    .then((data) => {
+      state.camerasOnline = data.length;
+      const alertCount = data.filter((camera) => camera.alert).length;
+      state.alerts = Math.max(state.alerts, alertCount, 1);
+      setTopbarState();
+      renderFocusCard();
+      renderCitySummary();
+      renderLiveAlerts();
+    })
+    .catch((error) => console.warn('camera fetch failed', error));
+}
+
+function updateModeFromScreen(id) {
+  if (id === 'map-screen') state.mode = 'map';
+  if (id === 'city-screen') state.mode = 'city';
+  if (id === 'cam-screen' && state.mode === 'map') state.mode = 'live';
+  setTopbarState();
+}
+
+function tickParticles() {
+  const canvas = $('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  const points = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function seed() {
+    points.length = 0;
+    const count = Math.max(32, Math.floor(window.innerWidth / 24));
+    for (let i = 0; i < count; i++) {
+      points.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: Math.random() * 1.4 + 0.5
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      for (let j = i + 1; j < points.length; j++) {
+        const q = points[j];
+        const dx = p.x - q.x;
+        const dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 130) {
+          ctx.strokeStyle = `rgba(0, 180, 220, ${0.12 * (1 - dist / 130)})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 220, 255, 0.6)';
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  seed();
+  draw();
+  window.addEventListener('resize', () => {
+    resize();
+    seed();
+  });
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+tickParticles();
+wireInteractivity();
+renderAll();
+refreshMetrics();
+refreshCameras();
+setInterval(refreshMetrics, 2500);
+setInterval(refreshCameras, 5000);
+setInterval(renderLiveAlerts, 4200);
+</script>
+</body>
+</html>
