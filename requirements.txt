@@ -1,1 +1,3 @@
 flask>=3.0.0
+
+in the end i even want to add an enlarge button so tht only one video plays in full screen so on an double click on the card in the video where crowd ,ANPr such kind of clip it shud play in full screen and all the respective content of tht particular video ll be prininting in the live alert section. add an enlarge and off enlarge button also for tht
