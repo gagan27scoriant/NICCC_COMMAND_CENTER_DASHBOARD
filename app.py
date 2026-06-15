@@ -1,12 +1,43 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, send_from_directory, request, redirect, url_for, session
 import random
 import time
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # For session management
+
+VIDEO_DIR = os.path.join(os.path.dirname(__file__), 'video')
+
+@app.route('/video/<path:filename>')
+def serve_video(filename):
+    return send_from_directory(VIDEO_DIR, filename)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Default credentials with basic RBAC setup
+        if email == 'admin@123' and password == 'admin@123':
+            session['user'] = 'admin'
+            session['role'] = 'superuser'
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('login.html', error="Invalid credentials. Use admin@123")
+            
+    return render_template('login.html', error=None)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/')
 def dashboard():
-    return render_template('dashboard.html')
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html', user=session['user'], role=session['role'])
 
 @app.route('/api/metrics')
 def metrics():

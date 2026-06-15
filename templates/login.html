@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NICCC Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #03080e;
+      --panel: rgba(4, 20, 38, 0.6);
+      --border: rgba(0, 220, 255, 0.15);
+      --cyan: #00dcff;
+      --cyan-dim: rgba(0, 220, 255, 0.2);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --red: #ff3b5c;
+      --font-ui: 'Inter', sans-serif;
+      --font-hud: 'JetBrains Mono', monospace;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      font-family: var(--font-ui);
+      color: var(--text);
+      overflow: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 220, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
+    }
+
+    #bg-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .login-box {
+      position: relative;
+      z-index: 1;
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 220, 255, 0.05);
+      animation: formIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes formIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-hud);
+      font-size: 24px;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 12px rgba(0, 220, 255, 0.4);
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--cyan-dim);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-hud);
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px rgba(0, 220, 255, 0.15);
+      background: rgba(0, 220, 255, 0.02);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, rgba(0, 220, 255, 0.2), rgba(0, 180, 220, 0.1));
+      border: 1px solid var(--cyan);
+      border-radius: 6px;
+      color: #fff;
+      font-family: var(--font-hud);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-shadow: 0 0 8px rgba(0, 220, 255, 0.5);
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, rgba(0, 220, 255, 0.3), rgba(0, 180, 220, 0.15));
+      box-shadow: 0 0 20px rgba(0, 220, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .error-msg {
+      margin-top: 16px;
+      padding: 10px;
+      background: rgba(255, 59, 92, 0.1);
+      border: 1px solid rgba(255, 59, 92, 0.3);
+      border-radius: 6px;
+      color: #ffb3b3;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .hint {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 11px;
+      color: #556b82;
+      font-family: var(--font-hud);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="login-box">
+    <div class="brand">
+      <h1>NICCC</h1>
+      <p>SECURE COMMAND PORTAL</p>
+    </div>
+    
+    <form method="POST" action="/login">
+      <div class="form-group">
+        <label>Email ID</label>
+        <input type="text" name="email" value="admin@123" placeholder="Enter email" required autofocus autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Access Key</label>
+        <input type="password" name="password" placeholder="Enter password" required>
+      </div>
+      
+      <button type="submit" class="submit-btn">AUTHENTICATE</button>
+      
+      {% if error %}
+      <div class="error-msg">{{ error }}</div>
+      {% endif %}
+    </form>
+    
+    <div class="hint">Restricted access area. All attempts are logged.</div>
+  </div>
+
+  <script>
+    // Minimal particle background matching the dashboard
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    const points = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function seed() {
+      points.length = 0;
+      for (let i = 0; i < 40; i++) {
+        points.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          r: Math.random() * 1.5 + 0.5
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 220, 255, 0.4)';
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    seed();
+    draw();
+    window.addEventListener('resize', () => { resize(); seed(); });
+  </script>
+</body>
+</html>

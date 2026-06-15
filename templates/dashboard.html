@@ -985,8 +985,10 @@
   }
   .area-list {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: auto;
     gap: 10px;
+    align-items: start;
   }
   .area-row,
   .area-card,
@@ -999,13 +1001,15 @@
   }
   .area-card {
     cursor: pointer;
-    transition: all 0.16s ease;
+    transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 176px;
+    height: auto;
+    min-height: 260px;
     position: relative;
     overflow: hidden;
+    padding: 12px;
   }
   .area-card-title {
     font-family: var(--font-hud);
@@ -1145,13 +1149,15 @@
   }
   .city-card {
     cursor: pointer;
-    transition: all 0.16s ease;
+    transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 176px;
+    height: auto;
+    min-height: 190px;
     position: relative;
     overflow: hidden;
+    padding: 12px;
   }
   .city-card::before {
     content: '';
@@ -1656,6 +1662,13 @@
     background: #0d1117;
   }
   .cam-feed svg { width: 100%; height: 100%; display: block; }
+  .cam-feed video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.7) brightness(0.85) contrast(1.1);
+  }
   .rec-dot {
     position: absolute;
     top: 7px;
@@ -1697,6 +1710,152 @@
     font-size: 10px;
     font-weight: 700;
     white-space: nowrap;
+  }
+
+  /* ── Fullscreen cam overlay ── */
+  #cam-fullscreen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(2, 11, 20, 0.97);
+    backdrop-filter: blur(12px);
+    flex-direction: column;
+    animation: fsIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #cam-fullscreen.open { display: flex; }
+  @keyframes fsIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  #cam-fs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(0,220,255,0.12);
+    flex-shrink: 0;
+    background: rgba(4,20,38,0.9);
+  }
+  #cam-fs-label {
+    font-family: var(--font-hud);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+    text-shadow: 0 0 14px rgba(0,220,255,0.3);
+  }
+  #cam-fs-minimize {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(0,220,255,0.14), rgba(0,200,240,0.08));
+    border: 1px solid rgba(0,220,255,0.28);
+    color: var(--cyan);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 18px rgba(0,220,255,0.08);
+  }
+  #cam-fs-minimize:hover {
+    background: linear-gradient(135deg, rgba(0,220,255,0.24), rgba(0,200,240,0.16));
+    border-color: rgba(0,220,255,0.45);
+    box-shadow: 0 0 24px rgba(0,220,255,0.2);
+    transform: translateY(-1px);
+  }
+  #cam-fs-body {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    position: relative;
+  }
+  /* Right panel slot — cam-side is moved here on expand */
+  #cam-fs-right {
+    width: 300px;
+    min-width: 260px;
+    max-width: 340px;
+    flex-shrink: 0;
+    border-left: 1px solid rgba(0,220,255,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Two-column main area inside overlay */
+  #cam-fs-main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+  }
+  /* When cam-side lives inside the overlay, keep it full-height */
+  #cam-fs-right > .cam-side {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex-shrink: 0;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+  #cam-fs-body video,
+  #cam-fs-body svg {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius);
+    filter: saturate(0.75) brightness(0.88) contrast(1.1);
+    box-shadow: 0 0 60px rgba(0,220,255,0.08), 0 0 120px rgba(0,0,0,0.6);
+  }
+  #cam-fs-body .rec-dot-fs {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 12px rgba(255,59,92,0.7);
+    animation: pulse 1.1s linear infinite;
+  }
+  #cam-fs-badge {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255,59,92,0.16);
+    border: 1px solid rgba(255,59,92,0.3);
+    color: #ffc1cb;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: none;
+  }
+  #cam-fs-footer {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(0,220,255,0.08);
+    flex-shrink: 0;
+    background: rgba(4,20,38,0.9);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
   }
 
   .cam-side {
@@ -2004,7 +2163,12 @@
       <span class="status-chip neutral" id="camera-chip">8 camera zones online</span>
       <span class="status-chip neutral" id="node-chip">Nodes: --</span>
       <div id="clock">00:00:00</div>
-      <div class="user-badge" title="Admin">AD</div>
+      {% if user %}
+        <div class="user-badge" title="Role: {{ role }}">{{ user[:2].upper() }}</div>
+        <a href="/logout" class="status-chip danger" style="text-decoration: none; cursor: pointer;">Logout</a>
+      {% else %}
+        <div class="user-badge" title="Admin">AD</div>
+      {% endif %}
     </div>
   </header>
 
@@ -2185,6 +2349,26 @@
   </div>
 </div>
 
+<!-- ── Fullscreen cam overlay ── -->
+<div id="cam-fullscreen">
+  <div id="cam-fs-header">
+    <span id="cam-fs-label">● LIVE FEED</span>
+    <button id="cam-fs-minimize" onclick="minimizeCam()">⊟ &nbsp;Minimize</button>
+  </div>
+  <div id="cam-fs-main">
+    <div id="cam-fs-body">
+      <div class="rec-dot-fs"></div>
+      <div id="cam-fs-badge"></div>
+    </div>
+    <div class="resize-divider" data-target="cam-fs-right"></div>
+    <div id="cam-fs-right"></div>
+  </div>
+  <div id="cam-fs-footer">
+    <span id="cam-fs-name"></span>
+    <span id="cam-fs-time"></span>
+  </div>
+</div>
+
 <script>
 const $ = (id) => document.getElementById(id);
 
@@ -2215,19 +2399,101 @@ const MUMBAI_AREAS = [
   { name: 'Lower Parel', cameras: 2, zones: 2, status: 'OK', tone: 'ok', alertCriteria: 'Business district + traffic', cameraModes: { live: 68, ai: 20, record: 12 }, x: 126, y: 360, w: 168, h: 40, hint: 'Business district steady' }
 ];
 
-const DEFAULT_AREA_NAMES = ['North Gate', 'Central Junction', 'Market Belt', 'Transit Hub', 'Civic Core', 'Outer Ring'];
-const AREA_PREFIX = {
-  'Kurla': 'KR',
-  'Andheri W': 'AW',
-  'CST Station': 'CS',
-  'Bandra': 'BD',
-  'Powai': 'PW',
-  'Dadar': 'DD',
-  'Thane': 'TH',
-  'Colaba': 'CB',
-  'Dharavi': 'DH',
-  'Lower Parel': 'LP'
+/* ── Real zone data sourced from official city surveillance districts ── */
+
+const DELHI_AREAS = [
+  { name: 'Connaught Place', cameras: 4, zones: 5, status: 'Watch', tone: 'warn', alertCriteria: 'Crowd density + perimeter', cameraModes: { live: 60, ai: 28, record: 12 }, x: 182, y: 84, w: 94, h: 64, hint: 'High footfall commercial zone' },
+  { name: 'Karol Bagh',      cameras: 3, zones: 4, status: 'Alert', tone: 'alert', alertCriteria: 'Watchlist + market crowd', cameraModes: { live: 55, ai: 33, record: 12 }, x: 70,  y: 84, w: 94, h: 64, hint: 'Watchlist match at market entry' },
+  { name: 'Chandni Chowk',   cameras: 4, zones: 5, status: 'Watch', tone: 'warn', alertCriteria: 'Crowd + ANPR + heritage',  cameraModes: { live: 58, ai: 30, record: 12 }, x: 294, y: 84, w: 94, h: 64, hint: 'Dense old city market' },
+  { name: 'Dwarka',          cameras: 2, zones: 3, status: 'OK',    tone: 'ok',   alertCriteria: 'Perimeter + vehicle flow',  cameraModes: { live: 70, ai: 18, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'Residential zone stable' },
+  { name: 'Nehru Place',     cameras: 3, zones: 4, status: 'OK',    tone: 'ok',   alertCriteria: 'ANPR + access control',     cameraModes: { live: 66, ai: 22, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'IT hub monitored' },
+  { name: 'Lajpat Nagar',    cameras: 2, zones: 3, status: 'OK',    tone: 'ok',   alertCriteria: 'Market + face match',       cameraModes: { live: 64, ai: 24, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Market zone covered' },
+  { name: 'Rohini',          cameras: 2, zones: 3, status: 'OK',    tone: 'ok',   alertCriteria: 'Perimeter + vehicle',       cameraModes: { live: 72, ai: 16, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Residential perimeter quiet' },
+  { name: 'Saket',           cameras: 3, zones: 4, status: 'OK',    tone: 'ok',   alertCriteria: 'Mall perimeter + crowd',    cameraModes: { live: 68, ai: 20, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Mall district steady' },
+  { name: 'Janakpuri',       cameras: 2, zones: 2, status: 'OK',    tone: 'ok',   alertCriteria: 'Transit + footfall',        cameraModes: { live: 71, ai: 17, record: 12 }, x: 294, y: 268, w: 94, h: 64, hint: 'Suburban transit node' },
+  { name: 'IGI Terminal 3',  cameras: 5, zones: 6, status: 'OK',    tone: 'ok',   alertCriteria: 'Biometric + ANPR + perimeter', cameraModes: { live: 52, ai: 36, record: 12 }, x: 126, y: 360, w: 168, h: 40, hint: 'Airport — highest AI coverage' }
+];
+
+const BENGALURU_AREAS = [
+  { name: 'Koramangala',    cameras: 3, zones: 4, status: 'Alert', tone: 'alert', alertCriteria: 'Watchlist + nightlife crowd', cameraModes: { live: 56, ai: 32, record: 12 }, x: 182, y: 84,  w: 94, h: 64, hint: 'Watchlist match — pub district' },
+  { name: 'Whitefield',    cameras: 3, zones: 4, status: 'Watch', tone: 'warn',  alertCriteria: 'ANPR + IT campus perimeter',  cameraModes: { live: 62, ai: 26, record: 12 }, x: 294, y: 84,  w: 94, h: 64, hint: 'IT corridor congestion' },
+  { name: 'Indiranagar',   cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Crowd + face match',          cameraModes: { live: 66, ai: 22, record: 12 }, x: 70,  y: 84,  w: 94, h: 64, hint: 'Mixed residential-commercial' },
+  { name: 'MG Road',       cameras: 4, zones: 5, status: 'OK',    tone: 'ok',    alertCriteria: 'Traffic + crowd + ANPR',      cameraModes: { live: 63, ai: 25, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'High-traffic commercial spine' },
+  { name: 'Electronic City',cameras: 3, zones: 4, status: 'OK',   tone: 'ok',    alertCriteria: 'Campus perimeter + vehicle',  cameraModes: { live: 68, ai: 20, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'Tech park monitored' },
+  { name: 'Marathahalli',  cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Transit + ANPR',              cameraModes: { live: 67, ai: 21, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Outer ring transit node' },
+  { name: 'HSR Layout',    cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Perimeter + footfall',        cameraModes: { live: 70, ai: 18, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Residential sector stable' },
+  { name: 'Yeshwanthpur',  cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Rail hub + crowd',            cameraModes: { live: 65, ai: 23, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Railway junction covered' }
+];
+
+const CHENNAI_AREAS = [
+  { name: 'T. Nagar',      cameras: 4, zones: 5, status: 'Watch', tone: 'warn',  alertCriteria: 'Crowd + market + ANPR',    cameraModes: { live: 59, ai: 29, record: 12 }, x: 70,  y: 84,  w: 94, h: 64, hint: 'Busy retail district' },
+  { name: 'Egmore',        cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Rail hub + crowd',          cameraModes: { live: 64, ai: 24, record: 12 }, x: 182, y: 84,  w: 94, h: 64, hint: 'Central station zone' },
+  { name: 'Anna Nagar',    cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Perimeter + face match',    cameraModes: { live: 70, ai: 18, record: 12 }, x: 294, y: 84,  w: 94, h: 64, hint: 'Residential sector stable' },
+  { name: 'Adyar',         cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Coastal perimeter + crowd', cameraModes: { live: 69, ai: 19, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'Coastal access monitored' },
+  { name: 'Velachery',     cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'ANPR + traffic',            cameraModes: { live: 67, ai: 21, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'Mall & transit node' },
+  { name: 'Mylapore',      cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Heritage + crowd',          cameraModes: { live: 71, ai: 17, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Heritage zone monitored' },
+  { name: 'Perambur',      cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Industrial + perimeter',    cameraModes: { live: 72, ai: 16, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Industrial cluster stable' },
+  { name: 'Tambaram',      cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Suburban transit + ANPR',   cameraModes: { live: 68, ai: 20, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Suburban rail hub' }
+];
+
+const HYDERABAD_AREAS = [
+  { name: 'HITEC City',    cameras: 4, zones: 5, status: 'Watch', tone: 'warn',  alertCriteria: 'IT campus + ANPR + crowd', cameraModes: { live: 60, ai: 28, record: 12 }, x: 70,  y: 84,  w: 94, h: 64, hint: 'Tech corridor congestion' },
+  { name: 'Secunderabad',  cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Rail hub + crowd',          cameraModes: { live: 64, ai: 24, record: 12 }, x: 182, y: 84,  w: 94, h: 64, hint: 'Cantonment railway junction' },
+  { name: 'Banjara Hills', cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'VIP perimeter + face match',cameraModes: { live: 62, ai: 26, record: 12 }, x: 294, y: 84,  w: 94, h: 64, hint: 'High-security residential' },
+  { name: 'Ameerpet',      cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Metro hub + crowd',         cameraModes: { live: 66, ai: 22, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'Metro interchange covered' },
+  { name: 'Jubilee Hills', cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Perimeter + vehicle flow',  cameraModes: { live: 68, ai: 20, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'Affluent zone stable' },
+  { name: 'Kukatpally',    cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Residential + transit',     cameraModes: { live: 70, ai: 18, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Residential suburb quiet' },
+  { name: 'LB Nagar',      cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Transit + ANPR',            cameraModes: { live: 67, ai: 21, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Outer ring transit node' },
+  { name: 'Begumpet',      cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Airport access + biometric',cameraModes: { live: 58, ai: 30, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Old airport vicinity' }
+];
+
+const KOLKATA_AREAS = [
+  { name: 'Park Street',   cameras: 3, zones: 4, status: 'Alert', tone: 'alert', alertCriteria: 'Watchlist + nightlife',    cameraModes: { live: 55, ai: 33, record: 12 }, x: 182, y: 84,  w: 94, h: 64, hint: 'Watchlist match — entertainment zone' },
+  { name: 'Howrah',        cameras: 4, zones: 5, status: 'Watch', tone: 'warn',  alertCriteria: 'Rail hub + crowd',         cameraModes: { live: 57, ai: 31, record: 12 }, x: 70,  y: 84,  w: 94, h: 64, hint: 'Busy rail terminus' },
+  { name: 'Salt Lake',     cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'IT campus + perimeter',    cameraModes: { live: 63, ai: 25, record: 12 }, x: 294, y: 84,  w: 94, h: 64, hint: 'Tech zone covered' },
+  { name: 'Jadavpur',      cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Campus + crowd',           cameraModes: { live: 66, ai: 22, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'University area monitored' },
+  { name: 'Dum Dum',       cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Airport access + ANPR',    cameraModes: { live: 65, ai: 23, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'Airport corridor steady' },
+  { name: 'New Town',      cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Smart city + face match',  cameraModes: { live: 62, ai: 26, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Smart city grid covered' },
+  { name: 'Shyambazar',    cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Heritage + crowd',         cameraModes: { live: 68, ai: 20, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Heritage locality stable' },
+  { name: 'Tollygunge',    cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Metro + transit crowd',    cameraModes: { live: 67, ai: 21, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Metro terminus covered' }
+];
+
+const PUNE_AREAS = [
+  { name: 'Shivajinagar',  cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Civic hub + crowd',        cameraModes: { live: 68, ai: 20, record: 12 }, x: 182, y: 84,  w: 94, h: 64, hint: 'Civic district monitored' },
+  { name: 'Hinjewadi',     cameras: 3, zones: 4, status: 'Watch', tone: 'warn',  alertCriteria: 'IT campus + ANPR',         cameraModes: { live: 63, ai: 25, record: 12 }, x: 70,  y: 84,  w: 94, h: 64, hint: 'IT park perimeter watch' },
+  { name: 'Koregaon Park', cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Nightlife + face match',   cameraModes: { live: 65, ai: 23, record: 12 }, x: 294, y: 84,  w: 94, h: 64, hint: 'Entertainment zone covered' },
+  { name: 'Viman Nagar',   cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Airport access + ANPR',    cameraModes: { live: 67, ai: 21, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'Airport road steady' },
+  { name: 'Hadapsar',      cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Industrial + perimeter',   cameraModes: { live: 70, ai: 18, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'Industrial zone stable' },
+  { name: 'Kothrud',       cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Residential + vehicle',    cameraModes: { live: 73, ai: 15, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Residential sector quiet' },
+  { name: 'Pimpri',        cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Industrial + transit',     cameraModes: { live: 69, ai: 19, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Industrial township' },
+  { name: 'Aundh',         cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Residential + crowd',      cameraModes: { live: 71, ai: 17, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Upscale residential stable' }
+];
+
+const AHMEDABAD_AREAS = [
+  { name: 'Navrangpura',   cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Commercial + crowd',       cameraModes: { live: 67, ai: 21, record: 12 }, x: 182, y: 84,  w: 94, h: 64, hint: 'Commercial hub monitored' },
+  { name: 'Maninagar',     cameras: 2, zones: 3, status: 'Watch', tone: 'warn',  alertCriteria: 'Crowd + heritage',         cameraModes: { live: 62, ai: 26, record: 12 }, x: 70,  y: 84,  w: 94, h: 64, hint: 'Heritage area crowd watch' },
+  { name: 'Vastrapur',     cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Lakefront + perimeter',    cameraModes: { live: 70, ai: 18, record: 12 }, x: 294, y: 84,  w: 94, h: 64, hint: 'Lake precinct stable' },
+  { name: 'Satellite',     cameras: 3, zones: 4, status: 'OK',    tone: 'ok',    alertCriteria: 'Commercial + ANPR',        cameraModes: { live: 68, ai: 20, record: 12 }, x: 70,  y: 176, w: 94, h: 64, hint: 'Upscale commercial steady' },
+  { name: 'Prahlad Nagar', cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'IT + perimeter',           cameraModes: { live: 66, ai: 22, record: 12 }, x: 182, y: 176, w: 94, h: 64, hint: 'Corporate hub covered' },
+  { name: 'Gota',          cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Residential + transit',    cameraModes: { live: 71, ai: 17, record: 12 }, x: 294, y: 176, w: 94, h: 64, hint: 'Residential sector quiet' },
+  { name: 'Chandkheda',    cameras: 2, zones: 2, status: 'OK',    tone: 'ok',    alertCriteria: 'Industrial + vehicle',     cameraModes: { live: 69, ai: 19, record: 12 }, x: 70,  y: 268, w: 94, h: 64, hint: 'Industrial node stable' },
+  { name: 'Naroda',        cameras: 2, zones: 3, status: 'OK',    tone: 'ok',    alertCriteria: 'Industrial + perimeter',   cameraModes: { live: 72, ai: 16, record: 12 }, x: 182, y: 268, w: 94, h: 64, hint: 'Outer industrial ring' }
+];
+
+const CITY_AREAS = {
+  'Mumbai':    MUMBAI_AREAS,
+  'Delhi':     DELHI_AREAS,
+  'Bengaluru': BENGALURU_AREAS,
+  'Chennai':   CHENNAI_AREAS,
+  'Hyderabad': HYDERABAD_AREAS,
+  'Kolkata':   KOLKATA_AREAS,
+  'Pune':      PUNE_AREAS,
+  'Ahmedabad': AHMEDABAD_AREAS
 };
+
+function getAreasForCity(city) {
+  return CITY_AREAS[city] || MUMBAI_AREAS;
+}
 
 let state = {
   city: 'Mumbai',
@@ -2243,29 +2509,6 @@ function updateClock() {
   const now = new Date();
   $('clock').textContent = [now.getHours(), now.getMinutes(), now.getSeconds()]
     .map((n) => String(n).padStart(2, '0')).join(':');
-}
-
-function getAreasForCity(city) {
-  if (city === 'Mumbai') return MUMBAI_AREAS;
-
-  return DEFAULT_AREA_NAMES.map((name, index) => ({
-    name: `${city} ${name}`,
-    cameras: 2 + (index % 3),
-    zones: 2 + (index % 4),
-    status: index === 1 ? 'Alert' : index === 2 ? 'Watch' : 'OK',
-    tone: index === 1 ? 'alert' : index === 2 ? 'warn' : 'ok',
-    alertCriteria: index === 1 ? 'Watchlist + access' : index === 2 ? 'Crowd + ANPR' : 'Perimeter + traffic',
-    cameraModes: {
-      live: 62 + (index % 3) * 4,
-      ai: 20 + (index % 2) * 4,
-      record: 100 - (62 + (index % 3) * 4) - (20 + (index % 2) * 4)
-    },
-    x: 62 + (index % 3) * 108,
-    y: 84 + Math.floor(index / 3) * 92,
-    w: 84,
-    h: 52,
-    hint: `${city} ${name} coverage`
-  }));
 }
 
 function getCurrentCityData() {
@@ -2569,6 +2812,38 @@ function renderAreaList() {
 }
 
 function cameraPrefixForArea(areaName) {
+  const AREA_PREFIX = {
+    /* Mumbai */
+    'Kurla':'KR','Andheri W':'AW','CST Station':'CS','Bandra':'BD',
+    'Powai':'PW','Dadar':'DD','Thane':'TH','Colaba':'CB',
+    'Dharavi':'DH','Lower Parel':'LP',
+    /* Delhi */
+    'Connaught Place':'CP','Karol Bagh':'KB','Chandni Chowk':'CC',
+    'Dwarka':'DW','Nehru Place':'NP','Lajpat Nagar':'LN',
+    'Rohini':'RH','Saket':'SK','Janakpuri':'JP','IGI Terminal 3':'IG',
+    /* Bengaluru */
+    'Koramangala':'KM','Whitefield':'WF','Indiranagar':'IN',
+    'MG Road':'MG','Electronic City':'EC','Marathahalli':'MH',
+    'HSR Layout':'HS','Yeshwanthpur':'YP',
+    /* Chennai */
+    'T. Nagar':'TN','Egmore':'EG','Anna Nagar':'AN','Adyar':'AD',
+    'Velachery':'VL','Mylapore':'MY','Perambur':'PR','Tambaram':'TB',
+    /* Hyderabad */
+    'HITEC City':'HC','Secunderabad':'SC','Banjara Hills':'BH',
+    'Ameerpet':'AP','Jubilee Hills':'JH','Kukatpally':'KP',
+    'LB Nagar':'LB','Begumpet':'BG',
+    /* Kolkata */
+    'Park Street':'PS','Howrah':'HW','Salt Lake':'SL','Jadavpur':'JD',
+    'Dum Dum':'DM','New Town':'NT','Shyambazar':'SB','Tollygunge':'TG',
+    /* Pune */
+    'Shivajinagar':'SN','Hinjewadi':'HJ','Koregaon Park':'KG',
+    'Viman Nagar':'VN','Hadapsar':'HP','Kothrud':'KT',
+    'Pimpri':'PI','Aundh':'AU',
+    /* Ahmedabad */
+    'Navrangpura':'NV','Maninagar':'MN','Vastrapur':'VP',
+    'Satellite':'SA','Prahlad Nagar':'PN','Gota':'GT',
+    'Chandkheda':'CK','Naroda':'NA'
+  };
   if (AREA_PREFIX[areaName]) return AREA_PREFIX[areaName];
   const base = areaName.replace(/[^A-Za-z]/g, '').toUpperCase();
   return base.slice(0, 2) || 'CC';
@@ -2668,13 +2943,23 @@ function cameraSvg(kind) {
 
 function renderCamGrid() {
   const prefix = cameraPrefixForArea(state.area);
+
+  // Tiles 01-05 use real video feeds; 06-09 use SVG demo graphics
   const tiles = [
-    { suffix: '01', name: 'Station entry', tone: '#ff3b5c', badge: 'Watchlist match', kind: 'watchlist', tag: 'Alert' },
-    { suffix: '02', name: 'Market area', tone: '#ffb300', badge: '', kind: 'crowd', tag: 'Crowd high' },
-    { suffix: '03', name: 'Parking lot', tone: '#00ffc3', badge: '', kind: 'anpr', tag: 'Normal' },
-    { suffix: '04', name: 'Platform', tone: '#ffb300', badge: 'VIP detected', kind: 'face', tag: 'Face match' },
-    { suffix: '05', name: 'Main road', tone: '#00ffc3', badge: '', kind: 'traffic', tag: 'Normal' },
-    { suffix: '06', name: 'Substation', tone: '#888888', badge: '', kind: 'offline', tag: 'Offline' }
+    { suffix: '01', name: 'Crowd Detection', tone: '#ff3b5c', badge: 'Watchlist match', kind: 'watchlist', tag: 'Alert',
+      video: '/video/Crowd_1_trimmed.mp4.mkv' },
+    { suffix: '02', name: 'Market area', tone: '#ffb300', badge: '', kind: 'crowd', tag: 'Crowd high',
+      video: '/video/Crowd.mp4.mkv' },
+    { suffix: '03', name: 'ANPR Parking', tone: '#00ffc3', badge: '', kind: 'anpr', tag: 'Normal',
+      video: '/video/ANPR.mp4.mkv' },
+    { suffix: '04', name: 'Platform', tone: '#ffb300', badge: 'VIP detected', kind: 'face', tag: 'Face match',
+      video: '/video/face_trimmed.mp4.mp4' },
+    { suffix: '05', name: 'Main road', tone: '#00ffc3', badge: '', kind: 'traffic', tag: 'Normal',
+      video: '/video/traffic.mp4.webm' },
+    { suffix: '06', name: 'Substation', tone: '#888888', badge: '', kind: 'offline', tag: 'Offline' },
+    { suffix: '07', name: 'North perimeter', tone: '#ffb300', badge: '', kind: 'traffic', tag: 'Monitor' },
+    { suffix: '08', name: 'East corridor', tone: '#00ffc3', badge: '', kind: 'crowd', tag: 'Normal' },
+    { suffix: '09', name: 'Control room', tone: '#7f77dd', badge: '', kind: 'face', tag: 'Secure' }
   ];
 
   $('cam-grid').innerHTML = tiles.map((tile) => {
@@ -2686,10 +2971,21 @@ function renderCamGrid() {
       'traffic': `Show traffic analytics for camera ${prefix}-${tile.suffix}`,
       'offline': `Show the offline camera diagnostics for ${prefix}-${tile.suffix}`
     };
+
+    const feedContent = tile.video
+      ? `<video src="${tile.video}" autoplay loop muted playsinline></video>`
+      : cameraSvg(tile.kind);
+
     return `
-      <div class="cam-tile" data-prompt="${encodeURIComponent(promptMap[tile.kind])}">
+      <div class="cam-tile"
+           data-prompt="${encodeURIComponent(promptMap[tile.kind])}"
+           data-name="${prefix}-${tile.suffix} · ${tile.name}"
+           data-badge="${tile.badge || ''}"
+           data-tag="${tile.tag}"
+           data-tone="${tile.tone}"
+           ondblclick="expandCam(this)">
         <div class="cam-feed">
-          ${cameraSvg(tile.kind)}
+          ${feedContent}
           <div class="rec-dot"></div>
           ${tile.badge ? `<div class="alert-badge">${tile.badge}</div>` : ''}
         </div>
@@ -2700,7 +2996,81 @@ function renderCamGrid() {
       </div>
     `;
   }).join('');
+
+  // Re-attach single-click prompt handler
+  document.querySelectorAll('#cam-grid .cam-tile').forEach((tile) => {
+    tile.addEventListener('click', () => {
+      const prompt = decodeURIComponent(tile.dataset.prompt || '');
+      if (prompt) sendPrompt(prompt);
+    });
+  });
 }
+
+function expandCam(tile) {
+  const overlay  = $('cam-fullscreen');
+  const body     = $('cam-fs-body');
+  const badge    = $('cam-fs-badge');
+  const fsRight  = $('cam-fs-right');
+  const camSide  = $('cam-side');
+  const camBody  = $('cam-body');
+
+  // ── Move cam-side into the right panel of the overlay ──
+  if (camSide && fsRight && !fsRight.contains(camSide)) {
+    // Remember the original next-sibling so we can restore later
+    overlay._camSideNext   = camSide.nextSibling;
+    overlay._camSideParent = camSide.parentElement;
+    fsRight.appendChild(camSide);
+  }
+
+  // ── Clone the video/SVG into the left body area ──
+  const feedEl = tile.querySelector('.cam-feed video, .cam-feed svg');
+  const existing = body.querySelector('video, svg');
+  if (existing) existing.remove();
+
+  if (feedEl) {
+    const clone = feedEl.cloneNode(true);
+    if (clone.tagName === 'VIDEO') {
+      clone.autoplay    = true;
+      clone.loop        = true;
+      clone.muted       = true;
+      clone.currentTime = feedEl.currentTime;
+    }
+    body.insertBefore(clone, body.querySelector('.rec-dot-fs'));
+  }
+
+  // ── Labels ──
+  $('cam-fs-label').textContent = '● ' + (tile.dataset.name || 'LIVE FEED');
+  $('cam-fs-name').textContent  = tile.dataset.name || '';
+  const badgeText = tile.dataset.badge || '';
+  badge.textContent    = badgeText;
+  badge.style.display  = badgeText ? 'block' : 'none';
+  $('cam-fs-time').textContent = new Date().toLocaleTimeString();
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function minimizeCam() {
+  const overlay = $('cam-fullscreen');
+  const camSide = $('cam-side');
+
+  // ── Restore cam-side back to its original position in cam-body ──
+  if (camSide && overlay._camSideParent) {
+    overlay._camSideParent.insertBefore(camSide, overlay._camSideNext || null);
+  }
+
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+
+  // Pause cloned video
+  const vid = overlay.querySelector('#cam-fs-body video');
+  if (vid) vid.pause();
+}
+
+// Close overlay on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') minimizeCam();
+});
 
 function formatAlertTime(baseTime, offsetMinutes) {
   const d = new Date(baseTime.getTime() - offsetMinutes * 60000);
