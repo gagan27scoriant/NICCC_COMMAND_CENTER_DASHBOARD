@@ -2052,6 +2052,91 @@
     line-height: 1.4;
   }
 
+  /* ── Admin Console Styles ── */
+  .admin-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 16px;
+    height: 100%;
+  }
+  .admin-sidebar {
+    background: rgba(0, 220, 255, 0.04);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .admin-nav-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .admin-nav-btn:hover {
+    background: rgba(0, 220, 255, 0.06);
+    color: var(--text);
+  }
+  .admin-nav-btn.active {
+    background: rgba(0, 220, 255, 0.1);
+    border-color: rgba(0, 220, 255, 0.2);
+    color: var(--cyan);
+    font-weight: 600;
+  }
+  .admin-content-panel {
+    background: rgba(0, 220, 255, 0.02);
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    overflow-y: auto;
+    display: none;
+  }
+  .admin-content-panel.active {
+    display: block;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .admin-table th, .admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 220, 255, 0.1);
+  }
+  .admin-table th {
+    color: var(--cyan);
+    font-family: var(--font-hud);
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  .admin-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+    max-width: 400px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px dashed rgba(0, 220, 255, 0.2);
+    border-radius: var(--radius-sm);
+  }
+  .admin-form input, .admin-form select {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    color: var(--text);
+    padding: 10px;
+    border-radius: var(--radius-xs);
+    font-family: var(--font-ui);
+  }
+
   /* ── Responsive breakpoints ── */
   @media (max-width: 1400px) {
     .city-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -2164,6 +2249,9 @@
       <span class="status-chip neutral" id="node-chip">Nodes: --</span>
       <div id="clock">00:00:00</div>
       {% if user %}
+        {% if role == 'superuser' %}
+          <a onclick="goToScreen('admin-screen')" class="status-chip warning" style="cursor: pointer; text-decoration: none;">Admin Console</a>
+        {% endif %}
         <div class="user-badge" title="Role: {{ role }}">{{ user[:2].upper() }}</div>
         <a href="/logout" class="status-chip danger" style="text-decoration: none; cursor: pointer;">Logout</a>
       {% else %}
@@ -2345,6 +2433,86 @@
           </div>
         </div>
       </section>
+
+      <!-- ADMIN SCREEN -->
+      <section class="screen admin-screen" id="admin-screen">
+        <div class="panel map-shell">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Administration Console</div>
+              <div class="panel-subtitle">Access control, RBAC, and system audit</div>
+            </div>
+            <div class="city-topbar">
+              <span class="status-chip danger">RESTRICTED ACCESS</span>
+            </div>
+          </div>
+          <div class="admin-layout" style="padding: 16px; height: calc(100% - 64px);">
+            <aside class="admin-sidebar">
+              <button class="admin-nav-btn active" onclick="switchAdminTab('users')">User Management</button>
+              <button class="admin-nav-btn" onclick="switchAdminTab('departments')">Departments</button>
+              <button class="admin-nav-btn" onclick="switchAdminTab('permissions')">Permissions</button>
+              <button class="admin-nav-btn" onclick="switchAdminTab('audit')">Audit Logs</button>
+            </aside>
+            <main class="admin-main">
+              <!-- Users Panel -->
+              <div id="admin-panel-users" class="admin-content-panel active">
+                <div class="panel-title">User Management</div>
+                <div class="panel-subtitle" style="margin-bottom:16px;">Create and manage system operators</div>
+                <form id="create-user-form" class="admin-form" onsubmit="handleCreateUser(event)">
+                  <input type="email" id="u-email" placeholder="Email Address" required>
+                  <input type="password" id="u-password" placeholder="Temporary Password" required>
+                  <select id="u-role">
+                    <option value="operator">Operator (Read-Only)</option>
+                    <option value="analyst">Analyst (Write Access)</option>
+                    <option value="superuser">Superuser (Admin)</option>
+                  </select>
+                  <input type="text" id="u-dept" placeholder="Department" required>
+                  <button type="submit" class="send-btn">Create User</button>
+                </form>
+                <table class="admin-table">
+                  <thead><tr><th>Email</th><th>Role</th><th>Department</th><th>Created</th></tr></thead>
+                  <tbody id="users-tbody"></tbody>
+                </table>
+              </div>
+
+              <!-- Departments Panel -->
+              <div id="admin-panel-departments" class="admin-content-panel">
+                <div class="panel-title">Departments</div>
+                <div class="panel-subtitle" style="margin-bottom:16px;">Organizational hierarchy</div>
+                <form id="create-dept-form" class="admin-form" onsubmit="handleCreateDept(event)">
+                  <input type="text" id="d-name" placeholder="Department Name" required>
+                  <button type="submit" class="send-btn">Create Department</button>
+                </form>
+                <table class="admin-table">
+                  <thead><tr><th>Department Name</th><th>Created At</th></tr></thead>
+                  <tbody id="depts-tbody"></tbody>
+                </table>
+              </div>
+
+              <!-- Permissions Panel -->
+              <div id="admin-panel-permissions" class="admin-content-panel">
+                <div class="panel-title">Role Permissions</div>
+                <div class="panel-subtitle" style="margin-bottom:16px;">Define RBAC access levels</div>
+                <table class="admin-table">
+                  <thead><tr><th>Role</th><th>Access Level</th><th>Last Updated</th></tr></thead>
+                  <tbody id="perms-tbody"></tbody>
+                </table>
+              </div>
+
+              <!-- Audit Panel -->
+              <div id="admin-panel-audit" class="admin-content-panel">
+                <div class="panel-title">Audit Logs</div>
+                <div class="panel-subtitle" style="margin-bottom:16px;">System-wide activity ledger</div>
+                <table class="admin-table">
+                  <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+                  <tbody id="audit-tbody"></tbody>
+                </table>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
 </div>
@@ -3526,6 +3694,110 @@ function initResizeDividers() {
 
     divider.addEventListener('pointerdown', onPointerDown);
   });
+}
+
+// --- Admin Console JS Logic ---
+function switchAdminTab(tabId) {
+  document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.admin-content-panel').forEach(panel => panel.classList.remove('active'));
+  
+  event.target.classList.add('active');
+  document.getElementById('admin-panel-' + tabId).classList.add('active');
+  
+  loadAdminData(tabId);
+}
+
+async function loadAdminData(tabId) {
+  try {
+    const res = await fetch(`/api/admin/${tabId}`);
+    if (res.status === 403) {
+      alert("Unauthorized: Superuser access required.");
+      return;
+    }
+    const data = await res.json();
+    
+    if (tabId === 'users') {
+      const tbody = document.getElementById('users-tbody');
+      tbody.innerHTML = data.map(u => `
+        <tr>
+          <td>${u.email}</td>
+          <td><span class="status-chip ${u.role === 'superuser' ? 'warning' : 'neutral'}">${u.role.toUpperCase()}</span></td>
+          <td>${u.department || 'N/A'}</td>
+          <td>${new Date(u.created_at).toLocaleString()}</td>
+        </tr>
+      `).join('');
+    } else if (tabId === 'departments') {
+      const tbody = document.getElementById('depts-tbody');
+      tbody.innerHTML = data.map(d => `
+        <tr>
+          <td>${d.name}</td>
+          <td>${new Date(d.created_at).toLocaleString()}</td>
+        </tr>
+      `).join('');
+    } else if (tabId === 'permissions') {
+      const tbody = document.getElementById('perms-tbody');
+      tbody.innerHTML = data.map(p => `
+        <tr>
+          <td>${p.role}</td>
+          <td>${p.access_level}</td>
+          <td>${new Date(p.updated_at).toLocaleString()}</td>
+        </tr>
+      `).join('');
+    } else if (tabId === 'audit') {
+      const tbody = document.getElementById('audit-tbody');
+      tbody.innerHTML = data.map(a => `
+        <tr>
+          <td style="color:var(--muted)">${new Date(a.timestamp).toLocaleString()}</td>
+          <td>${a.user}</td>
+          <td style="color:var(--cyan)">${a.action}</td>
+          <td>${a.details}</td>
+        </tr>
+      `).join('');
+    }
+  } catch (err) {
+    console.error("Failed to load admin data:", err);
+  }
+}
+
+async function handleCreateUser(e) {
+  e.preventDefault();
+  const payload = {
+    email: document.getElementById('u-email').value,
+    password: document.getElementById('u-password').value,
+    role: document.getElementById('u-role').value,
+    department: document.getElementById('u-dept').value
+  };
+  const res = await fetch('/api/admin/users', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    document.getElementById('create-user-form').reset();
+    loadAdminData('users');
+  } else {
+    const err = await res.json();
+    alert("Error: " + err.error);
+  }
+}
+
+async function handleCreateDept(e) {
+  e.preventDefault();
+  const payload = {
+    name: document.getElementById('d-name').value
+  };
+  const res = await fetch('/api/admin/departments', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    document.getElementById('create-dept-form').reset();
+    loadAdminData('departments');
+  } else {
+    const err = await res.json();
+    alert("Error: " + err.error);
+  }
 }
 
 updateClock();
