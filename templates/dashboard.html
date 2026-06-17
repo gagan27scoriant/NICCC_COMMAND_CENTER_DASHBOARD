@@ -2052,6 +2052,354 @@
     line-height: 1.4;
   }
 
+  /* ── Video Analytics Screen Styles ── */
+  .va-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 12px;
+    padding: 12px;
+    min-height: 0;
+    overflow: auto;
+  }
+  .va-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+  }
+  .va-panel {
+    background: linear-gradient(168deg, rgba(5, 27, 49, 0.96) 0%, rgba(3, 18, 35, 0.98) 100%);
+    border: 1px solid rgba(0, 220, 255, 0.14);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(0, 220, 255, 0.06);
+  }
+  .va-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 10%, rgba(0, 220, 255, 0.35) 50%, transparent 90%);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .va-panel-title {
+    font-family: var(--font-hud);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(214, 237, 248, 0.72);
+  }
+  .va-panel-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .va-upload-zone {
+    border: 1px dashed rgba(0, 220, 255, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+    background: rgba(0, 220, 255, 0.04);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .va-upload-zone:hover {
+    background: rgba(0, 220, 255, 0.08);
+    border-color: rgba(0, 220, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 220, 255, 0.08);
+  }
+  .va-upload-zone.dragover {
+    background: rgba(0, 220, 255, 0.12);
+    border-color: var(--cyan);
+    box-shadow: 0 0 30px rgba(0, 220, 255, 0.15);
+  }
+  .va-upload-icon {
+    font-size: 32px;
+    color: var(--cyan);
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .va-upload-text {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .va-upload-hint {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .va-upload-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .va-btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .va-btn {
+    border: 1px solid rgba(0, 220, 255, 0.2);
+    background: linear-gradient(135deg, rgba(0, 220, 255, 0.14) 0%, rgba(0, 200, 240, 0.08) 100%);
+    color: var(--cyan);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.02em;
+  }
+  .va-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 220, 255, 0.24) 0%, rgba(0, 200, 240, 0.14) 100%);
+    border-color: rgba(0, 220, 255, 0.4);
+    box-shadow: 0 0 18px rgba(0, 220, 255, 0.12);
+    transform: translateY(-1px);
+  }
+  .va-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .va-btn.danger {
+    border-color: rgba(255, 59, 92, 0.24);
+    background: linear-gradient(135deg, rgba(255, 59, 92, 0.12) 0%, rgba(255, 59, 92, 0.06) 100%);
+    color: #ffb8c3;
+  }
+  .va-btn.danger:hover {
+    background: linear-gradient(135deg, rgba(255, 59, 92, 0.2) 0%, rgba(255, 59, 92, 0.12) 100%);
+    border-color: rgba(255, 59, 92, 0.4);
+  }
+  .va-btn.secondary {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+  }
+  .va-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .va-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .va-metric {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: background 0.2s ease;
+  }
+  .va-metric:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .va-metric .label {
+    display: block;
+    font-size: 10px;
+    color: var(--muted-2);
+    margin-bottom: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .va-metric .value {
+    display: block;
+    font-family: var(--font-hud);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .va-metric .value.small {
+    font-size: 14px;
+    line-height: 1.3;
+  }
+  .va-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(0, 220, 255, 0.08);
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .va-status-pill.processing {
+    background: rgba(255, 179, 0, 0.12);
+    border-color: rgba(255, 179, 0, 0.28);
+    color: #ffe08a;
+  }
+  .va-status-pill.completed {
+    background: rgba(0, 255, 195, 0.1);
+    border-color: rgba(0, 255, 195, 0.24);
+    color: #8fffe2;
+  }
+  .va-status-pill.failed {
+    background: rgba(255, 59, 92, 0.12);
+    border-color: rgba(255, 59, 92, 0.24);
+    color: #ffb8c3;
+  }
+  .va-video-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .va-video-wrap video {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    background: #000;
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    max-height: 320px;
+  }
+  .va-video-hint {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .va-download-link {
+    display: none;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(0, 220, 255, 0.08);
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    color: var(--cyan);
+    font-size: 11px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .va-download-link:hover {
+    background: rgba(0, 220, 255, 0.14);
+    border-color: rgba(0, 220, 255, 0.3);
+  }
+  .va-narrative {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .va-narrative-title {
+    font-family: var(--font-hud);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+  .va-narrative-body {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .va-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    max-height: 100%;
+    padding-right: 4px;
+  }
+  .va-events-list::-webkit-scrollbar { width: 5px; }
+  .va-events-list::-webkit-scrollbar-track { background: transparent; }
+  .va-events-list::-webkit-scrollbar-thumb { background: rgba(0, 220, 255, 0.14); border-radius: 10px; }
+  .va-event {
+    border: 1px solid rgba(0, 220, 255, 0.12);
+    border-radius: var(--radius-sm);
+    background: rgba(0, 220, 255, 0.04);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background 0.2s ease;
+  }
+  .va-event:hover {
+    background: rgba(0, 220, 255, 0.08);
+  }
+  .va-event-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .va-event-type {
+    font-family: var(--font-hud);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: var(--cyan);
+    letter-spacing: 0.04em;
+  }
+  .va-event-time {
+    font-size: 10px;
+    color: var(--muted-2);
+  }
+  .va-event-desc {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .va-event-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .va-event-chip {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(0, 220, 255, 0.08);
+    border: 1px solid rgba(0, 220, 255, 0.16);
+    color: var(--text);
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .va-confidence-pill {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(0, 255, 195, 0.1);
+    border: 1px solid rgba(0, 255, 195, 0.22);
+    color: #8fffe2;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .va-json-pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    color: var(--muted);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 220, 255, 0.08);
+    max-height: 200px;
+    overflow: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+  }
+  @media (max-width: 1024px) {
+    .va-layout { grid-template-columns: 1fr; }
+    .va-metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .va-metrics { grid-template-columns: 1fr; }
+  }
+
   /* ── Admin Console Styles ── */
   .admin-layout {
     display: grid;
@@ -2242,6 +2590,7 @@
     <div class="brand"><span class="brand-dot"></span> NICCC</div>
     <div class="top-tabs">
       <button class="tab active" onclick="switchTab('map', this)">National map</button>
+      <button class="tab" onclick="switchTab('video-analytics', this)">Video Analytics</button>
     </div>
     <div class="top-status">
       <span class="status-chip danger" id="alert-chip">3 active alerts</span>
@@ -2265,6 +2614,8 @@
       <button class="rail-btn active" title="Map" onclick="goToScreen('map-screen')">M</button>
       <button class="rail-btn" title="Cities" onclick="goToScreen('city-screen')">C</button>
       <button class="rail-btn" title="Camera feeds" onclick="goToScreen('cam-screen')">V</button>
+      <div class="rail-rule"></div>
+      <button class="rail-btn" title="Video Analytics" onclick="goToScreen('va-screen')">VA</button>
       <div class="rail-rule"></div>
       <button class="rail-btn" title="Alerts" onclick="goToScreen('cam-screen'); sendPrompt('Show me the live alerts panel for the current city and area')">A</button>
       <button class="rail-btn" title="Vehicles" onclick="sendPrompt('Show me the vehicle tracking dashboard for the NICCC system')">V</button>
@@ -2430,6 +2781,101 @@
                 <div class="footnote">Prompts stay in the local dashboard log so the homepage behaves like a live operational shell.</div>
               </div>
             </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIDEO ANALYTICS SCREEN -->
+      <section class="screen va-screen" id="va-screen">
+        <div class="panel map-shell">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Video Intelligence Analytics</div>
+              <div class="panel-subtitle">Upload a clip and review AI-powered event detection, timeline, and incident analysis.</div>
+            </div>
+            <div class="panel-actions">
+              <span class="va-status-pill" id="va-status-pill">Idle</span>
+              <span class="mini-chip muted">Powered by NICCC AI</span>
+            </div>
+          </div>
+          <div class="va-layout">
+            <div class="va-col">
+              <!-- Upload & Run Card -->
+              <div class="va-panel">
+                <div class="va-panel-title">Upload & Analyze</div>
+                <div class="va-panel-subtitle">Select a video file to run AI-powered incident detection analysis.</div>
+                <div class="va-upload-zone" id="va-upload-zone">
+                  <input id="va-video-input" type="file" accept="video/*" />
+                  <div class="va-upload-icon">&#9654;</div>
+                  <div class="va-upload-text">Drop video here or click to browse</div>
+                  <div class="va-upload-hint" id="va-upload-info">Supports MP4, MKV, AVI, WebM. Max analysis time depends on clip length.</div>
+                </div>
+                <div class="va-btn-row">
+                  <button class="va-btn" id="va-run-btn" onclick="vaUpload()">&#9654; Analyze Video</button>
+                  <button class="va-btn secondary" onclick="vaRefresh()">&#8635; Refresh</button>
+                  <button class="va-btn danger" onclick="vaClear()">&#10005; Clear</button>
+                </div>
+              </div>
+
+              <!-- Run Summary Card -->
+              <div class="va-panel">
+                <div class="va-panel-title">Run Summary</div>
+                <div class="va-metrics">
+                  <div class="va-metric">
+                    <span class="label">Frames</span>
+                    <span class="value" id="va-frames-metric">&mdash;</span>
+                  </div>
+                  <div class="va-metric">
+                    <span class="label">Events</span>
+                    <span class="value" id="va-events-metric">&mdash;</span>
+                  </div>
+                  <div class="va-metric">
+                    <span class="label">Status</span>
+                    <span class="value small" id="va-status-metric">&mdash;</span>
+                  </div>
+                  <div class="va-metric">
+                    <span class="label">Output</span>
+                    <span class="value small" id="va-output-metric">&mdash;</span>
+                  </div>
+                </div>
+                <div class="va-narrative">
+                  <div class="va-narrative-title" id="va-narrative-title">&mdash;</div>
+                  <div class="va-narrative-body" id="va-narrative-body">The dashboard will summarize the dominant event once processing completes.</div>
+                </div>
+              </div>
+
+              <!-- Original Playback Card -->
+              <div class="va-panel">
+                <div class="va-panel-title">Original Playback</div>
+                <div class="va-video-wrap">
+                  <video id="va-output-video" controls playsinline autoplay muted loop></video>
+                  <div class="va-video-hint" id="va-video-hint">The original uploaded video will appear here once processing completes.</div>
+                  <a id="va-output-download" class="va-download-link" href="#" download>&#11015; Download original video</a>
+                </div>
+              </div>
+
+              <!-- Raw JSON -->
+              <div class="va-panel">
+                <div class="va-panel-title">Raw Summary JSON</div>
+                <pre class="va-json-pre" id="va-summary-json">No analysis run yet.</pre>
+              </div>
+            </div>
+
+            <!-- Right Column: Event Timeline -->
+            <div class="va-col">
+              <div class="va-panel" style="flex: 1; min-height: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div class="va-panel-title">Event Timeline</div>
+                    <div class="va-panel-subtitle">AI-detected incidents in chronological order</div>
+                  </div>
+                  <span class="mini-chip" id="va-event-count-chip">0 events</span>
+                </div>
+                <div class="va-events-list" id="va-events-list">
+                  <div style="color: var(--muted); font-size: 12px; text-align: center; padding: 40px 0;">No events yet. Upload a video to start analysis.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -2763,6 +3209,8 @@ function goToScreen(id) {
     state.mode = 'city';
   } else if (id === 'cam-screen') {
     if (state.mode === 'map' || state.mode === 'city') state.mode = 'live';
+  } else if (id === 'va-screen') {
+    state.mode = 'video-analytics';
   }
   setTopbarState();
 }
@@ -2774,6 +3222,12 @@ function switchTab(tab, el) {
   if (tab === 'map') {
     state.mode = 'map';
     goToScreen('map-screen');
+    return;
+  }
+
+  if (tab === 'video-analytics') {
+    state.mode = 'video-analytics';
+    goToScreen('va-screen');
     return;
   }
 
@@ -3811,6 +4265,255 @@ refreshCameras();
 setInterval(refreshMetrics, 2500);
 setInterval(refreshCameras, 5000);
 setInterval(renderLiveAlerts, 4200);
+
+// ═══════════════════════════════════════════════════════════
+//  Video Analytics Screen JavaScript
+// ═══════════════════════════════════════════════════════════
+
+let vaLatestSummary = null;
+let vaLatestVideoUrl = null;
+let vaAutoRefreshId = null;
+
+function vaSetStatus(text, statusClass) {
+  const pill = $('va-status-pill');
+  pill.textContent = text;
+  pill.className = 'va-status-pill ' + (statusClass || '');
+}
+
+function vaPrettyEventType(eventType) {
+  return String(eventType || '').replace(/_/g, ' ');
+}
+
+function vaFormatDescription(event) {
+  const metadata = event.metadata || {};
+  if (event.event_type === 'crowd_count') return `${event.person_count} people visible in frame ${event.frame_index}.`;
+  if (event.event_type === 'fall') return `Potential fall detected on track ${(event.track_ids && event.track_ids[0]) || '—'}.`;
+  if (event.event_type === 'fight') return `Aggression/fight detected between tracks ${(event.track_ids && event.track_ids.join(' and ')) || '—'}.`;
+  if (event.event_type === 'crowd_surge') return `Crowd surge in ${event.roi_zone || 'zone'} with ${event.person_count} people; mean velocity ${Number(metadata.mean_velocity || 0).toFixed(1)} px/frame.`;
+  if (event.event_type === 'loitering') return `Loitering detected in ${event.roi_zone || 'zone'} for ${Number(metadata.elapsed_seconds || 0).toFixed(1)} seconds.`;
+  return `Event detected on frame ${event.frame_index}.`;
+}
+
+function vaRenderEvents(events) {
+  const list = $('va-events-list');
+  const chip = $('va-event-count-chip');
+  if (!events || !events.length) {
+    list.innerHTML = '<div style="color: var(--muted); font-size: 12px; text-align: center; padding: 40px 0;">No events yet. Upload a video to start analysis.</div>';
+    chip.textContent = '0 events';
+    return;
+  }
+  chip.textContent = `${events.length} event${events.length === 1 ? '' : 's'}`;
+  list.innerHTML = events.map((event) => {
+    const confText = event.confidence ? (event.confidence * 100).toFixed(0) + '%' : '—';
+    return `
+      <div class="va-event">
+        <div class="va-event-top">
+          <div>
+            <div class="va-event-type">${vaPrettyEventType(event.event_type)}</div>
+            <div class="va-event-time">Frame ${event.frame_index} · ${new Date(event.timestamp).toLocaleString()}</div>
+          </div>
+          <span class="va-confidence-pill">${confText}</span>
+        </div>
+        <div class="va-event-desc">${vaFormatDescription(event)}</div>
+        <div class="va-event-chips">
+          <span class="va-event-chip">Camera: ${event.camera_id}</span>
+          <span class="va-event-chip">People: ${event.person_count}</span>
+          ${event.roi_zone ? `<span class="va-event-chip">Zone: ${event.roi_zone}</span>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function vaLoadVideo() {
+  try {
+    const response = await fetch('/api/va/video/latest', { cache: 'no-store' });
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok || !contentType.includes('video/')) {
+      $('va-output-download').style.display = 'none';
+      $('va-output-video').removeAttribute('src');
+      $('va-output-video').load();
+      return false;
+    }
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const videoEl = $('va-output-video');
+    if (videoEl.dataset.objectUrl) URL.revokeObjectURL(videoEl.dataset.objectUrl);
+    videoEl.dataset.objectUrl = objectUrl;
+    videoEl.src = objectUrl;
+    videoEl.load();
+    videoEl.play();
+    const dl = $('va-output-download');
+    dl.href = objectUrl;
+    dl.download = 'analytics-output.mp4';
+    dl.style.display = 'inline-flex';
+    return true;
+  } catch (err) {
+    console.warn('VA video load failed', err);
+    return false;
+  }
+}
+
+async function vaLoadSummary() {
+  try {
+    const response = await fetch('/api/va/summary/latest');
+    if (response.status === 404) {
+      vaLatestSummary = null;
+      $('va-summary-json').textContent = 'Upload a video to generate a summary.';
+      $('va-frames-metric').textContent = '—';
+      $('va-events-metric').textContent = '—';
+      $('va-status-metric').textContent = 'Idle';
+      $('va-output-metric').textContent = '—';
+      $('va-narrative-title').textContent = '—';
+      $('va-narrative-body').textContent = 'The dashboard will summarize the dominant event once processing completes.';
+      $('va-output-download').style.display = 'none';
+      vaSetStatus('Idle', '');
+      vaRenderEvents([]);
+      return;
+    }
+    if (response.status === 202) {
+      const payload = await response.json();
+      vaSetStatus('Processing', 'processing');
+      $('va-summary-json').textContent = JSON.stringify(payload, null, 2);
+      $('va-status-metric').textContent = 'Processing';
+      $('va-narrative-title').textContent = 'Processing...';
+      $('va-narrative-body').textContent = 'We are still analyzing the clip. Results will appear automatically.';
+      return;
+    }
+    const text = await response.text();
+    const contentType = response.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') || text.trim().startsWith('{') ? JSON.parse(text) : { raw: text };
+    vaLatestSummary = data;
+    const eventCount = (data.events || []).length;
+    $('va-summary-json').textContent = JSON.stringify(data, null, 2);
+    $('va-frames-metric').textContent = data.frames_processed ?? '—';
+    $('va-events-metric').textContent = eventCount;
+    $('va-status-metric').textContent = String(data.status || 'completed').toUpperCase();
+    $('va-output-metric').textContent = data.output_video_ready ? 'Ready' : 'Pending';
+    $('va-narrative-title').textContent = (data.narrative && data.narrative.title) || 'General activity';
+    const dominant = data.narrative && data.narrative.dominant_event ? vaPrettyEventType(data.narrative.dominant_event) : 'no notable incident';
+    const topEvents = ((data.narrative && data.narrative.top_events) || []).map(vaPrettyEventType).join(', ');
+    $('va-narrative-body').textContent = data.narrative && data.narrative.dominant_event
+      ? `Dominant event: ${dominant}. Top events: ${topEvents || dominant}.`
+      : 'No notable incident found.';
+    vaSetStatus(
+      String(data.status || 'Completed').replace(/^\w/, (m) => m.toUpperCase()),
+      data.status === 'failed' ? 'failed' : 'completed'
+    );
+    vaRenderEvents(data.events || []);
+    if (data.output_video_ready && vaLatestVideoUrl !== data.output_video) {
+      vaLatestVideoUrl = data.output_video;
+      const loaded = await vaLoadVideo();
+      $('va-video-hint').textContent = loaded
+        ? 'Play the uploaded video below.'
+        : 'Video is not ready yet.';
+    }
+    // Stop auto-refresh once complete
+    if (data.status === 'completed' || data.status === 'failed') {
+      if (vaAutoRefreshId) { clearInterval(vaAutoRefreshId); vaAutoRefreshId = null; }
+    }
+  } catch (err) {
+    console.warn('VA summary load failed', err);
+  }
+}
+
+async function vaLoadEvents() {
+  try {
+    const response = await fetch('/api/va/events');
+    const events = await response.json();
+    if (!vaLatestSummary || !vaLatestSummary.events) {
+      vaRenderEvents(events);
+    }
+  } catch (err) {
+    console.warn('VA events load failed', err);
+  }
+}
+
+async function vaRefresh() {
+  await vaLoadSummary();
+  await vaLoadEvents();
+}
+
+async function vaUpload() {
+  const file = $('va-video-input').files[0];
+  if (!file) {
+    $('va-upload-info').textContent = 'Please select a video file first.';
+    return;
+  }
+  const form = new FormData();
+  form.append('video', file);
+  $('va-run-btn').disabled = true;
+  vaSetStatus('Uploading', 'processing');
+  $('va-upload-info').textContent = `Uploading: ${file.name}`;
+  try {
+    const response = await fetch('/api/va/upload', { method: 'POST', body: form });
+    const payload = await response.json();
+    $('va-run-btn').disabled = false;
+    $('va-upload-info').textContent = payload.status === 'processing'
+      ? 'Processing started. Results will appear automatically.'
+      : 'Upload complete.';
+    vaLatestVideoUrl = null;
+    vaSetStatus('Processing', 'processing');
+    // Start auto-refresh
+    if (vaAutoRefreshId) clearInterval(vaAutoRefreshId);
+    vaAutoRefreshId = setInterval(vaRefresh, 3000);
+    await vaRefresh();
+  } catch (err) {
+    $('va-run-btn').disabled = false;
+    vaSetStatus('Error', 'failed');
+    $('va-upload-info').textContent = 'Upload failed. Please try again.';
+    console.error('VA upload failed', err);
+  }
+}
+
+async function vaClear() {
+  try {
+    await fetch('/api/va/reset', { method: 'POST' });
+  } catch (err) {
+    console.warn('VA reset failed', err);
+  }
+  if (vaAutoRefreshId) { clearInterval(vaAutoRefreshId); vaAutoRefreshId = null; }
+  vaLatestSummary = null;
+  vaLatestVideoUrl = null;
+  $('va-output-video').removeAttribute('src');
+  $('va-output-video').load();
+  vaRenderEvents([]);
+  $('va-summary-json').textContent = 'Results cleared.';
+  $('va-frames-metric').textContent = '—';
+  $('va-events-metric').textContent = '—';
+  $('va-status-metric').textContent = 'Idle';
+  $('va-output-metric').textContent = '—';
+  $('va-narrative-title').textContent = '—';
+  $('va-narrative-body').textContent = 'The dashboard will summarize the dominant event once processing completes.';
+  $('va-video-hint').textContent = 'The original uploaded video will appear here once processing completes.';
+  $('va-output-download').style.display = 'none';
+  $('va-upload-info').textContent = 'Supports MP4, MKV, AVI, WebM. Max analysis time depends on clip length.';
+  vaSetStatus('Idle', '');
+}
+
+// Drag-and-drop support for the upload zone
+(function initVaDragDrop() {
+  const zone = document.getElementById('va-upload-zone');
+  if (!zone) return;
+  ['dragenter', 'dragover'].forEach(evt => {
+    zone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); zone.classList.add('dragover'); });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    zone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); zone.classList.remove('dragover'); });
+  });
+  zone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      $('va-video-input').files = files;
+      $('va-upload-info').textContent = `Selected: ${files[0].name}`;
+    }
+  });
+  $('va-video-input').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      $('va-upload-info').textContent = `Selected: ${e.target.files[0].name}`;
+    }
+  });
+})();
 </script>
 </body>
 </html>
