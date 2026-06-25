@@ -7,19 +7,19 @@
   <title>NICCC - Command Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Outfit:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
   <style>
     :root {
-      --bg: #030811;
-      --panel: rgba(10, 22, 40, 0.6);
-      --panel-strong: rgba(12, 28, 50, 0.85);
-      --border: rgba(0, 195, 255, 0.15);
-      --border-strong: rgba(0, 195, 255, 0.3);
+      --bg: #000000;
+      --panel: rgba(0, 0, 0, 0.55);
+      --panel-strong: rgba(0, 0, 0, 0.8);
+      --border: rgba(255, 255, 255, 0.15);
+      --border-strong: rgba(255, 255, 255, 0.3);
       --border-inner: inset 0 1px 1px rgba(255, 255, 255, 0.06);
-      --cyan: #00d2ff;
-      --cyan-dim: rgba(0, 210, 255, 0.08);
-      --teal: #00e5ff;
+      --cyan: #ffffff;
+      --cyan-dim: rgba(255, 255, 255, 0.08);
+      --teal: #e0e0e0;
       --red: #ff4d6d;
       --amber: #ffb703;
       --text: #e0f2fe;
@@ -27,12 +27,12 @@
       --muted-2: rgba(224, 242, 254, 0.4);
       --font-hud: 'Rajdhani', sans-serif;
       --font-mono: 'Share Tech Mono', monospace;
-      --font-ui: 'Inter', sans-serif;
+      --font-ui: 'Outfit', sans-serif;
       --radius: 16px;
       --radius-sm: 12px;
       --radius-xs: 6px;
-      --glow-cyan: 0 0 24px rgba(0, 210, 255, 0.15), 0 0 48px rgba(0, 210, 255, 0.08);
-      --glow-teal: 0 0 18px rgba(0, 229, 255, 0.18);
+      --glow-cyan: 0 0 24px rgba(255, 255, 255, 0.15), 0 0 48px rgba(255, 255, 255, 0.08);
+      --glow-teal: 0 0 18px rgba(255, 255, 255, 0.18);
       --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       --transition-base: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -42,14 +42,17 @@
       width: 6px;
       height: 6px;
     }
+
     ::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.02);
       border-radius: 4px;
     }
+
     ::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.15);
       border-radius: 4px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(255, 255, 255, 0.3);
     }
@@ -74,8 +77,8 @@
       font-family: var(--font-ui);
       color: var(--text);
       background:
-        radial-gradient(circle at 15% 10%, rgba(0, 210, 255, 0.1), transparent 30%),
-        radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.08), transparent 25%),
+        radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.1), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.08), transparent 25%),
         linear-gradient(180deg, #050e1d 0%, #030811 100%);
     }
 
@@ -95,8 +98,8 @@
       z-index: 1;
       pointer-events: none;
       background-image:
-        linear-gradient(rgba(0, 220, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 220, 255, 0.04) 1px, transparent 1px);
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
       background-size: 52px 52px;
       mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
     }
@@ -109,7 +112,7 @@
       height: 2px;
       z-index: 2;
       pointer-events: none;
-      background: linear-gradient(90deg, transparent, rgba(0, 220, 255, 0.34), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
       animation: scan 9s linear infinite;
     }
 
@@ -156,7 +159,7 @@
       font-weight: 700;
       letter-spacing: 4px;
       text-transform: uppercase;
-      text-shadow: 0 0 18px rgba(0, 220, 255, 0.35);
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
       white-space: nowrap;
     }
 
@@ -205,15 +208,15 @@
 
     .tab:hover {
       color: var(--text);
-      background: rgba(0, 210, 255, 0.08);
+      background: rgba(255, 255, 255, 0.08);
       transform: translateY(-1px);
     }
 
     .tab.active {
       color: var(--cyan);
-      background: rgba(0, 210, 255, 0.15);
-      border-color: rgba(0, 210, 255, 0.3);
-      box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 4px 12px rgba(0, 210, 255, 0.15);
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(255, 255, 255, 0.15);
       transform: translateY(-1px);
     }
 
@@ -232,8 +235,8 @@
       gap: 6px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(0, 220, 255, 0.08);
-      border: 1px solid rgba(0, 220, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       color: var(--text);
       font-family: var(--font-ui);
       font-size: 11px;
@@ -266,8 +269,8 @@
       border-radius: 50%;
       display: grid;
       place-items: center;
-      background: rgba(0, 220, 255, 0.1);
-      border: 1px solid rgba(0, 220, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: var(--cyan);
       font-family: var(--font-ui);
       font-size: 11px;
@@ -313,19 +316,19 @@
 
     .rail-btn:hover {
       color: var(--text);
-      background: rgba(0, 220, 255, 0.07);
+      background: rgba(255, 255, 255, 0.07);
     }
 
     .rail-btn.active {
       color: var(--cyan);
-      background: rgba(0, 220, 255, 0.12);
-      border-color: rgba(0, 220, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .rail-rule {
       width: 20px;
       height: 1px;
-      background: rgba(0, 220, 255, 0.14);
+      background: rgba(255, 255, 255, 0.14);
       margin: 2px 0;
     }
 
@@ -355,6 +358,7 @@
         opacity: 0;
         transform: translateY(15px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -372,9 +376,9 @@
       position: relative;
       transition: box-shadow var(--transition-base);
     }
-    
+
     .panel:hover {
-      box-shadow: var(--border-inner), 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 32px rgba(0, 210, 255, 0.2);
+      box-shadow: var(--border-inner), 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 32px rgba(255, 255, 255, 0.2);
     }
 
     .panel::before {
@@ -384,7 +388,7 @@
       right: 0;
       top: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent 5%, rgba(0, 220, 255, 0.5) 20%, rgba(0, 255, 195, 0.4) 50%, rgba(0, 220, 255, 0.5) 80%, transparent 95%);
+      background: linear-gradient(90deg, transparent 5%, rgba(255, 255, 255, 0.5) 20%, rgba(200, 200, 200, 0.4) 50%, rgba(255, 255, 255, 0.5) 80%, transparent 95%);
       opacity: 0.7;
       animation: panelShimmer 6s ease-in-out infinite;
     }
@@ -407,7 +411,7 @@
       justify-content: space-between;
       gap: 12px;
       padding: 14px 14px 12px;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .panel-title {
@@ -436,8 +440,8 @@
     .mini-chip {
       padding: 6px 9px;
       border-radius: 999px;
-      border: 1px solid rgba(0, 220, 255, 0.14);
-      background: rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text);
       font-size: 11px;
       white-space: nowrap;
@@ -545,15 +549,15 @@
       width: 3px;
       height: 36px;
       border-radius: 4px;
-      background: rgba(0, 220, 255, 0.18);
+      background: rgba(255, 255, 255, 0.18);
       transition: all 0.2s ease;
     }
 
     .resize-divider:hover::before,
     .resize-divider.dragging::before {
-      background: rgba(0, 220, 255, 0.45);
+      background: rgba(255, 255, 255, 0.45);
       height: 52px;
-      box-shadow: 0 0 10px rgba(0, 220, 255, 0.15);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
     }
 
     .resize-divider-h {
@@ -576,15 +580,15 @@
       height: 3px;
       width: 36px;
       border-radius: 4px;
-      background: rgba(0, 220, 255, 0.18);
+      background: rgba(255, 255, 255, 0.18);
       transition: all 0.2s ease;
     }
 
     .resize-divider-h:hover::before,
     .resize-divider-h.dragging::before {
-      background: rgba(0, 220, 255, 0.45);
+      background: rgba(255, 255, 255, 0.45);
       width: 52px;
-      box-shadow: 0 0 10px rgba(0, 220, 255, 0.15);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
     }
 
     /* Resizable panels (user can grab the corner handle) */
@@ -608,8 +612,8 @@
       width: 12px;
       height: 12px;
       background:
-        linear-gradient(135deg, transparent 50%, rgba(0, 220, 255, 0.3) 50%),
-        linear-gradient(135deg, transparent 65%, rgba(0, 220, 255, 0.15) 65%);
+        linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.3) 50%),
+        linear-gradient(135deg, transparent 65%, rgba(255, 255, 255, 0.15) 65%);
       border-radius: 0 0 var(--radius-xs) 0;
       cursor: nwse-resize;
       pointer-events: none;
@@ -623,16 +627,19 @@
 
     /* Chatbot Interface Styles — Premium Gen AI Design */
     .chatbot-container {
-      background: linear-gradient(168deg, rgba(5, 27, 49, 0.96) 0%, rgba(3, 18, 35, 0.98) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.18);
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px) saturate(1.2);
+      -webkit-backdrop-filter: blur(12px) saturate(1.2);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: var(--radius);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       height: auto;
-      min-height: 220px;
+      min-height: 280px;
+      margin-top: auto;
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(0, 220, 255, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       position: relative;
     }
 
@@ -643,7 +650,7 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent 5%, rgba(0, 220, 255, 0.6) 30%, rgba(0, 255, 195, 0.45) 50%, rgba(0, 220, 255, 0.6) 70%, transparent 95%);
+      background: linear-gradient(90deg, transparent 5%, rgba(255, 255, 255, 0.6) 30%, rgba(200, 200, 200, 0.45) 50%, rgba(255, 255, 255, 0.6) 70%, transparent 95%);
       z-index: 1;
     }
 
@@ -654,7 +661,7 @@
       left: 0;
       right: 0;
       height: 60px;
-      background: linear-gradient(180deg, rgba(0, 220, 255, 0.04) 0%, transparent 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
       pointer-events: none;
       z-index: 0;
     }
@@ -664,8 +671,8 @@
       align-items: center;
       gap: 12px;
       padding: 12px 16px;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.1);
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.06) 0%, rgba(0, 255, 195, 0.02) 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(200, 200, 200, 0.02) 100%);
       position: relative;
       z-index: 2;
     }
@@ -674,13 +681,13 @@
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(0, 220, 255, 0.2), rgba(0, 220, 255, 0.08));
-      border: 1.5px solid rgba(0, 220, 255, 0.3);
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      box-shadow: 0 0 16px rgba(0, 220, 255, 0.15), inset 0 0 8px rgba(0, 220, 255, 0.05);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.05);
       animation: avatarPulse 3s ease-in-out infinite;
     }
 
@@ -688,11 +695,11 @@
 
       0%,
       100% {
-        box-shadow: 0 0 16px rgba(0, 220, 255, 0.15), inset 0 0 8px rgba(0, 220, 255, 0.05);
+        box-shadow: 0 0 16px rgba(255, 255, 255, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.05);
       }
 
       50% {
-        box-shadow: 0 0 24px rgba(0, 220, 255, 0.25), inset 0 0 12px rgba(0, 220, 255, 0.08);
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.25), inset 0 0 12px rgba(255, 255, 255, 0.08);
       }
     }
 
@@ -705,14 +712,14 @@
       border-radius: 50%;
       background: var(--teal);
       box-shadow: 0 0 8px var(--teal), 0 0 4px var(--teal);
-      border: 1.5px solid rgba(3, 18, 35, 0.9);
+      border: 1.5px solid rgba(15, 15, 15, 0.9);
     }
 
     .avatar-text {
       font-size: 11px;
       font-weight: 700;
       color: var(--cyan);
-      text-shadow: 0 0 8px rgba(0, 220, 255, 0.4);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
     }
 
     .chatbot-header-text {
@@ -725,7 +732,7 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       color: var(--text);
-      text-shadow: 0 0 12px rgba(0, 220, 255, 0.1);
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
     }
 
     .chatbot-subtitle {
@@ -740,8 +747,8 @@
     }
 
     .chat-clear-btn {
-      border: 1px solid rgba(0, 220, 255, 0.18);
-      background: rgba(0, 220, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--cyan);
       font-family: var(--font-ui);
       font-size: 10px;
@@ -754,9 +761,9 @@
 
     .chat-clear-btn:hover {
       color: var(--text);
-      border-color: rgba(0, 220, 255, 0.35);
-      background: rgba(0, 220, 255, 0.15);
-      box-shadow: 0 0 12px rgba(0, 220, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
     }
 
     .chat-messages {
@@ -779,26 +786,29 @@
     }
 
     .chat-messages::-webkit-scrollbar-thumb {
-      background: rgba(0, 220, 255, 0.14);
+      background: rgba(255, 255, 255, 0.14);
       border-radius: 10px;
     }
 
     .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 220, 255, 0.25);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .anpr-scroll-body::-webkit-scrollbar {
       width: 6px;
     }
+
     .anpr-scroll-body::-webkit-scrollbar-track {
       background: rgba(0, 0, 0, 0.15);
     }
+
     .anpr-scroll-body::-webkit-scrollbar-thumb {
-      background: rgba(0, 220, 255, 0.18);
+      background: rgba(255, 255, 255, 0.18);
       border-radius: 10px;
     }
+
     .anpr-scroll-body::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 220, 255, 0.35);
+      background: rgba(255, 255, 255, 0.35);
     }
 
     .chat-message {
@@ -837,27 +847,27 @@
     }
 
     .chat-message.bot .message-bubble {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 220, 255, 0.03) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.03) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text);
       border-top-left-radius: 4px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .chat-message.bot .message-bubble:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 8px rgba(0, 220, 255, 0.05);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 8px rgba(255, 255, 255, 0.05);
     }
 
     .chat-message.user .message-bubble {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.16) 0%, rgba(0, 200, 240, 0.1) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.25);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(220, 220, 220, 0.1) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: var(--cyan);
       border-top-right-radius: 4px;
-      box-shadow: 0 2px 12px rgba(0, 220, 255, 0.08);
+      box-shadow: 0 2px 12px rgba(255, 255, 255, 0.08);
     }
 
     .chat-message.user .message-bubble:hover {
-      box-shadow: 0 4px 20px rgba(0, 220, 255, 0.12);
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.12);
     }
 
     .chat-quick-suggestions {
@@ -866,7 +876,7 @@
       padding: 10px 16px;
       overflow-x: auto;
       white-space: nowrap;
-      border-top: 1px solid rgba(0, 220, 255, 0.06);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
       position: relative;
       z-index: 1;
     }
@@ -876,7 +886,7 @@
     }
 
     .chat-quick-suggestions::-webkit-scrollbar-thumb {
-      background: rgba(0, 220, 255, 0.12);
+      background: rgba(255, 255, 255, 0.12);
       border-radius: 10px;
     }
 
@@ -884,8 +894,8 @@
       font-family: var(--font-ui);
       font-size: 10px;
       color: var(--cyan);
-      background: rgba(0, 220, 255, 0.06);
-      border: 1px solid rgba(0, 220, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 999px;
       padding: 6px 12px;
       cursor: pointer;
@@ -894,9 +904,9 @@
     }
 
     .suggest-btn:hover {
-      background: rgba(0, 220, 255, 0.14);
-      border-color: rgba(0, 220, 255, 0.3);
-      box-shadow: 0 0 12px rgba(0, 220, 255, 0.1);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
       transform: translateY(-1px);
     }
 
@@ -904,7 +914,7 @@
       display: flex;
       gap: 8px;
       padding: 12px 16px;
-      border-top: 1px solid rgba(0, 220, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
       position: relative;
       z-index: 1;
@@ -913,7 +923,7 @@
     .chat-input-area input {
       flex: 1;
       background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(0, 220, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: var(--font-ui);
@@ -924,8 +934,8 @@
     }
 
     .chat-input-area input:focus {
-      border-color: rgba(0, 220, 255, 0.35);
-      box-shadow: 0 0 16px rgba(0, 220, 255, 0.1), inset 0 0 8px rgba(0, 220, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.1), inset 0 0 8px rgba(255, 255, 255, 0.03);
       background: rgba(0, 0, 0, 0.35);
     }
 
@@ -934,8 +944,8 @@
     }
 
     .chatbot-send-btn {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.18) 0%, rgba(0, 200, 240, 0.12) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.25);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(220, 220, 220, 0.12) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: var(--cyan);
       padding: 10px 18px;
       border-radius: var(--radius-sm);
@@ -953,15 +963,15 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, transparent 40%, rgba(0, 220, 255, 0.1) 100%);
+      background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.1) 100%);
       opacity: 0;
       transition: opacity 0.25s;
     }
 
     .chatbot-send-btn:hover {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.25) 0%, rgba(0, 200, 240, 0.18) 100%);
-      border-color: rgba(0, 220, 255, 0.4);
-      box-shadow: 0 0 20px rgba(0, 220, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(220, 220, 220, 0.18) 100%);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.2);
       transform: translateY(-1px);
     }
 
@@ -971,7 +981,7 @@
 
     .chatbot-send-btn:active {
       transform: translateY(0px);
-      box-shadow: 0 0 10px rgba(0, 220, 255, 0.1);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     }
 
     /* Typing animation — enhanced shimmer */
@@ -1023,9 +1033,9 @@
       border-radius: calc(var(--radius) - 1px);
       background:
         url('/static/maps/india_locator_blank.svg') center center / contain no-repeat,
-        radial-gradient(circle at 50% 48%, rgba(0, 220, 255, 0.06), transparent 34%),
+        radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.06), transparent 34%),
         linear-gradient(180deg, #071324 0%, #04101d 100%);
-      border: 1px solid rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       isolation: isolate;
     }
 
@@ -1044,7 +1054,7 @@
 
     .legend-box {
       fill: rgba(2, 11, 20, 0.84);
-      stroke: rgba(0, 220, 255, 0.12);
+      stroke: rgba(255, 255, 255, 0.12);
       stroke-width: 1;
     }
 
@@ -1067,7 +1077,7 @@
     }
 
     .city-dot:hover {
-      filter: drop-shadow(0 0 10px rgba(0, 220, 255, 0.3));
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
     }
 
     .city-dot circle.base {
@@ -1080,7 +1090,7 @@
 
     .city-dot.selected circle.base {
       stroke-width: 2;
-      filter: drop-shadow(0 0 8px rgba(0, 220, 255, 0.24));
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.24));
     }
 
     .pulse-ring {
@@ -1107,15 +1117,15 @@
     }
 
     .stack-card {
-      background: linear-gradient(168deg, rgba(5, 27, 49, 0.96) 0%, rgba(3, 18, 35, 0.98) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.14);
+      background: linear-gradient(168deg, rgba(25, 25, 25, 0.96) 0%, rgba(15, 15, 15, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius);
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       min-height: 0;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(0, 220, 255, 0.06);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
       position: relative;
     }
 
@@ -1126,7 +1136,7 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent 10%, rgba(0, 220, 255, 0.35) 50%, transparent 90%);
+      background: linear-gradient(90deg, transparent 10%, rgba(255, 255, 255, 0.35) 50%, transparent 90%);
       border-radius: var(--radius) var(--radius) 0 0;
     }
 
@@ -1171,18 +1181,18 @@
       position: relative;
       overflow: hidden;
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(0, 220, 255, 0.12);
-      background: rgba(0, 220, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .city-quick-card:hover {
-      background: rgba(0, 220, 255, 0.1);
-      border-color: rgba(0, 220, 255, 0.22);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.22);
     }
 
     .city-quick-card.active {
-      background: rgba(0, 220, 255, 0.14);
-      border-color: rgba(0, 220, 255, 0.3);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .city-quick-card.active.alert {
@@ -1196,8 +1206,8 @@
     }
 
     .city-quick-card.active.connected {
-      background: rgba(0, 255, 195, 0.12);
-      border-color: rgba(0, 255, 195, 0.3);
+      background: rgba(200, 200, 200, 0.12);
+      border-color: rgba(200, 200, 200, 0.3);
     }
 
     .city-quick-top {
@@ -1226,8 +1236,8 @@
       flex: 0 0 auto;
       padding: 3px 7px;
       border-radius: 999px;
-      border: 1px solid rgba(0, 220, 255, 0.16);
-      background: rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--cyan);
       font-size: 9px;
       font-weight: 700;
@@ -1249,9 +1259,9 @@
     }
 
     .city-quick-chip.connected {
-      border-color: rgba(0, 255, 195, 0.24);
-      background: rgba(0, 255, 195, 0.1);
-      color: #8fffe2;
+      border-color: rgba(200, 200, 200, 0.24);
+      background: rgba(200, 200, 200, 0.1);
+      color: #cccccc;
     }
 
     .area-list {
@@ -1268,8 +1278,8 @@
     .command-chip,
     .focus-card {
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(0, 220, 255, 0.12);
-      background: rgba(0, 220, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .area-card {
@@ -1308,20 +1318,20 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.08), transparent 44%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 44%);
       pointer-events: none;
       opacity: 0.5;
     }
 
     .area-card:hover {
-      background: rgba(0, 220, 255, 0.09) !important;
-      border-color: rgba(0, 220, 255, 0.22) !important;
+      background: rgba(255, 255, 255, 0.09) !important;
+      border-color: rgba(255, 255, 255, 0.22) !important;
     }
 
     .area-card.active {
-      background: rgba(0, 220, 255, 0.12) !important;
-      border-color: rgba(0, 220, 255, 0.28) !important;
-      box-shadow: 0 0 10px rgba(0, 220, 255, 0.16);
+      background: rgba(255, 255, 255, 0.12) !important;
+      border-color: rgba(255, 255, 255, 0.28) !important;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.16);
     }
 
     .area-card.active.alert {
@@ -1335,7 +1345,7 @@
     }
 
     .area-card.active.connected {
-      background: rgba(0, 255, 195, 0.12) !important;
+      background: rgba(200, 200, 200, 0.12) !important;
       border-color: var(--teal) !important;
     }
 
@@ -1352,8 +1362,8 @@
       flex: 0 0 auto;
       padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(0, 220, 255, 0.16);
-      background: rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--cyan);
       font-size: 10px;
       font-weight: 700;
@@ -1374,9 +1384,9 @@
     }
 
     .area-status-chip.connected {
-      border-color: rgba(0, 255, 195, 0.24);
-      background: rgba(0, 255, 195, 0.1);
-      color: #8fffe2;
+      border-color: rgba(200, 200, 200, 0.24);
+      background: rgba(200, 200, 200, 0.1);
+      color: #cccccc;
     }
 
     .area-metric-grid {
@@ -1460,38 +1470,59 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.08), transparent 44%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 44%);
       pointer-events: none;
       opacity: 0.55;
     }
 
     .city-card:hover {
-      background: rgba(0, 220, 255, 0.09) !important;
-      border-color: rgba(0, 220, 255, 0.24) !important;
+      background: rgba(255, 255, 255, 0.09) !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
     }
 
     .city-card.active {
-      background: rgba(0, 220, 255, 0.14) !important;
+      background: rgba(255, 255, 255, 0.14) !important;
       border-color: var(--cyan) !important;
-      box-shadow: 0 0 10px rgba(0, 220, 255, 0.2);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
-    .city-card.active.alert {
-      background: rgba(255, 59, 92, 0.14) !important;
+    @keyframes blink-alert {
+      0% {
+        box-shadow: 0 0 5px rgba(255, 59, 92, 0.2);
+        border-color: rgba(255, 59, 92, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(255, 59, 92, 0.6);
+        border-color: rgba(255, 59, 92, 0.8);
+        background: rgba(255, 59, 92, 0.15);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(255, 59, 92, 0.2);
+        border-color: rgba(255, 59, 92, 0.4);
+      }
+    }
+
+    .city-card.active.alert,
+    .city-card.alert {
+      background: rgba(255, 59, 92, 0.1) !important;
       border-color: var(--red) !important;
-      box-shadow: 0 0 10px rgba(255, 59, 92, 0.25);
+      animation: blink-alert 1.5s infinite;
     }
 
-    .city-card.active.watch {
-      background: rgba(255, 179, 0, 0.14) !important;
-      border-color: var(--amber) !important;
-      box-shadow: 0 0 10px rgba(255, 179, 0, 0.25);
+    .city-card.active.watch,
+    .city-card.watch {
+      background: rgba(255, 204, 0, 0.1) !important;
+      border-color: #ffcc00 !important;
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.25);
     }
 
-    .city-card.active.connected {
-      background: rgba(0, 255, 195, 0.12) !important;
-      border-color: var(--teal) !important;
-      box-shadow: 0 0 10px rgba(0, 255, 195, 0.22);
+    .city-card.active.connected,
+    .city-card.connected {
+      background: rgba(0, 255, 136, 0.1) !important;
+      border-color: #00ff88 !important;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.22);
     }
 
     .city-card-head {
@@ -1526,8 +1557,8 @@
       flex: 0 0 auto;
       padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(0, 220, 255, 0.16);
-      background: rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--cyan);
       font-size: 10px;
       font-weight: 700;
@@ -1536,21 +1567,22 @@
     }
 
     .city-status-chip.alert {
-      border-color: rgba(255, 59, 92, 0.28);
-      background: rgba(255, 59, 92, 0.12);
+      border-color: rgba(255, 59, 92, 0.5);
+      background: rgba(255, 59, 92, 0.2);
       color: #ffb8c3;
+      animation: blink-alert 1.5s infinite;
     }
 
     .city-status-chip.watch {
-      border-color: rgba(255, 179, 0, 0.28);
-      background: rgba(255, 179, 0, 0.12);
-      color: #ffe08a;
+      border-color: rgba(255, 204, 0, 0.5);
+      background: rgba(255, 204, 0, 0.2);
+      color: #ffcc00;
     }
 
     .city-status-chip.connected {
-      border-color: rgba(0, 255, 195, 0.24);
-      background: rgba(0, 255, 195, 0.1);
-      color: #8fffe2;
+      border-color: rgba(0, 255, 136, 0.4);
+      background: rgba(0, 255, 136, 0.15);
+      color: #00ff88;
     }
 
     .city-metric-grid {
@@ -1652,8 +1684,8 @@
     }
 
     .focus-action {
-      border: 1px solid rgba(0, 220, 255, 0.18);
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.1) 0%, rgba(0, 200, 240, 0.06) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(220, 220, 220, 0.06) 100%);
       color: var(--cyan);
       font-family: var(--font-ui);
       border-radius: var(--radius-sm);
@@ -1665,9 +1697,9 @@
     }
 
     .focus-action:hover {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.18) 0%, rgba(0, 200, 240, 0.12) 100%);
-      border-color: rgba(0, 220, 255, 0.32);
-      box-shadow: 0 0 16px rgba(0, 220, 255, 0.1);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(220, 220, 220, 0.12) 100%);
+      border-color: rgba(255, 255, 255, 0.32);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
       transform: translateY(-1px);
     }
 
@@ -1688,13 +1720,13 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       flex-wrap: wrap;
     }
 
     .back-btn {
-      border: 1px solid rgba(0, 220, 255, 0.18);
-      background: rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--cyan);
       font-family: var(--font-ui);
       border-radius: 999px;
@@ -1706,9 +1738,9 @@
     }
 
     .back-btn:hover {
-      background: rgba(0, 220, 255, 0.14);
-      border-color: rgba(0, 220, 255, 0.3);
-      box-shadow: 0 0 12px rgba(0, 220, 255, 0.08);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
     }
 
     .breadcrumb {
@@ -1779,7 +1811,7 @@
 
     .area-panel {
       background: var(--panel-strong);
-      border: 1px solid rgba(0, 220, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius);
       padding: 12px;
       display: flex;
@@ -1793,12 +1825,12 @@
     }
 
     .zone-node:hover .zone-box {
-      stroke: rgba(0, 220, 255, 0.45);
+      stroke: rgba(255, 255, 255, 0.45);
     }
 
     .zone-box {
-      fill: rgba(0, 220, 255, 0.06);
-      stroke: rgba(0, 220, 255, 0.16);
+      fill: rgba(255, 255, 255, 0.06);
+      stroke: rgba(255, 255, 255, 0.16);
       stroke-width: 1;
       rx: 8;
     }
@@ -1814,8 +1846,8 @@
     }
 
     .zone-box.ok {
-      fill: rgba(0, 255, 195, 0.08);
-      stroke: rgba(0, 255, 195, 0.25);
+      fill: rgba(200, 200, 200, 0.08);
+      stroke: rgba(200, 200, 200, 0.25);
     }
 
     .zone-label {
@@ -1832,7 +1864,7 @@
 
     .zone-node.active .zone-box {
       stroke-width: 2;
-      filter: drop-shadow(0 0 10px rgba(0, 220, 255, 0.16));
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.16));
     }
 
     .area-row {
@@ -1846,13 +1878,13 @@
     }
 
     .area-row:hover {
-      background: rgba(0, 220, 255, 0.09);
-      border-color: rgba(0, 220, 255, 0.22);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.22);
     }
 
     .area-row.active {
-      background: rgba(0, 220, 255, 0.12);
-      border-color: rgba(0, 220, 255, 0.28);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.28);
     }
 
     .area-name {
@@ -1876,7 +1908,7 @@
     }
 
     .area-status.ok {
-      background: rgba(0, 255, 195, 0.12);
+      background: rgba(200, 200, 200, 0.12);
       color: #89ffd8;
     }
 
@@ -1904,7 +1936,7 @@
 
     .cam-header {
       padding: 12px 14px;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -1934,8 +1966,8 @@
     }
 
     .mode-chip {
-      border: 1px solid rgba(0, 220, 255, 0.16);
-      background: rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--cyan);
       border-radius: 999px;
       padding: 7px 10px;
@@ -1984,15 +2016,15 @@
     }
 
     .cam-grid-wrap {
-      background: linear-gradient(168deg, rgba(5, 27, 49, 0.96) 0%, rgba(3, 18, 35, 0.98) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.14);
+      background: linear-gradient(168deg, rgba(25, 25, 25, 0.96) 0%, rgba(15, 15, 15, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius);
       padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       overflow: auto;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(0, 220, 255, 0.06);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
       position: relative;
     }
 
@@ -2003,7 +2035,7 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent 10%, rgba(0, 220, 255, 0.35) 50%, transparent 90%);
+      background: linear-gradient(90deg, transparent 10%, rgba(255, 255, 255, 0.35) 50%, transparent 90%);
       border-radius: var(--radius) var(--radius) 0 0;
     }
 
@@ -2014,8 +2046,8 @@
     }
 
     .stat-card {
-      background: rgba(0, 220, 255, 0.05);
-      border: 1px solid rgba(0, 220, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius);
       padding: 12px 13px;
       min-height: 86px;
@@ -2059,7 +2091,7 @@
     .cam-tile {
       border-radius: var(--radius);
       overflow: hidden;
-      border: 1px solid rgba(0, 220, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(0, 0, 0, 0.35);
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2067,8 +2099,8 @@
 
     .cam-tile:hover {
       transform: translateY(-2px);
-      border-color: rgba(0, 220, 255, 0.35);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 12px rgba(0, 220, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 255, 255, 0.08);
     }
 
     .cam-feed {
@@ -2172,9 +2204,9 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 18px;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.12);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       flex-shrink: 0;
-      background: rgba(4, 20, 38, 0.9);
+      background: rgba(20, 20, 20, 0.9);
     }
 
     #cam-fs-label {
@@ -2183,15 +2215,15 @@
       font-weight: 700;
       letter-spacing: 0.18em;
       color: var(--cyan);
-      text-shadow: 0 0 14px rgba(0, 220, 255, 0.3);
+      text-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
     }
 
     #cam-fs-minimize {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.14), rgba(0, 200, 240, 0.08));
-      border: 1px solid rgba(0, 220, 255, 0.28);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(220, 220, 220, 0.08));
+      border: 1px solid rgba(255, 255, 255, 0.28);
       color: var(--cyan);
       font-family: var(--font-ui);
       font-size: 12px;
@@ -2201,13 +2233,13 @@
       cursor: pointer;
       letter-spacing: 0.04em;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 0 18px rgba(0, 220, 255, 0.08);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
     }
 
     #cam-fs-minimize:hover {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.24), rgba(0, 200, 240, 0.16));
-      border-color: rgba(0, 220, 255, 0.45);
-      box-shadow: 0 0 24px rgba(0, 220, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(220, 220, 220, 0.16));
+      border-color: rgba(255, 255, 255, 0.45);
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.2);
       transform: translateY(-1px);
     }
 
@@ -2228,7 +2260,7 @@
       min-width: 260px;
       max-width: 340px;
       flex-shrink: 0;
-      border-left: 1px solid rgba(0, 220, 255, 0.1);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -2264,7 +2296,7 @@
       object-fit: contain;
       border-radius: var(--radius);
       filter: saturate(0.75) brightness(0.88) contrast(1.1);
-      box-shadow: 0 0 60px rgba(0, 220, 255, 0.08), 0 0 120px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 60px rgba(255, 255, 255, 0.08), 0 0 120px rgba(0, 0, 0, 0.6);
     }
 
     #cam-fs-body .rec-dot-fs {
@@ -2299,9 +2331,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-top: 1px solid rgba(0, 220, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-shrink: 0;
-      background: rgba(4, 20, 38, 0.9);
+      background: rgba(20, 20, 20, 0.9);
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--muted);
@@ -2309,13 +2341,13 @@
     }
 
     .cam-side {
-      background: linear-gradient(168deg, rgba(5, 27, 49, 0.96) 0%, rgba(3, 18, 35, 0.98) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.14);
+      background: linear-gradient(168deg, rgba(25, 25, 25, 0.96) 0%, rgba(15, 15, 15, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(0, 220, 255, 0.08);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       position: relative;
     }
 
@@ -2326,13 +2358,13 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent 5%, rgba(0, 220, 255, 0.5) 30%, rgba(0, 255, 195, 0.35) 50%, rgba(0, 220, 255, 0.5) 70%, transparent 95%);
+      background: linear-gradient(90deg, transparent 5%, rgba(255, 255, 255, 0.5) 30%, rgba(200, 200, 200, 0.35) 50%, rgba(255, 255, 255, 0.5) 70%, transparent 95%);
       z-index: 1;
     }
 
     .side-section {
       padding: 12px;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -2381,12 +2413,12 @@
     }
 
     .alert-item.info {
-      background: rgba(0, 220, 255, 0.05);
+      background: rgba(255, 255, 255, 0.05);
       border-left-color: var(--cyan);
     }
 
     .alert-item.ok {
-      background: rgba(0, 255, 195, 0.05);
+      background: rgba(200, 200, 200, 0.05);
       border-left-color: var(--teal);
     }
 
@@ -2399,12 +2431,12 @@
     .assistant-bubble {
       border-radius: 16px;
       padding: 14px 16px;
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.08) 0%, rgba(0, 255, 195, 0.04) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.16);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(200, 200, 200, 0.04) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       color: var(--text);
       line-height: 1.6;
       font-size: 12px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(0, 220, 255, 0.06);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.06);
       position: relative;
       overflow: hidden;
     }
@@ -2416,7 +2448,7 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle at 20% 20%, rgba(0, 220, 255, 0.04), transparent 50%);
+      background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.04), transparent 50%);
       pointer-events: none;
     }
 
@@ -2435,7 +2467,7 @@
       font-family: var(--font-ui);
       background: rgba(255, 255, 255, 0.03);
       border-radius: var(--radius-xs);
-      border: 1px solid rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       transition: background 0.15s ease;
     }
 
@@ -2450,8 +2482,8 @@
     }
 
     .quick-btn {
-      border: 1px solid rgba(0, 220, 255, 0.16);
-      background: rgba(0, 220, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--text);
       border-radius: 999px;
       padding: 6px 11px;
@@ -2463,9 +2495,9 @@
     }
 
     .quick-btn:hover {
-      background: rgba(0, 220, 255, 0.12);
-      border-color: rgba(0, 220, 255, 0.28);
-      box-shadow: 0 0 10px rgba(0, 220, 255, 0.08);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
       transform: translateY(-1px);
       color: var(--cyan);
     }
@@ -2478,7 +2510,7 @@
     .genih-input-row input {
       flex: 1;
       min-width: 0;
-      border: 1px solid rgba(0, 220, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(0, 0, 0, 0.28);
       color: var(--text);
       font-family: var(--font-ui);
@@ -2490,8 +2522,8 @@
     }
 
     .genih-input-row input:focus {
-      border-color: rgba(0, 220, 255, 0.35);
-      box-shadow: 0 0 16px rgba(0, 220, 255, 0.1), inset 0 0 8px rgba(0, 220, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.1), inset 0 0 8px rgba(255, 255, 255, 0.03);
       background: rgba(0, 0, 0, 0.35);
     }
 
@@ -2500,8 +2532,8 @@
     }
 
     .send-btn {
-      border: 1px solid rgba(0, 220, 255, 0.2);
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.16) 0%, rgba(0, 200, 240, 0.1) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(220, 220, 220, 0.1) 100%);
       color: var(--cyan);
       font-family: var(--font-ui);
       border-radius: var(--radius-sm);
@@ -2514,9 +2546,9 @@
     }
 
     .send-btn:hover {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.24) 0%, rgba(0, 200, 240, 0.16) 100%);
-      border-color: rgba(0, 220, 255, 0.38);
-      box-shadow: 0 0 16px rgba(0, 220, 255, 0.12);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.24) 0%, rgba(220, 220, 220, 0.16) 100%);
+      border-color: rgba(255, 255, 255, 0.38);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
       transform: translateY(-1px);
     }
 
@@ -2540,7 +2572,7 @@
       min-height: 0;
       overflow: auto;
     }
-    
+
     .va-layout.idle-mode {
       grid-template-columns: 1fr;
       align-content: center;
@@ -2558,15 +2590,17 @@
     }
 
     .va-panel {
-      background: linear-gradient(168deg, rgba(5, 27, 49, 0.96) 0%, rgba(3, 18, 35, 0.98) 100%);
-      border: 1px solid rgba(0, 220, 255, 0.14);
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius);
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
       position: relative;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(0, 220, 255, 0.06);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
 
     .va-panel::before {
@@ -2576,7 +2610,7 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent 10%, rgba(0, 220, 255, 0.35) 50%, transparent 90%);
+      background: linear-gradient(90deg, transparent 10%, rgba(255, 255, 255, 0.35) 50%, transparent 90%);
       border-radius: var(--radius) var(--radius) 0 0;
     }
 
@@ -2596,11 +2630,11 @@
     }
 
     .va-upload-zone {
-      border: 2px dashed rgba(0, 210, 255, 0.2);
+      border: 2px dashed rgba(255, 255, 255, 0.2);
       border-radius: var(--radius-sm);
       padding: 24px;
       text-align: center;
-      background: rgba(0, 210, 255, 0.03);
+      background: rgba(255, 255, 255, 0.03);
       transition: all var(--transition-base);
       cursor: pointer;
       position: relative;
@@ -2620,20 +2654,25 @@
     }
 
     @keyframes spin-dash {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .va-upload-zone:hover {
-      background: rgba(0, 210, 255, 0.06);
-      border-color: rgba(0, 210, 255, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.4);
       transform: translateY(-2px);
     }
 
     .va-upload-zone.dragover {
-      background: rgba(0, 210, 255, 0.12);
+      background: rgba(255, 255, 255, 0.12);
       border-color: transparent;
-      box-shadow: 0 0 40px rgba(0, 210, 255, 0.2);
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
       transform: scale(1.02);
     }
 
@@ -2648,7 +2687,7 @@
       opacity: 0.8;
       transition: transform var(--transition-base);
     }
-    
+
     .va-upload-zone:hover .va-upload-icon {
       transform: scale(1.1);
     }
@@ -2681,8 +2720,8 @@
     }
 
     .va-btn {
-      border: 1px solid rgba(0, 210, 255, 0.2);
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, rgba(0, 180, 220, 0.05) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(200, 200, 200, 0.05) 100%);
       color: var(--cyan);
       font-family: var(--font-ui);
       font-size: 13px;
@@ -2693,13 +2732,13 @@
       transition: all var(--transition-fast);
       letter-spacing: 0.03em;
       text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .va-btn:hover {
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 180, 220, 0.1) 100%);
-      border-color: rgba(0, 210, 255, 0.5);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 210, 255, 0.15);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(200, 200, 200, 0.1) 100%);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.15);
       transform: translateY(-2px);
     }
 
@@ -2781,8 +2820,8 @@
       gap: 6px;
       padding: 6px 12px;
       border-radius: 999px;
-      background: rgba(0, 220, 255, 0.08);
-      border: 1px solid rgba(0, 220, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       color: var(--text);
       font-size: 11px;
       font-weight: 600;
@@ -2796,9 +2835,9 @@
     }
 
     .va-status-pill.completed {
-      background: rgba(0, 255, 195, 0.1);
-      border-color: rgba(0, 255, 195, 0.24);
-      color: #8fffe2;
+      background: rgba(200, 200, 200, 0.1);
+      border-color: rgba(200, 200, 200, 0.24);
+      color: #cccccc;
     }
 
     .va-status-pill.failed {
@@ -2815,14 +2854,10 @@
 
     .va-video-wrap video {
       width: 100%;
-      height: 320px;
       border-radius: var(--radius-sm);
       background: #000;
-      border: 1px solid rgba(0, 220, 255, 0.12);
-      resize: both;
-      overflow: hidden;
-      min-height: 200px;
-      min-width: 200px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      max-height: 320px;
     }
 
     .va-video-hint {
@@ -2835,8 +2870,8 @@
       width: fit-content;
       padding: 5px 10px;
       border-radius: 999px;
-      background: rgba(0, 220, 255, 0.08);
-      border: 1px solid rgba(0, 220, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       color: var(--cyan);
       font-size: 11px;
       text-decoration: none;
@@ -2844,8 +2879,8 @@
     }
 
     .va-download-link:hover {
-      background: rgba(0, 220, 255, 0.14);
-      border-color: rgba(0, 220, 255, 0.3);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .va-narrative {
@@ -2887,14 +2922,14 @@
     }
 
     .va-events-list::-webkit-scrollbar-thumb {
-      background: rgba(0, 220, 255, 0.14);
+      background: rgba(255, 255, 255, 0.14);
       border-radius: 10px;
     }
 
     .va-event {
-      border: 1px solid rgba(0, 220, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-sm);
-      background: rgba(0, 220, 255, 0.04);
+      background: rgba(255, 255, 255, 0.04);
       padding: 12px;
       display: flex;
       flex-direction: column;
@@ -2903,7 +2938,7 @@
     }
 
     .va-event:hover {
-      background: rgba(0, 220, 255, 0.08);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .va-event-top {
@@ -2942,8 +2977,8 @@
     .va-event-chip {
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(0, 220, 255, 0.08);
-      border: 1px solid rgba(0, 220, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       color: var(--text);
       font-size: 10px;
       white-space: nowrap;
@@ -2952,9 +2987,9 @@
     .va-confidence-pill {
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(0, 255, 195, 0.1);
-      border: 1px solid rgba(0, 255, 195, 0.22);
-      color: #8fffe2;
+      background: rgba(200, 200, 200, 0.1);
+      border: 1px solid rgba(200, 200, 200, 0.22);
+      color: #cccccc;
       font-size: 10px;
       font-weight: 700;
     }
@@ -2967,7 +3002,7 @@
       background: rgba(0, 0, 0, 0.2);
       padding: 12px;
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(0, 220, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       max-height: 200px;
       overflow: auto;
       font-family: var(--font-mono);
@@ -2999,8 +3034,8 @@
     }
 
     .admin-sidebar {
-      background: rgba(0, 220, 255, 0.04);
-      border: 1px solid rgba(0, 220, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-sm);
       padding: 16px;
       display: flex;
@@ -3022,20 +3057,20 @@
     }
 
     .admin-nav-btn:hover {
-      background: rgba(0, 220, 255, 0.06);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--text);
     }
 
     .admin-nav-btn.active {
-      background: rgba(0, 220, 255, 0.1);
-      border-color: rgba(0, 220, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
       color: var(--cyan);
       font-weight: 600;
     }
 
     .admin-content-panel {
-      background: rgba(0, 220, 255, 0.02);
-      border: 1px solid rgba(0, 220, 255, 0.12);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-sm);
       padding: 24px;
       overflow-y: auto;
@@ -3057,7 +3092,7 @@
     .admin-table td {
       padding: 12px;
       text-align: left;
-      border-bottom: 1px solid rgba(0, 220, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .admin-table th {
@@ -3074,14 +3109,14 @@
       max-width: 400px;
       padding: 16px;
       background: rgba(0, 0, 0, 0.3);
-      border: 1px dashed rgba(0, 220, 255, 0.2);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
       border-radius: var(--radius-sm);
     }
 
     .admin-form input,
     .admin-form select {
       background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(0, 220, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: var(--text);
       padding: 10px;
       border-radius: var(--radius-xs);
@@ -3518,7 +3553,9 @@
                   analysis.</div>
               </div>
               <div class="panel-actions">
-                <button class="va-btn secondary" style="display:none; padding: 6px 12px; font-size: 11px; margin-right: 8px;" id="va-header-new-btn" onclick="vaClear()">&#8635; New Video</button>
+                <button class="va-btn secondary"
+                  style="display:none; padding: 6px 12px; font-size: 11px; margin-right: 8px;" id="va-header-new-btn"
+                  onclick="vaClear()">&#8635; New Video</button>
                 <span class="va-status-pill" id="va-status-pill">Idle</span>
                 <span class="mini-chip muted">Powered by NICCC AI</span>
               </div>
@@ -3530,21 +3567,27 @@
                   <div class="va-panel-title">Upload & Analyze</div>
                   <div class="va-panel-subtitle">Select a video file to run AI-powered incident detection analysis.
                   </div>
-                  <div class="va-upload-zone" id="va-upload-zone" onclick="document.getElementById('va-video-input').click()">
+                  <div class="va-upload-zone" id="va-upload-zone"
+                    onclick="document.getElementById('va-video-input').click()">
                     <input id="va-video-input" type="file" accept="video/*" hidden />
                     <div class="va-upload-icon">
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                       </svg>
                     </div>
                     <div style="font-weight:700; color:var(--text); margin-bottom:4px;">Drag &amp; Drop Video</div>
                     <div style="color:var(--muted); margin-bottom:12px;">Supports MP4, MKV, AVI, WebM</div>
-                    <button class="va-btn secondary" type="button" onclick="event.stopPropagation(); document.getElementById('va-video-input').click()">Browse Files</button>
-                    <div id="va-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                    <button class="va-btn secondary" type="button"
+                      onclick="event.stopPropagation(); document.getElementById('va-video-input').click()">Browse
+                      Files</button>
+                    <div id="va-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);">
+                    </div>
                   </div>
                   <div class="va-btn-row" style="margin-top:16px; justify-content:center;">
                     <button class="va-btn" id="va-run-btn" onclick="vaUpload()">&#9654; Analyze Video</button>
-                    <button class="va-btn secondary" id="va-new-btn" onclick="vaClear()" style="display:none;">&#8635; New Clip</button>
+                    <button class="va-btn secondary" id="va-new-btn" onclick="vaClear()" style="display:none;">&#8635;
+                      New Clip</button>
                     <button class="va-btn danger" onclick="vaClear()">Clear</button>
                   </div>
                 </div>
@@ -3591,41 +3634,47 @@
 
                 <!-- Density Curve Card -->
                 <div class="va-panel" id="va-density-panel" style="display:none;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
                     <div>
                       <div class="va-panel-title">Crowd Density Monitoring</div>
                       <div class="va-panel-subtitle" id="va-density-meta">Track crowd congestion across frames</div>
                     </div>
                     <div style="display:flex; gap:10px; align-items:center;">
                       <span style="font-size:12px; color:var(--muted);">Threshold</span>
-                      <input id="va-threshold-slider" type="range" min="1" max="100" value="10" style="width:140px; accent-color:#ff6b6b;" />
-                      <span class="mini-chip" id="va-threshold-value" style="color:#ff6b6b; border-color:rgba(255,107,107,0.3);">10</span>
+                      <input id="va-threshold-slider" type="range" min="1" max="100" value="10"
+                        style="width:140px; accent-color:#ff6b6b;" />
+                      <span class="mini-chip" id="va-threshold-value"
+                        style="color:#ff6b6b; border-color:rgba(255,107,107,0.3);">10</span>
                     </div>
                   </div>
-                  <div style="overflow-x:auto; background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:8px; padding:10px;">
-                    <canvas id="va-density-canvas" width="1200" height="220" style="display:block; min-width:100%; height:220px;"></canvas>
+                  <div
+                    style="overflow-x:auto; background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:8px; padding:10px;">
+                    <canvas id="va-density-canvas" width="1200" height="220"
+                      style="display:block; min-width:100%; height:220px;"></canvas>
                   </div>
-                  <div id="va-density-alerts" style="margin-top:12px; display:grid; gap:8px; max-height:160px; overflow-y:auto;"></div>
-              </div>
+                  <div id="va-density-alerts"
+                    style="margin-top:12px; display:grid; gap:8px; max-height:160px; overflow-y:auto;"></div>
+                </div>
 
-              <!-- Right Column: Event Timeline -->
-              <div class="va-col" id="va-right-col" style="display:none;">
-                <div class="va-panel" id="va-timeline-card" style="flex: 1; min-height: 0;">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                      <div class="va-panel-title">Event Timeline</div>
-                      <div class="va-panel-subtitle">AI-detected incidents in chronological order</div>
+                <!-- Right Column: Event Timeline -->
+                <div class="va-col" id="va-right-col" style="display:none;">
+                  <div class="va-panel" id="va-timeline-card" style="flex: 1; min-height: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <div class="va-panel-title">Event Timeline</div>
+                        <div class="va-panel-subtitle">AI-detected incidents in chronological order</div>
+                      </div>
+                      <span class="mini-chip" id="va-event-count-chip">0 events</span>
                     </div>
-                    <span class="mini-chip" id="va-event-count-chip">0 events</span>
-                  </div>
-                  <div class="va-events-list" id="va-events-list">
-                    <div style="color: var(--muted); font-size: 12px; text-align: center; padding: 40px 0;">No events
-                      yet. Upload a video to start analysis.</div>
+                    <div class="va-events-list" id="va-events-list">
+                      <div style="color: var(--muted); font-size: 12px; text-align: center; padding: 40px 0;">No events
+                        yet. Upload a video to start analysis.</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
         </section>
 
         <!-- ANPR SCREEN -->
@@ -3637,14 +3686,16 @@
                 <div class="panel-subtitle">Automatic Number Plate Recognition</div>
               </div>
               <div class="panel-actions" style="display: flex; align-items: center; gap: 8px;">
-                <button class="va-btn secondary" style="display:none; padding: 6px 12px; font-size: 11px;" id="anpr-header-new-btn" onclick="anprClear()">&#8635; New Video</button>
+                <button class="va-btn secondary" style="display:none; padding: 6px 12px; font-size: 11px;"
+                  id="anpr-header-new-btn" onclick="anprClear()">&#8635; New Video</button>
                 <div class="va-status-pill" id="anpr-status-pill">
                   <div class="va-status-dot" id="anpr-status-dot"></div>
                   <span id="anpr-status-text">Idle</span>
                 </div>
               </div>
             </div>
-            <div class="anpr-scroll-body centered-container" id="anpr-scroll-body" style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:20px; padding:20px;">
+            <div class="anpr-scroll-body centered-container" id="anpr-scroll-body"
+              style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:20px; padding:20px;">
               <div style="display:flex; gap:20px;">
                 <!-- UPLOAD PANEL -->
                 <div class="panel" id="anpr-upload-card" style="flex:1; overflow:visible;">
@@ -3655,18 +3706,22 @@
                     <div class="va-upload-zone" id="anpr-upload-zone">
                       <input type="file" id="anpr-video-input" accept="video/mp4,video/x-m4v,video/*" hidden />
                       <div class="va-upload-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                         </svg>
                       </div>
                       <div style="font-weight:700; color:var(--text); margin-bottom:4px;">Drag &amp; Drop Video</div>
                       <div style="color:var(--muted); margin-bottom:12px;">MP4 format • Max 50MB</div>
-                      <button class="va-btn secondary" onclick="document.getElementById('anpr-video-input').click()">Browse Files</button>
-                      <div id="anpr-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                      <button class="va-btn secondary"
+                        onclick="document.getElementById('anpr-video-input').click()">Browse Files</button>
+                      <div id="anpr-upload-info"
+                        style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
                     </div>
                     <div class="va-btn-row" style="margin-top:16px; justify-content:center;">
                       <button class="va-btn" id="anpr-run-btn" onclick="anprUpload()">&#9654; Analyze Plates</button>
-                      <button class="va-btn secondary" id="anpr-new-btn" onclick="anprClear()" style="display:none;">&#8635; New Clip</button>
+                      <button class="va-btn secondary" id="anpr-new-btn" onclick="anprClear()"
+                        style="display:none;">&#8635; New Clip</button>
                       <button class="va-btn danger" onclick="anprClear()">Clear</button>
                     </div>
                   </div>
@@ -3681,33 +3736,46 @@
                 <div style="padding:16px; display:flex; flex-direction:column; gap:20px;">
                   <div id="anpr-job-status" style="font-family:var(--font-hud); color:var(--cyan);"></div>
                   <!-- Master Dual Video Control Header -->
-                  <div id="anpr-sync-header" style="display:none; align-items:center; justify-content:space-between; background:rgba(0,220,255,0.06); padding:10px 16px; border-radius:8px; border:1px solid rgba(0,220,255,0.2);">
+                  <div id="anpr-sync-header"
+                    style="display:none; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.06); padding:10px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
                     <div style="font-weight:700; color:var(--cyan); display:flex; align-items:center; gap:8px;">
                       <span class="va-status-dot processing"></span> Synchronized Dual-Stream Playback
                     </div>
                     <div style="display:flex; gap:8px;">
-                      <button class="va-btn" id="anpr-sync-play-btn" onclick="anprToggleSyncPlay()">&#9654; Play Both</button>
+                      <button class="va-btn" id="anpr-sync-play-btn" onclick="anprToggleSyncPlay()">&#9654; Play
+                        Both</button>
                       <button class="va-btn secondary" onclick="anprResetSyncPlay()">&#8634; Reset</button>
                     </div>
                   </div>
                   <!-- Video Row -->
                   <div id="anpr-videos-container" style="display:none; grid-template-columns: 1fr 1fr; gap:16px;">
                     <div>
-                      <div style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Original Feed</div>
-                      <video id="anpr-video-original" class="va-video-player" playsinline style="width:100%; height:280px; resize:both; overflow:hidden; min-height:150px; min-width:200px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;" onclick="anprToggleSyncPlay()"></video>
+                      <div
+                        style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">
+                        Original Feed</div>
+                      <video id="anpr-video-original" class="va-video-player" playsinline
+                        style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;"
+                        onclick="anprToggleSyncPlay()"></video>
                     </div>
                     <div>
-                      <div style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">ANPR AI Annotated Feed</div>
-                      <video id="anpr-video-annotated" class="va-video-player" playsinline style="width:100%; height:280px; resize:both; overflow:hidden; min-height:150px; min-width:200px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;" onclick="anprToggleSyncPlay()"></video>
+                      <div
+                        style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">
+                        ANPR AI Annotated Feed</div>
+                      <video id="anpr-video-annotated" class="va-video-player" playsinline
+                        style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;"
+                        onclick="anprToggleSyncPlay()"></video>
                     </div>
                   </div>
                   <!-- Plates Table -->
                   <div id="anpr-plates-container" style="display:none;">
-                    <div style="font-weight:700; margin-bottom:8px; color:var(--cyan); font-size:14px; letter-spacing:0.05em;">&#9654; Extracted Number Plates</div>
+                    <div
+                      style="font-weight:700; margin-bottom:8px; color:var(--cyan); font-size:14px; letter-spacing:0.05em;">
+                      &#9654; Extracted Number Plates</div>
                     <div style="overflow-x:auto;">
-                      <table style="width:100%; text-align:left; border-collapse:collapse; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+                      <table
+                        style="width:100%; text-align:left; border-collapse:collapse; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
                         <thead>
-                          <tr style="border-bottom:1px solid var(--border); background:rgba(0, 220, 255, 0.05);">
+                          <tr style="border-bottom:1px solid var(--border); background:rgba(255, 255, 255, 0.05);">
                             <th style="padding:10px 14px;">Plate Number</th>
                             <th style="padding:10px 14px;">Vehicle Type</th>
                             <th style="padding:10px 14px;">First Seen Frame</th>
@@ -3716,7 +3784,10 @@
                           </tr>
                         </thead>
                         <tbody id="anpr-plates-tbody">
-                          <tr><td colspan="5" style="padding:16px; text-align:center; color:var(--muted);">No plates detected yet.</td></tr>
+                          <tr>
+                            <td colspan="5" style="padding:16px; text-align:center; color:var(--muted);">No plates
+                              detected yet.</td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -3863,7 +3934,7 @@
     const CITY_DATA = [
       { name: 'Delhi', lat: 28.6139, lon: 77.2090, fill: '#00dcff', glow: '#93c5fd', cameras: 15, zones: 6, alerts: 0, status: 'Monitored', alertCriteria: 'Perimeter + crowd', cameraModes: { live: 68, ai: 22, record: 10 }, labelDx: 16, labelDy: -4, anchor: 'start' },
       { name: 'Mumbai', lat: 19.0760, lon: 72.8777, fill: '#ff3b5c', glow: '#fca5a5', cameras: 12, zones: 7, alerts: 3, status: 'Alert', alertCriteria: 'Watchlist + crowd', cameraModes: { live: 61, ai: 27, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
-      { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, fill: '#00ffc3', glow: '#6ee7b7', cameras: 10, zones: 5, alerts: 1, status: 'Watch', alertCriteria: 'ANPR + crowd', cameraModes: { live: 64, ai: 24, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
+      { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, fill: '#e0e0e0', glow: '#6ee7b7', cameras: 10, zones: 5, alerts: 1, status: 'Watch', alertCriteria: 'ANPR + crowd', cameraModes: { live: 64, ai: 24, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
       { name: 'Chennai', lat: 13.0827, lon: 80.2707, fill: '#00dcff', glow: '#93c5fd', cameras: 9, zones: 5, alerts: 0, status: 'Monitored', alertCriteria: 'Perimeter + face match', cameraModes: { live: 70, ai: 18, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
       { name: 'Hyderabad', lat: 17.3850, lon: 78.4867, fill: '#ffb300', glow: '#fcd34d', cameras: 11, zones: 6, alerts: 0, status: 'Watch', alertCriteria: 'Traffic + crowd', cameraModes: { live: 66, ai: 21, record: 13 }, labelDx: 16, labelDy: -4, anchor: 'start' },
       { name: 'Kolkata', lat: 22.5726, lon: 88.3639, fill: '#00dcff', glow: '#93c5fd', cameras: 8, zones: 4, alerts: 1, status: 'Monitored', alertCriteria: 'Watchlist + access', cameraModes: { live: 59, ai: 29, record: 12 }, labelDx: 16, labelDy: -4, anchor: 'start' },
@@ -4006,8 +4077,7 @@
     function getCityTone(city) {
       if (city.alerts > 0 || city.status === 'Alert') return 'alert';
       if (city.status === 'Watch') return 'watch';
-      if (city.status === 'Connected') return 'connected';
-      return 'neutral';
+      return 'connected';
     }
 
     function formatModeMix(city) {
@@ -4360,8 +4430,8 @@
         <rect x="20" y="20" width="34" height="42" rx="2" fill="#1f2937"/>
         <rect x="62" y="24" width="28" height="34" rx="2" fill="#293240"/>
         <rect x="97" y="20" width="36" height="42" rx="2" fill="#1f2937"/>
-        <rect x="65" y="22" width="22" height="32" fill="none" stroke="#00ffc3" stroke-width="1"/>
-        <text x="65" y="19" font-size="5" fill="#00ffc3" font-family="monospace">Person 0.94</text>
+        <rect x="65" y="22" width="22" height="32" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="65" y="19" font-size="5" fill="#e0e0e0" font-family="monospace">Person 0.94</text>
         <rect x="98" y="42" width="20" height="14" fill="none" stroke="#ff3b5c" stroke-width="1"/>
         <text x="98" y="40" font-size="5" fill="#ff3b5c" font-family="monospace">WATCH</text>
         <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
@@ -4381,7 +4451,7 @@
         <circle cx="114" cy="42" r="6" fill="#374151"/>
         <rect x="30" y="36" width="18" height="26" fill="none" stroke="#ffb300" stroke-width="1"/>
         <text x="30" y="34" font-size="5" fill="#ffb300" font-family="monospace">Crowd 0.91</text>
-        <rect x="110" y="62" width="34" height="12" fill="#00ffc3" opacity="0.8" rx="1"/>
+        <rect x="110" y="62" width="34" height="12" fill="#e0e0e0" opacity="0.8" rx="1"/>
         <text x="112" y="71" font-size="6" fill="#fff" font-family="monospace">MH01AB1234</text>
         <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
         <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Crowd: 52 | Vehicles: 11 | 14:32:07</text>
@@ -4435,8 +4505,8 @@
       <rect x="100" y="18" width="40" height="22" fill="#1e3a5f" rx="2"/>
       <rect x="20" y="18" width="35" height="22" fill="none" stroke="#7f77dd" stroke-width="1"/>
       <text x="20" y="16" font-size="5" fill="#7f77dd" font-family="monospace">ANPR</text>
-      <rect x="100" y="16" width="40" height="24" fill="none" stroke="#00ffc3" stroke-width="1"/>
-      <text x="100" y="14" font-size="5" fill="#00ffc3" font-family="monospace">MATCH</text>
+      <rect x="100" y="16" width="40" height="24" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+      <text x="100" y="14" font-size="5" fill="#e0e0e0" font-family="monospace">MATCH</text>
       <rect x="0" y="76" width="160" height="14" fill="#000" opacity="0.52"/>
       <text x="4" y="85" font-size="7" fill="#00dcff" font-family="monospace">Vehicles: 14 | ANPR: 2 | 14:32:08</text>
     </svg>
@@ -4457,7 +4527,7 @@
           video: '/video/Crowd.mp4.mkv'
         },
         {
-          suffix: '03', name: 'ANPR Parking', tone: '#00ffc3', badge: '', kind: 'anpr', tag: 'Normal',
+          suffix: '03', name: 'ANPR Parking', tone: '#e0e0e0', badge: '', kind: 'anpr', tag: 'Normal',
           video: '/video/ANPR.mp4.mkv'
         },
         {
@@ -4465,12 +4535,12 @@
           video: '/video/face_trimmed.mp4.mp4'
         },
         {
-          suffix: '05', name: 'Main road', tone: '#00ffc3', badge: '', kind: 'traffic', tag: 'Normal',
+          suffix: '05', name: 'Main road', tone: '#e0e0e0', badge: '', kind: 'traffic', tag: 'Normal',
           video: '/video/traffic.mp4.webm'
         },
         { suffix: '06', name: 'Substation', tone: '#888888', badge: '', kind: 'offline', tag: 'Offline' },
         { suffix: '07', name: 'North perimeter', tone: '#ffb300', badge: '', kind: 'traffic', tag: 'Monitor' },
-        { suffix: '08', name: 'East corridor', tone: '#00ffc3', badge: '', kind: 'crowd', tag: 'Normal' },
+        { suffix: '08', name: 'East corridor', tone: '#e0e0e0', badge: '', kind: 'crowd', tag: 'Normal' },
         { suffix: '09', name: 'Control room', tone: '#7f77dd', badge: '', kind: 'face', tag: 'Secure' }
       ];
 
@@ -4960,7 +5030,7 @@
             const dy = p.y - q.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 130) {
-              ctx.strokeStyle = `rgba(0, 180, 220, ${0.12 * (1 - dist / 130)})`;
+              ctx.strokeStyle = `rgba(200, 200, 200, ${0.12 * (1 - dist / 130)})`;
               ctx.lineWidth = 0.5;
               ctx.beginPath();
               ctx.moveTo(p.x, p.y);
@@ -4971,7 +5041,7 @@
 
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(0, 220, 255, 0.6)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
           ctx.fill();
         }
         requestAnimationFrame(draw);
@@ -5337,7 +5407,7 @@
       $('va-run-btn').disabled = true;
       vaSetStatus('Uploading', 'processing');
       $('va-upload-info').textContent = `Uploading: ${file.name}`;
-      
+
       // Reveal extra panels and hide upload card
       document.getElementById('va-upload-card').style.display = 'none';
       document.getElementById('va-layout').classList.remove('idle-mode');
@@ -5348,7 +5418,7 @@
       $('va-summary-card').classList.add('visible');
       $('va-playback-card').classList.add('visible');
       $('va-timeline-card').classList.add('visible');
-      
+
       document.getElementById('va-header-new-btn').style.display = 'inline-block';
 
       try {
@@ -5398,7 +5468,7 @@
       document.getElementById('va-new-btn').style.display = 'none';
       const dp = document.getElementById('va-density-panel');
       if (dp) dp.style.display = 'none';
-      
+
       // Hide extra panels
       $('va-summary-card').style.display = 'none';
       $('va-playback-card').style.display = 'none';
@@ -5410,7 +5480,7 @@
       document.getElementById('va-right-col').style.display = 'none';
       document.getElementById('va-upload-card').style.display = 'flex';
       document.getElementById('va-header-new-btn').style.display = 'none';
-      
+
       vaSetStatus('Idle', '');
     }
 
@@ -5445,10 +5515,10 @@
       const samples = payload?.density_curve || vaLatestSummary?.density_samples || [];
       const slider = document.getElementById("va-threshold-slider");
       const threshold = payload?.crowd_threshold || (slider ? Number(slider.value) : 10);
-      
+
       const valSpan = document.getElementById("va-threshold-value");
       if (valSpan) valSpan.textContent = String(threshold);
-      
+
       const alerts = [];
       let previous = 0;
       for (const s of samples) {
@@ -5456,7 +5526,7 @@
         if (previous < threshold && cnt >= threshold) alerts.push(s);
         previous = cnt;
       }
-      
+
       const alertDiv = document.getElementById("va-density-alerts");
       if (alertDiv) {
         if (!alerts.length) {
@@ -5470,7 +5540,7 @@
           `).join('');
         }
       }
-      
+
       const meta = document.getElementById("va-density-meta");
       if (meta) meta.textContent = `Frames tracked: ${samples.length} · Congestion alerts: ${alerts.length}`;
 
@@ -5481,7 +5551,7 @@
         ctx.fillText("No crowd tracking data available.", 20, 30);
         return;
       }
-      
+
       const width = Math.max(800, samples.length * 12);
       canvas.width = width;
       canvas.height = 220;
@@ -5489,11 +5559,11 @@
       const padding = 28;
       const chartTop = 24;
       const chartHeight = 160;
-      
+
       ctx.clearRect(0, 0, width, canvas.height);
-      ctx.fillStyle = "rgba(0, 220, 255, 0.02)";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.02)";
       ctx.fillRect(0, 0, width, canvas.height);
-      
+
       ctx.strokeStyle = "rgba(255,255,255,0.08)";
       ctx.beginPath();
       for (let i = 0; i <= 4; i++) {
@@ -5502,23 +5572,23 @@
         ctx.lineTo(width - padding, y);
       }
       ctx.stroke();
-      
+
       ctx.fillStyle = "rgba(255,255,255,0.5)";
       ctx.font = "11px Inter, system-ui";
       ctx.fillText("People Count", 12, 16);
-      
+
       const points = samples.map((s, idx) => {
         const x = padding + (idx / Math.max(1, samples.length - 1)) * (width - padding * 2);
         const y = chartTop + chartHeight - (Number(s.person_count || 0) / maxCount) * chartHeight;
         return { x, y, sample: s };
       });
-      
+
       ctx.strokeStyle = "#00e5ff";
       ctx.lineWidth = 3;
-      
+
       const gradient = ctx.createLinearGradient(0, chartTop, 0, chartTop + chartHeight);
-      gradient.addColorStop(0, "rgba(0, 229, 255, 0.4)");
-      gradient.addColorStop(1, "rgba(0, 229, 255, 0.0)");
+      gradient.addColorStop(0, "rgba(255, 255, 255, 0.4)");
+      gradient.addColorStop(1, "rgba(255, 255, 255, 0.0)");
 
       ctx.beginPath();
       points.forEach((pt, i) => {
@@ -5526,7 +5596,7 @@
         else ctx.lineTo(pt.x, pt.y);
       });
       ctx.stroke();
-      
+
       // Fill underneath
       if (points.length > 0) {
         ctx.lineTo(points[points.length - 1].x, chartTop + chartHeight);
@@ -5535,7 +5605,7 @@
         ctx.fillStyle = gradient;
         ctx.fill();
       }
-      
+
       ctx.strokeStyle = "rgba(255,107,107,0.9)";
       ctx.setLineDash([8, 6]);
       const threshY = chartTop + chartHeight - (threshold / maxCount) * chartHeight;
@@ -5544,7 +5614,7 @@
       ctx.lineTo(width - padding, threshY);
       ctx.stroke();
       ctx.setLineDash([]);
-      
+
       points.forEach(pt => {
         const crossed = Number(pt.sample.person_count || 0) >= threshold;
         ctx.fillStyle = crossed ? "#ff6b6b" : "#00e5ff";
@@ -5567,7 +5637,7 @@
           }
           vaDrawDensityCurve(data);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     (function initVaDensitySlider() {
@@ -5613,26 +5683,26 @@
       document.getElementById('anpr-run-btn').disabled = true;
       anprSetStatus('Uploading...', 'active');
       document.getElementById('anpr-upload-info').textContent = `Uploading: ${file.name}`;
-      
+
       // Reveal extra panels and hide upload card
       document.getElementById('anpr-upload-card').style.display = 'none';
       document.getElementById('anpr-scroll-body').classList.remove('centered-container');
       document.getElementById('anpr-output-panel').style.display = 'block';
       document.getElementById('anpr-output-panel').classList.add('visible');
       document.getElementById('anpr-header-new-btn').style.display = 'inline-block';
-      
+
       const form = new FormData();
       form.append('video', file);
 
       try {
         const response = await fetch('/api/anpr/upload', { method: 'POST', body: form });
         const data = await response.json();
-        
+
         if (response.ok) {
           anprJobId = data.job_id;
           anprSetStatus('Processing...', 'active');
           document.getElementById('anpr-job-status').textContent = `Job ID: ${anprJobId} (Processing...)`;
-          
+
           if (anprAutoRefreshId) clearInterval(anprAutoRefreshId);
           anprAutoRefreshId = setInterval(anprCheckStatus, 2000);
         } else {
@@ -5652,7 +5722,7 @@
       try {
         const res = await fetch(`/api/anpr/job/${anprJobId}`);
         const data = await res.json();
-        
+
         if (data.status === 'COMPLETED') {
           clearInterval(anprAutoRefreshId);
           anprSetStatus('Completed', 'idle');
@@ -5693,14 +5763,14 @@
                     <td style="padding:10px 14px; color:var(--text);">${ev.vehicle_type || '—'}</td>
                     <td style="padding:10px 14px; color:var(--muted);">${ev.first_seen_frame ?? '—'}</td>
                     <td style="padding:10px 14px; color:var(--muted);">${ev.last_seen_frame ?? '—'}</td>
-                    <td style="padding:10px 14px;">${ev.plate_locked ? '<span style="color:#00ffc3;">&#10003; Yes</span>' : '<span style="color:var(--muted);">No</span>'}</td>
+                    <td style="padding:10px 14px;">${ev.plate_locked ? '<span style="color:#e0e0e0;">&#10003; Yes</span>' : '<span style="color:var(--muted);">No</span>'}</td>
                   </tr>`;
                 }).join('');
               } else {
                 tbody.innerHTML = `<tr><td colspan="5" style="padding:16px; text-align:center; color:var(--muted);">No plates extracted (model ran but detected none in this clip).</td></tr>`;
               }
             }
-          } catch(e) {
+          } catch (e) {
             console.error('Error fetching evidence:', e);
           }
         } else if (data.status === 'FAILED') {
@@ -5726,30 +5796,30 @@
       document.getElementById('anpr-video-input').value = '';
       document.getElementById('anpr-upload-info').textContent = '';
       document.getElementById('anpr-job-status').textContent = '';
-      
+
       document.getElementById('anpr-sync-header').style.display = 'none';
       document.getElementById('anpr-videos-container').style.display = 'none';
       document.getElementById('anpr-plates-container').style.display = 'none';
-      
+
       // Hide extra panels and reveal upload card
       document.getElementById('anpr-scroll-body').classList.add('centered-container');
       document.getElementById('anpr-output-panel').style.display = 'none';
       document.getElementById('anpr-upload-card').style.display = 'block';
       document.getElementById('anpr-header-new-btn').style.display = 'none';
-      
+
       anprResetSyncPlay();
-      
+
       const videoPlayerOriginal = document.getElementById('anpr-video-original');
       const videoPlayerAnnotated = document.getElementById('anpr-video-annotated');
       videoPlayerOriginal.src = '';
       videoPlayerAnnotated.src = '';
-      
+
       const tbody = document.getElementById('anpr-plates-tbody');
-      if(tbody) tbody.innerHTML = `<tr><td colspan="5" style="padding:16px; text-align:center; color:var(--muted);">No plates detected yet.</td></tr>`;
-      
+      if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="padding:16px; text-align:center; color:var(--muted);">No plates detected yet.</td></tr>`;
+
       document.getElementById('anpr-run-btn').style.display = 'inline-block';
       document.getElementById('anpr-new-btn').style.display = 'none';
-      
+
       anprSetStatus('Idle', '');
     }
 
