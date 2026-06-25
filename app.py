@@ -438,7 +438,8 @@ def _write_highlight_clip(video_path_str, output_path_str, events, seconds_befor
     start_f = max(0, int(frame_index - seconds_before * fps))
     end_f = int(frame_index + seconds_after * fps)
     cap.set(cv2.CAP_PROP_POS_FRAMES, start_f)
-    writer = cv2.VideoWriter(str(output_path_str), cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+    temp_path_str = str(output_path_str) + ".temp.mp4"
+    writer = cv2.VideoWriter(temp_path_str, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
     if not writer.isOpened():
         cap.release()
         return
@@ -454,6 +455,20 @@ def _write_highlight_clip(video_path_str, output_path_str, events, seconds_befor
         cf += 1
     writer.release()
     cap.release()
+
+    import subprocess, os
+    try:
+        subprocess.run([
+            "ffmpeg", "-y", "-i", temp_path_str,
+            "-vcodec", "libx264", "-pix_fmt", "yuv420p", "-preset", "fast",
+            str(output_path_str)
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if os.path.exists(temp_path_str):
+            os.remove(temp_path_str)
+    except Exception as e:
+        print(f"[VA CLIP TRANSCODE ERROR] {e}")
+        if os.path.exists(temp_path_str):
+            os.replace(temp_path_str, str(output_path_str))
 
 
 def _process_va_video_real(video_path_str, summary_path_str, highlight_clip_path_str):
@@ -741,6 +756,25 @@ def va_density_latest():
         'density_alerts': result.get('density_alerts', []),
         'status': result.get('status', 'unknown'),
     })
+
+@app.route('/api/va/config/thresholds', methods=['POST'])
+def va_config_thresholds():
+    """Update crowd threshold dynamically."""
+    data = request.get_json(silent=True) or {}
+    new_thresh = int(data.get('crowd_threshold', 10))
+    result = va_state.get('latest_result')
+    if result:
+        result['crowd_threshold'] = new_thresh
+        samples = result.get('density_samples', [])
+        alerts = []
+        prev = 0
+        for s in samples:
+            pc = int(s.get('person_count', 0))
+            if prev < new_thresh <= pc:
+                alerts.append(s)
+            prev = pc
+        result['density_alerts'] = alerts
+    return jsonify({'status': 'ok', 'crowd_threshold': new_thresh})
 
 @app.route('/api/va/status')
 def va_status():
