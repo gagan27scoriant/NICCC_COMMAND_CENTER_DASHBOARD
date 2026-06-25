@@ -50,10 +50,37 @@ VA_OUTPUTS_DIR = DATA_DIR / 'va_outputs'
 VA_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 VA_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
+# ── Forensic Intelligence System (ANPR) ──────────────────────────────────────
 FIS_DIR = Path(__file__).resolve().parent / "Forensic_Intelligence_System"
 VT_DIR = FIS_DIR / "vehicle-tracking"
 sys.path.insert(0, str(VT_DIR))
 sys.path.insert(0, str(FIS_DIR / "parseq"))
+
+# ── Video Intelligence (real VA pipeline) ────────────────────────────────────
+VI_PROJECT_DIR = Path(__file__).resolve().parent / "video_inttelligence" / "project"
+sys.path.insert(0, str(VI_PROJECT_DIR))
+
+# Load .env for the video_analytics Settings before importing it
+from dotenv import load_dotenv as _load_dotenv
+_load_dotenv(VI_PROJECT_DIR / ".env")
+
+try:
+    from video_analytics.config import Settings as VASettings
+    from video_analytics.main import build_count_event
+    from video_analytics.models.event import AnalyticsEvent, EventType
+    from video_analytics.output.db_writer import DBWriter
+    from video_analytics.output.redis_publisher import EventPublisher
+    from video_analytics.pipeline.capture import FrameCapture
+    from video_analytics.pipeline.detector import Detector as VADetector
+    from video_analytics.pipeline.incident import IncidentDetector
+    from video_analytics.pipeline.snapshot import SnapshotSaver
+    from video_analytics.pipeline.tracker import Tracker as VATracker
+    from video_analytics.pipeline.vlm_summary import VLMVideoSummarizer
+    VA_BACKEND_AVAILABLE = True
+    print("[INFO] Real Video Analytics backend loaded successfully.")
+except ImportError as _va_err:
+    VA_BACKEND_AVAILABLE = False
+    print(f"[WARN] Real VA backend not available, using simulation fallback: {_va_err}")
 
 try:
     from database.mongo import MongoManager
@@ -100,6 +127,8 @@ def _anpr_job_snapshot(job_id: str) -> Dict[str, Any] | None:
         return dict(job) if job is not None else None
 
 def _run_anpr(video_path: Path, output_video_path: Path | None = None) -> dict:
+    if ANPRService is None:
+        raise RuntimeError("ANPR service unavailable: missing dependencies (e.g. 'supervision').")
     if not torch.cuda.is_available():
         print("CUDA is required for this app, but no GPU is available in the active environment.")
     service = ANPRService(
@@ -145,6 +174,9 @@ va_state = {
     'latest_result': None,
     'events': []
 }
+
+# Shared EventPublisher instance (in-memory, no Redis dependency)
+_va_publisher: 'EventPublisher | None' = EventPublisher() if VA_BACKEND_AVAILABLE else None
 
 @app.route('/video/<path:filename>')
 def serve_video(filename):
@@ -379,8 +411,202 @@ def _build_va_narrative(result):
     title = ' / '.join(readable.get(e, e) for e in top if e != 'crowd_count') or 'General activity'
     return {'title': title, 'dominant_event': dominant, 'importance': scored.get(dominant, 0), 'counts': counts, 'top_events': top}
 
-def _process_va_video(video_path_str, summary_path_str):
-    """Background thread: process video and write summary JSON."""
+def _build_event_counts(events):
+    counts = {}
+    for e in events:
+        et = str(e.get('event_type', 'unknown'))
+        counts[et] = counts.get(et, 0) + 1
+    return counts
+
+
+def _write_highlight_clip(video_path_str, output_path_str, events, seconds_before=2.0, seconds_after=4.0):
+    """Write a short highlight clip around the strongest incident."""
+    import cv2
+    if not events:
+        return
+    best = events[0]
+    frame_index = int(best.get('frame_index', 0))
+    cap = cv2.VideoCapture(video_path_str)
+    if not cap.isOpened():
+        return
+    fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
+    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) or 0)
+    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
+    if w <= 0 or h <= 0:
+        cap.release()
+        return
+    start_f = max(0, int(frame_index - seconds_before * fps))
+    end_f = int(frame_index + seconds_after * fps)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, start_f)
+    writer = cv2.VideoWriter(str(output_path_str), cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+    if not writer.isOpened():
+        cap.release()
+        return
+    cf = start_f
+    while cf <= end_f:
+        ok, frame = cap.read()
+        if not ok:
+            break
+        label = f"Highlight: {best.get('event_type', 'event')} | frame {frame_index}"
+        cv2.rectangle(frame, (8, 8), (min(w - 8, 520), 60), (0, 0, 0), -1)
+        cv2.putText(frame, label, (18, 42), cv2.FONT_HERSHEY_SIMPLEX, 0.85, (0, 255, 255), 2, cv2.LINE_AA)
+        writer.write(frame)
+        cf += 1
+    writer.release()
+    cap.release()
+
+
+def _process_va_video_real(video_path_str, summary_path_str, highlight_clip_path_str):
+    """Background thread: process video using the REAL video_analytics pipeline."""
+    import asyncio as _asyncio
+    import cv2
+
+    async def _runner():
+        settings = VASettings()
+        publisher = _va_publisher
+        db_writer = DBWriter(settings.MONGODB_URL, settings.MONGODB_DB)
+        try:
+            await db_writer.startup()
+            await db_writer.start()
+        except Exception as _db_err:
+            print(f"[WARN] VA DB writer startup failed (non-fatal): {_db_err}")
+            db_writer = None
+
+        try:
+            capture = FrameCapture(video_path_str, settings.FRAME_SKIP)
+            detector = VADetector(settings.YOLO_MODEL_PATH, settings.DETECTION_CONFIDENCE)
+            tracker = VATracker(settings.REID_EVERY_N_FRAMES)
+            incident_detector = IncidentDetector(
+                settings.CAMERA_ID,
+                settings.parsed_roi_zones(),
+                settings.LOITER_SECONDS,
+                settings.SURGE_VELOCITY_THRESHOLD,
+                settings.FALL_COOLDOWN_SECONDS,
+                settings.FIGHT_COOLDOWN_SECONDS,
+            )
+            snapshot = SnapshotSaver(settings.SNAPSHOT_DIR)
+            vlm_summarizer = VLMVideoSummarizer(settings.OLLAMA_URL, settings.OLLAMA_VLM_MODEL)
+
+            collected = []
+            density_samples = []
+            incident_rankings = []
+            frame_counter = 0
+
+            async for frame_idx, frame in capture.frames():
+                frame_counter += 1
+                detections = detector.detect(frame)
+                tracks = tracker.update(detections, frame, frame_idx)
+                incidents = incident_detector.analyze(tracks, frame_idx)
+                count_event = build_count_event(
+                    settings.CAMERA_ID, tracks, frame_idx, settings.CROWD_COUNT_THRESHOLD
+                )
+                events = ([count_event] if count_event else []) + incidents
+                current_people = len(tracks)
+                # Determine primary action label
+                primary_action = 'crowd_monitoring'
+                priority_order = ['fight', 'fall', 'crowd_surge', 'loitering', 'crowd_count']
+                for ptype in priority_order:
+                    for ev in events:
+                        if str(getattr(ev, 'event_type', '')).lower().endswith(ptype):
+                            primary_action = ptype
+                            break
+                    else:
+                        continue
+                    break
+                density_samples.append({
+                    'frame_index': frame_idx,
+                    'person_count': current_people,
+                    'action': primary_action,
+                    'threshold': settings.CROWD_COUNT_THRESHOLD,
+                    'threshold_crossed': current_people >= settings.CROWD_COUNT_THRESHOLD,
+                    'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                })
+                for event in events:
+                    try:
+                        event.snapshot_path = await snapshot.save(frame, event)
+                    except Exception:
+                        pass
+                    if publisher:
+                        try:
+                            await publisher.publish(event)
+                        except Exception:
+                            pass
+                    if db_writer:
+                        try:
+                            await db_writer.enqueue(event)
+                        except Exception:
+                            pass
+                    payload = event.model_dump(mode='json')
+                    collected.append(payload)
+                    incident_rankings.append(payload)
+
+            # Priority sort for key incidents
+            priority_map = {'fight': 4.0, 'fall': 3.0, 'crowd_surge': 2.5, 'loitering': 1.5, 'crowd_count': 1.0}
+            def _score_event(ev):
+                et = str(ev.get('event_type', '')).split('.')[-1].lower()
+                s = priority_map.get(et, 0.0)
+                s += float(ev.get('confidence', 0.0))
+                s += float((ev.get('metadata') or {}).get('importance', 0.0))
+                s += float((ev.get('metadata') or {}).get('mean_velocity', 0.0)) / 10.0
+                return s
+            key_incidents = sorted(incident_rankings, key=_score_event, reverse=True)[:3]
+
+            # Build density alerts
+            density_alerts = []
+            prev_count = 0
+            for sample in density_samples:
+                pc = int(sample.get('person_count', 0))
+                if prev_count < settings.CROWD_COUNT_THRESHOLD <= pc:
+                    density_alerts.append({
+                        'frame_index': sample.get('frame_index'),
+                        'person_count': pc,
+                        'timestamp': sample.get('timestamp'),
+                        'action': sample.get('action'),
+                    })
+                prev_count = pc
+
+            result = {
+                'events': collected,
+                'status': 'completed',
+                'frames_processed': frame_counter,
+                'output_video': video_path_str,
+                'output_video_ready': True,
+                'highlight_clip': highlight_clip_path_str,
+                'highlight_clip_ready': False,
+                'event_counts': _build_event_counts(collected),
+                'density_samples': density_samples,
+                'density_alerts': density_alerts,
+                'crowd_threshold': settings.CROWD_COUNT_THRESHOLD,
+                'key_incidents': key_incidents,
+            }
+            result['video_summary'] = vlm_summarizer.summarize_video(video_path_str)
+            result['summary_status'] = 'generated' if result['video_summary'] else 'missing'
+            result['narrative'] = _build_va_narrative(result)
+            _write_highlight_clip(video_path_str, highlight_clip_path_str, key_incidents)
+            if Path(highlight_clip_path_str).exists() and Path(highlight_clip_path_str).stat().st_size >= 1024:
+                result['highlight_clip_ready'] = True
+            return result
+
+        except Exception as exc:
+            print(f"[ERROR] VA pipeline failed: {exc}")
+            return {'status': 'failed', 'error': str(exc), 'video': video_path_str}
+        finally:
+            if db_writer:
+                try:
+                    await db_writer.drain()
+                except Exception:
+                    pass
+
+    result = _asyncio.run(_runner())
+    with open(summary_path_str, 'w', encoding='utf-8') as f:
+        json.dump(result, f, indent=2, default=str)
+    va_state['latest_result'] = result
+    va_state['events'] = result.get('events', [])
+    print(f"[INFO] VA pipeline completed: status={result.get('status')}, frames={result.get('frames_processed', 0)}")
+
+
+def _process_va_video_sim(video_path_str, summary_path_str):
+    """Fallback: simulated video analytics (used when real backend unavailable)."""
     try:
         import cv2
         cap = cv2.VideoCapture(video_path_str)
@@ -388,10 +614,7 @@ def _process_va_video(video_path_str, summary_path_str):
         cap.release()
     except Exception:
         frame_count = 300
-
-    # Simulate processing delay
-    time.sleep(random.uniform(2.0, 5.0))
-
+    time.sleep(random.uniform(2.0, 4.0))
     events = _generate_va_events(video_path_str, frame_count)
     result = {
         'events': events,
@@ -401,18 +624,25 @@ def _process_va_video(video_path_str, summary_path_str):
         'output_video_ready': True,
         'highlight_clip': None,
         'highlight_clip_ready': False,
-        'event_counts': {},
+        'event_counts': _build_event_counts(events),
     }
-    for e in events:
-        et = e['event_type']
-        result['event_counts'][et] = result['event_counts'].get(et, 0) + 1
     result['narrative'] = _build_va_narrative(result)
-
     with open(summary_path_str, 'w', encoding='utf-8') as f:
         json.dump(result, f, indent=2)
-
     va_state['latest_result'] = result
     va_state['events'] = events
+
+
+def _process_va_video(video_path_str, summary_path_str):
+    """Entry point for the background VA thread — uses real pipeline when available."""
+    if VA_BACKEND_AVAILABLE:
+        highlight_clip_path_str = str(
+            VA_OUTPUTS_DIR / (Path(video_path_str).stem + '_highlight.mp4')
+        )
+        va_state['latest_clip_path'] = highlight_clip_path_str
+        _process_va_video_real(video_path_str, summary_path_str, highlight_clip_path_str)
+    else:
+        _process_va_video_sim(video_path_str, summary_path_str)
 
 @app.route('/api/va/upload', methods=['POST'])
 def va_upload():
@@ -491,7 +721,37 @@ def va_reset():
     va_state['latest_clip_path'] = None
     va_state['latest_result'] = None
     va_state['events'] = []
+    if _va_publisher:
+        try:
+            import asyncio
+            asyncio.run(_va_publisher.clear())
+        except Exception:
+            pass
     return jsonify({'status': 'cleared'})
+
+@app.route('/api/va/density/latest')
+def va_density_latest():
+    """Return the density curve and alerts from the latest VA result."""
+    result = va_state.get('latest_result')
+    if not result:
+        return jsonify({'error': 'no analysis available yet'}), 404
+    return jsonify({
+        'crowd_threshold': result.get('crowd_threshold', 10),
+        'density_curve': result.get('density_samples', []),
+        'density_alerts': result.get('density_alerts', []),
+        'status': result.get('status', 'unknown'),
+    })
+
+@app.route('/api/va/status')
+def va_status():
+    """Return VA backend availability and current job status."""
+    result = va_state.get('latest_result')
+    return jsonify({
+        'backend': 'real' if VA_BACKEND_AVAILABLE else 'simulation',
+        'job_status': result.get('status') if result else 'idle',
+        'frames_processed': result.get('frames_processed', 0) if result else 0,
+        'events_detected': len(va_state.get('events', [])),
+    })
 
 # ═══════════════════════════════════════════════════════════════
 #  ANPR API Routes
