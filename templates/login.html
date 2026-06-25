@@ -1,523 +1,589 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NICCC Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-left: #0a0a0c;
-            --bg-right: #040405;
-            --text-primary: #ffffff;
-            --text-secondary: #8b8b93;
-            --border-color: #222226;
-            --input-bg: #121216;
-            --btn-primary: #2a2a32;
-            --btn-primary-hover: #3f3f4a;
-            --btn-sso: #121216;
-            --accent: #6d6dff;
-            --font-main: 'Outfit', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NICCC Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-left: #0a0a0c;
+      --bg-right: #040405;
+      --text-primary: #ffffff;
+      --text-secondary: #8b8b93;
+      --border-color: #222226;
+      --input-bg: #121216;
+      --btn-primary: #2a2a32;
+      --btn-primary-hover: #3f3f4a;
+      --btn-sso: #121216;
+      --accent: #6d6dff;
+      --font-main: 'Outfit', sans-serif;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            font-family: var(--font-main);
-            color: var(--text-primary);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            background-color: var(--bg-left);
-        }
+    body {
+      font-family: var(--font-main);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      background-color: var(--bg-left);
+    }
 
-        .split-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
+    .split-container {
+      display: flex;
+      flex-direction: row-reverse;
+      width: 100%;
+      height: 100%;
+    }
 
-        /* LEFT PANEL */
-        .left-panel {
-            flex: 0 0 45%;
-            max-width: 600px;
-            background-color: var(--bg-left);
-            display: flex;
-            flex-direction: column;
-            padding: 2.5rem 3rem;
-            position: relative;
-        }
+    /* LEFT PANEL */
+    .left-panel {
+      flex: 0 0 45%;
+      max-width: 600px;
+      background-color: var(--bg-left);
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 3rem;
+      position: relative;
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: auto;
-        }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: auto;
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.25rem;
-            letter-spacing: -0.02em;
-        }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
 
-        .logo-icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #6d6dff, #00d2ff);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .logo-icon svg { width: 14px; height: 14px; fill: none; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;}
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #6d6dff, #00d2ff);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .lang-select {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
+    .logo-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
-        .form-wrapper {
-            max-width: 380px;
-            width: 100%;
-            margin: auto;
-        }
+    .lang-select {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
 
-        .form-wrapper h2 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
+    .form-wrapper {
+      max-width: 380px;
+      width: 100%;
+      margin: auto;
+    }
 
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
+    .form-wrapper h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
 
-        .sso-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
 
-        .sso-btn {
-            background-color: var(--btn-sso);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.875rem;
-            color: var(--text-primary);
-            font-family: var(--font-main);
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+    .sso-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
 
-        .sso-btn:hover {
-            background-color: #1a1a20;
-        }
+    .sso-btn {
+      background-color: var(--btn-sso);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.875rem;
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
 
-        .sso-btn svg {
-            width: 18px;
-            height: 18px;
-        }
+    .sso-btn:hover {
+      background-color: #1a1a20;
+    }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #444;
-            font-size: 0.75rem;
-        }
+    .sso-btn svg {
+      width: 18px;
+      height: 18px;
+    }
 
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--border-color);
-        }
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #444;
+      font-size: 0.75rem;
+    }
 
-        .divider span {
-            padding: 0 10px;
-        }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border-color);
+    }
 
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+    .divider span {
+      padding: 0 10px;
+    }
 
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
 
-        label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
 
-        .forgot-link {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
 
-        .forgot-link:hover {
-            color: var(--text-primary);
-        }
+    .forgot-link {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
 
-        input {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.875rem 1rem;
-            color: var(--text-primary);
-            font-family: var(--font-main);
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s, background 0.2s;
-        }
+    .forgot-link:hover {
+      color: var(--text-primary);
+    }
 
-        input:focus {
-            border-color: #444;
-            background-color: #1a1a20;
-        }
-        
-        input::placeholder {
-            color: #555;
-        }
+    input {
+      width: 100%;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
 
-        .input-icon-wrapper {
-            position: relative;
-        }
-        
-        .input-icon-wrapper svg {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            color: #555;
-            pointer-events: none;
-        }
+    input:focus {
+      border-color: #444;
+      background-color: #1a1a20;
+    }
 
-        .submit-btn {
-            width: 100%;
-            background-color: var(--btn-primary);
-            border: none;
-            border-radius: 8px;
-            padding: 1rem;
-            color: var(--text-primary);
-            font-family: var(--font-main);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
-        }
+    input::placeholder {
+      color: #555;
+    }
 
-        .submit-btn:hover {
-            background-color: var(--btn-primary-hover);
-        }
+    .input-icon-wrapper {
+      position: relative;
+    }
 
-        .signup-link {
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
+    .input-icon-wrapper svg {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: #555;
+      pointer-events: none;
+    }
 
-        .signup-link a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .error-msg {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 8px;
-            color: #fca5a5;
-            font-size: 0.85rem;
-            text-align: center;
-        }
+    .submit-btn {
+      width: 100%;
+      background-color: var(--btn-primary);
+      border: none;
+      border-radius: 8px;
+      padding: 1rem;
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+    }
 
-        /* RIGHT PANEL */
-        .right-panel {
-            flex: 1;
-            background-color: var(--bg-right);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 4rem;
-            overflow: hidden;
-            border-left: 1px solid #111;
-        }
+    .submit-btn:hover {
+      background-color: var(--btn-primary-hover);
+    }
 
-        .hero-text {
-            text-align: center;
-            z-index: 2;
-            margin-bottom: 4rem;
-        }
+    .signup-link {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
 
-        .hero-text h1 {
-            font-size: 2.5rem;
-            font-weight: 500;
-            line-height: 1.2;
-            color: #e4e4e7;
-            max-width: 500px;
-            margin: 0 auto 1rem;
-        }
+    .signup-link a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background-color: #201a30;
-            border: 1px solid #3b2d59;
-            color: #bfa6ff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
+    .error-msg {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      color: #fca5a5;
+      font-size: 0.85rem;
+      text-align: center;
+    }
 
-        .badge svg {
-            width: 10px;
-            height: 10px;
-            fill: currentColor;
-        }
+    /* RIGHT PANEL */
+    .right-panel {
+      flex: 1;
+      background-color: var(--bg-right);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 4rem;
+      overflow: hidden;
+      border-right: 1px solid #111;
+    }
 
-        /* CSS 3D Element mimicking the graphic */
-        .graphic-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .hero-text {
+      text-align: center;
+      z-index: 2;
+      margin-bottom: 4rem;
+    }
 
-        .bg-text {
-            position: absolute;
-            font-size: 200px;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.02);
-            z-index: 0;
-            user-select: none;
-            letter-spacing: -0.05em;
-        }
+    .hero-text h1 {
+      font-size: 2.5rem;
+      font-weight: 500;
+      line-height: 1.2;
+      color: #e4e4e7;
+      max-width: 500px;
+      margin: 0 auto 1rem;
+    }
 
-        .cube-wrapper {
-            position: relative;
-            width: 120px;
-            height: 240px;
-            perspective: 1000px;
-            z-index: 2;
-        }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #201a30;
+      border: 1px solid #3b2d59;
+      color: #bfa6ff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
 
-        .cube {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            transform-style: preserve-3d;
-            transform: rotateX(-15deg) rotateY(45deg);
-        }
+    .badge svg {
+      width: 10px;
+      height: 10px;
+      fill: currentColor;
+    }
 
-        .face {
-            position: absolute;
-            background: #111;
-            border: 1px solid #222;
-        }
+    /* CSS 3D Element mimicking the graphic */
+    .graphic-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .front  { width: 120px; height: 240px; transform: translateZ(60px); background: linear-gradient(to bottom, #1a1a20, #0a0a0c); }
-        .back   { width: 120px; height: 240px; transform: rotateY(180deg) translateZ(60px); }
-        .right  { width: 120px; height: 240px; transform: rotateY(90deg) translateZ(60px); background: linear-gradient(to bottom, #141418, #050505); }
-        .left   { width: 120px; height: 240px; transform: rotateY(-90deg) translateZ(60px); }
-        .top    { width: 120px; height: 120px; transform: rotateX(90deg) translateZ(60px); background: #222228; border: 1px solid #333; }
-        .bottom { width: 120px; height: 120px; transform: rotateX(-90deg) translateZ(180px); }
+    .bg-text {
+      position: absolute;
+      font-size: 200px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.02);
+      z-index: 0;
+      user-select: none;
+      letter-spacing: -0.05em;
+    }
 
-        .orbit {
-            position: absolute;
-            width: 350px;
-            height: 100px;
-            border: 1px solid rgba(109, 109, 255, 0.3);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(70deg);
-            z-index: 3;
-        }
+    .cube-wrapper {
+      position: relative;
+      width: 120px;
+      height: 240px;
+      perspective: 1000px;
+      z-index: 2;
+    }
 
-        .orbit-dot {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: #a8a8ff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #a8a8ff;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-        }
-        
-        .corner-dot {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fff;
-            border-radius: 50%;
-        }
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transform: rotateX(-15deg) rotateY(45deg);
+    }
 
-        @media (max-width: 900px) {
-            .right-panel {
-                display: none;
-            }
-            .left-panel {
-                flex: 1;
-                max-width: 100%;
-                align-items: center;
-                justify-content: center;
-            }
-            header {
-                position: absolute;
-                top: 2.5rem;
-                left: 3rem;
-                right: 3rem;
-                width: auto;
-            }
-        }
-    </style>
+    .face {
+      position: absolute;
+      background: #111;
+      border: 1px solid #222;
+    }
+
+    .front {
+      width: 120px;
+      height: 240px;
+      transform: translateZ(60px);
+      background: linear-gradient(to bottom, #1a1a20, #0a0a0c);
+    }
+
+    .back {
+      width: 120px;
+      height: 240px;
+      transform: rotateY(180deg) translateZ(60px);
+    }
+
+    .right {
+      width: 120px;
+      height: 240px;
+      transform: rotateY(90deg) translateZ(60px);
+      background: linear-gradient(to bottom, #141418, #050505);
+    }
+
+    .left {
+      width: 120px;
+      height: 240px;
+      transform: rotateY(-90deg) translateZ(60px);
+    }
+
+    .top {
+      width: 120px;
+      height: 120px;
+      transform: rotateX(90deg) translateZ(60px);
+      background: #222228;
+      border: 1px solid #333;
+    }
+
+    .bottom {
+      width: 120px;
+      height: 120px;
+      transform: rotateX(-90deg) translateZ(180px);
+    }
+
+    .orbit {
+      position: absolute;
+      width: 350px;
+      height: 100px;
+      border: 1px solid rgba(109, 109, 255, 0.3);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotateX(70deg);
+      z-index: 3;
+    }
+
+    .orbit-dot {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #a8a8ff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #a8a8ff;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    }
+
+    .corner-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    @media (max-width: 900px) {
+      .right-panel {
+        display: none;
+      }
+
+      .left-panel {
+        flex: 1;
+        max-width: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+
+      header {
+        position: absolute;
+        top: 2.5rem;
+        left: 3rem;
+        right: 3rem;
+        width: auto;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <div class="split-container">
-        <!-- LEFT PANEL -->
-        <div class="left-panel">
-            <header>
-                <div class="logo">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                    </div>
-                    NICCC
-                </div>
-                <div class="lang-select">
-                    English 
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-                </div>
-            </header>
+  <div class="split-container">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <header>
+        <div class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          NICCC
+        </div>
+        <div class="lang-select">
+          English
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </div>
+      </header>
 
-            <div class="form-wrapper">
-                <h2>Welcome!</h2>
-                <p class="subtitle">Login to NICCC to continue to Command Portal</p>
+      <div class="form-wrapper">
+        <h2>Welcome!</h2>
+        <p class="subtitle">Login to NICCC to continue to Command Portal</p>
 
-                <div class="sso-buttons">
-                    <button class="sso-btn">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81Z"/></svg>
-                        Sign in with Google
-                    </button>
-                    <button class="sso-btn">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.15 2.95.97 3.83 2.32-3.41 1.96-2.82 6.85.59 8.23-.74 1.83-1.63 3.32-3.07 4.46zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-                        Sign in with Apple
-                    </button>
-                </div>
-
-                <div class="divider"><span>OR</span></div>
-
-                <form method="POST" action="/login">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="text" name="email" value="admin@123" placeholder="Your email address" required autocomplete="off">
-                    </div>
-                    
-                    <div class="form-group">
-                        <div class="label-row">
-                            <label>Password</label>
-                            <a href="#" class="forgot-link">Forgot password?</a>
-                        </div>
-                        <div class="input-icon-wrapper">
-                            <input type="password" name="password" placeholder="Your Password" required>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="submit-btn">Continue to portal</button>
-                    
-                    {% if error %}
-                    <div class="error-msg">{{ error }}</div>
-                    {% endif %}
-                </form>
-
-                <div class="signup-link">
-                    Don't have an account? <a href="#">Sign up</a>
-                </div>
-            </div>
+        <div class="sso-buttons">
+          <button class="sso-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81Z" />
+            </svg>
+            Sign in with Google
+          </button>
+          <button class="sso-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.15 2.95.97 3.83 2.32-3.41 1.96-2.82 6.85.59 8.23-.74 1.83-1.63 3.32-3.07 4.46zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+            </svg>
+            Sign in with Apple
+          </button>
         </div>
 
-        <!-- RIGHT PANEL -->
-        <div class="right-panel">
-            <div class="hero-text">
-                <h1>100% Secure. 24/7 Threat Monitoring.</h1>
-                <div class="badge">
-                    <svg viewBox="0 0 24 24"><path d="M12 2L2 22l10-5-10-5-10 5z"></path></svg>
-                    Active Node
-                </div>
-            </div>
+        <div class="divider"><span>OR</span></div>
 
-            <div class="graphic-container">
-                <div class="bg-text">3D</div>
-                
-                <div class="orbit">
-                    <div class="orbit-dot"></div>
-                </div>
+        <form method="POST" action="/login">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="text" name="email" value="admin@123" placeholder="Your email address" required
+              autocomplete="off">
+          </div>
 
-                <div class="cube-wrapper">
-                    <div class="cube">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
-                        <div class="face right"></div>
-                        <div class="face left"></div>
-                        <div class="face top">
-                            <div class="corner-dot" style="top:4px; left:4px"></div>
-                            <div class="corner-dot" style="top:4px; right:4px"></div>
-                            <div class="corner-dot" style="bottom:4px; left:4px"></div>
-                            <div class="corner-dot" style="bottom:4px; right:4px"></div>
-                        </div>
-                        <div class="face bottom"></div>
-                    </div>
-                </div>
+          <div class="form-group">
+            <div class="label-row">
+              <label>Password</label>
+              <a href="#" class="forgot-link">Forgot password?</a>
             </div>
+            <div class="input-icon-wrapper">
+              <input type="password" name="password" placeholder="Your Password" required>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">Continue to portal</button>
+
+          {% if error %}
+          <div class="error-msg">{{ error }}</div>
+          {% endif %}
+        </form>
+
+        <div class="signup-link">
+          Don't have an account? <a href="#">Sign up</a>
         </div>
+      </div>
     </div>
 
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="hero-text">
+        <h1>100% Secure. 24/7 Threat Monitoring.</h1>
+        <div class="badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 22l10-5-10-5-10 5z"></path>
+          </svg>
+          Active Node
+        </div>
+      </div>
+
+      <div class="graphic-container">
+        <div class="bg-text">3D</div>
+
+        <div class="orbit">
+          <div class="orbit-dot"></div>
+        </div>
+
+        <div class="cube-wrapper">
+          <div class="cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top">
+              <div class="corner-dot" style="top:4px; left:4px"></div>
+              <div class="corner-dot" style="top:4px; right:4px"></div>
+              <div class="corner-dot" style="bottom:4px; left:4px"></div>
+              <div class="corner-dot" style="bottom:4px; right:4px"></div>
+            </div>
+            <div class="face bottom"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
+
 </html>
