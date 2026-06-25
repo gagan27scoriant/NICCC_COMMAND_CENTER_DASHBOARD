@@ -641,10 +641,10 @@
 
     /* Chatbot Interface Styles — Premium Gen AI Design */
     .chatbot-container {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(15, 18, 25, 0.95);
       backdrop-filter: blur(12px) saturate(1.2);
       -webkit-backdrop-filter: blur(12px) saturate(1.2);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: var(--radius);
       display: flex;
       flex-direction: column;
@@ -653,7 +653,7 @@
       min-height: 280px;
       margin-top: auto;
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
       position: relative;
     }
 
@@ -832,6 +832,10 @@
       animation: messageSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    .chat-message:first-child {
+      margin-top: auto;
+    }
+
     @keyframes messageSlideIn {
       from {
         opacity: 0;
@@ -862,9 +866,9 @@
     }
 
     .chat-message.bot .message-bubble {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.03) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text);
+      background: #ffffff;
+      border: 1px solid #ffffff;
+      color: #000000;
       border-top-left-radius: 4px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
@@ -2435,6 +2439,11 @@
       border-left-color: var(--teal);
     }
 
+    .alert-item.watch {
+      background: rgba(255, 204, 0, 0.08);
+      border-left-color: #ffcc00;
+    }
+
     .alert-time {
       color: var(--muted-2);
       font-size: 9px;
@@ -2600,6 +2609,13 @@
 
     .centered-container {
       justify-content: center;
+    }
+
+    #va-upload-card,
+    #anpr-upload-card {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
     }
 
     .va-panel {
@@ -3042,52 +3058,74 @@
     .admin-layout {
       display: grid;
       grid-template-columns: 240px 1fr;
-      gap: 16px;
+      gap: 24px;
       height: 100%;
     }
 
     .admin-sidebar {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-sm);
-      padding: 16px;
+      background: rgba(10, 12, 16, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      padding: 20px 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
     .admin-nav-btn {
       background: transparent;
       border: 1px solid transparent;
-      color: var(--muted);
-      padding: 10px 14px;
+      color: var(--muted-2);
+      padding: 12px 18px;
       text-align: left;
       font-family: var(--font-ui);
-      font-size: 13px;
+      font-size: 14px;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .admin-nav-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
       color: var(--text);
+      transform: translateX(4px);
     }
 
     .admin-nav-btn.active {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: linear-gradient(90deg, rgba(0, 220, 255, 0.1) 0%, transparent 100%);
+      border-left: 3px solid var(--cyan);
       color: var(--cyan);
       font-weight: 600;
+      box-shadow: inset 2px 0 8px rgba(0, 220, 255, 0.2);
     }
 
     .admin-content-panel {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-sm);
-      padding: 24px;
+      background: rgba(15, 18, 25, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      padding: 32px;
       overflow-y: auto;
       display: none;
+      backdrop-filter: blur(12px) saturate(1.2);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: panelFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes panelFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .admin-content-panel.active {
@@ -3096,44 +3134,127 @@
 
     .admin-table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      margin-top: 24px;
       font-size: 13px;
     }
 
-    .admin-table th,
-    .admin-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
     .admin-table th {
-      color: var(--cyan);
+      color: var(--muted);
       font-family: var(--font-hud);
       font-size: 11px;
       text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0 16px 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .admin-table td {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      transition: all 0.2s;
+    }
+
+    .admin-table td:first-child {
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      border-top-left-radius: var(--radius-sm);
+      border-bottom-left-radius: var(--radius-sm);
+    }
+
+    .admin-table td:last-child {
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-top-right-radius: var(--radius-sm);
+      border-bottom-right-radius: var(--radius-sm);
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .admin-form {
       display: grid;
-      gap: 12px;
-      margin-top: 16px;
-      max-width: 400px;
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      border-radius: var(--radius-sm);
+      gap: 16px;
+      margin-top: 24px;
+      max-width: 480px;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
     }
 
     .admin-form input,
     .admin-form select {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text);
-      padding: 10px;
-      border-radius: var(--radius-xs);
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
       font-family: var(--font-ui);
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .admin-form input:focus,
+    .admin-form select:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px rgba(0, 220, 255, 0.2);
+    }
+
+    .admin-form option {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-size: 11px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: var(--font-hud);
+      margin-left: 2px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .admin-submit-btn {
+      background: linear-gradient(135deg, rgba(0, 220, 255, 0.1) 0%, rgba(0, 150, 255, 0.05) 100%);
+      border: 1px solid rgba(0, 220, 255, 0.3);
+      color: var(--cyan);
+      font-family: var(--font-hud);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 12px;
+    }
+
+    .admin-submit-btn:hover {
+      background: linear-gradient(135deg, rgba(0, 220, 255, 0.2) 0%, rgba(0, 150, 255, 0.1) 100%);
+      border-color: rgba(0, 220, 255, 0.6);
+      box-shadow: 0 0 20px rgba(0, 220, 255, 0.2);
+      transform: translateY(-2px);
+      color: #fff;
     }
 
     /* ── Responsive breakpoints ── */
@@ -3368,14 +3489,11 @@
         <span class="status-chip neutral" id="node-chip">Nodes: --</span>
         <div id="clock">00:00:00</div>
         {% if user %}
-        {% if role == 'superuser' %}
-        <a onclick="goToScreen('admin-screen')" class="status-chip warning"
-          style="cursor: pointer; text-decoration: none;">Admin Console</a>
-        {% endif %}
-        <div class="user-badge" title="Role: {{ role }}">{{ user[:2].upper() }}</div>
+        <div class="user-badge" title="Role: {{ role }}" onclick="goToScreen('admin-screen')" style="cursor: pointer;">
+          {{ user[:2].upper() }}</div>
         <a href="/logout" class="status-chip danger" style="text-decoration: none; cursor: pointer;">Logout</a>
         {% else %}
-        <div class="user-badge" title="Admin">AD</div>
+        <div class="user-badge" title="Admin" onclick="goToScreen('admin-screen')" style="cursor: pointer;">AD</div>
         {% endif %}
       </div>
     </header>
@@ -3398,7 +3516,8 @@
               <div class="map-main">
 
                 <div class="city-grid" id="city-list" style="margin-bottom: 24px;"></div>
-                <div class="chatbot-container resizable-panel" id="chatbot-wrap" onclick="activateChatMode()" style="margin-top: auto; flex: 1; min-height: 450px;">
+                <div class="chatbot-container resizable-panel" id="chatbot-wrap" onclick="activateChatMode()"
+                  style="margin-top: auto; flex: 1; min-height: 450px;">
                   <div class="chatbot-header">
                     <div class="chatbot-avatar">
                       <span class="ai-status-dot"></span>
@@ -3448,14 +3567,16 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
                     transition: all 0.2s ease;
                   }
+
                   .sidebar-metric:hover {
                     background: rgba(30, 35, 50, 0.95);
                     transform: translateY(-2px);
                     border-color: rgba(255, 255, 255, 0.3);
                   }
+
                   .sidebar-metric .label {
                     display: block;
                     font-size: 11px;
@@ -3465,6 +3586,7 @@
                     text-transform: uppercase;
                     font-weight: 600;
                   }
+
                   .sidebar-metric .value {
                     display: block;
                     font-size: 22px;
@@ -3473,25 +3595,40 @@
                     font-weight: 700;
                     font-family: var(--font-mono);
                   }
+
                   .sidebar-metric.alert-red {
                     background: rgba(255, 59, 92, 0.15);
                     border-color: rgba(255, 59, 92, 0.4);
                   }
-                  .sidebar-metric.alert-red .label { color: #ffb8c3; }
-                  .sidebar-metric.alert-red .value { color: #ffb8c3; text-shadow: 0 0 10px rgba(255,59,92,0.4); }
-                  
+
+                  .sidebar-metric.alert-red .label {
+                    color: #ffb8c3;
+                  }
+
+                  .sidebar-metric.alert-red .value {
+                    color: #ffb8c3;
+                    text-shadow: 0 0 10px rgba(255, 59, 92, 0.4);
+                  }
+
                   .sidebar-metric.alert-amber {
                     background: rgba(255, 179, 0, 0.15);
                     border-color: rgba(255, 179, 0, 0.4);
                   }
-                  .sidebar-metric.alert-amber .label { color: #ffe08a; }
-                  .sidebar-metric.alert-amber .value { color: #ffe08a; text-shadow: 0 0 10px rgba(255,179,0,0.4); }
+
+                  .sidebar-metric.alert-amber .label {
+                    color: #ffe08a;
+                  }
+
+                  .sidebar-metric.alert-amber .value {
+                    color: #ffe08a;
+                    text-shadow: 0 0 10px rgba(255, 179, 0, 0.4);
+                  }
                 </style>
                 <div class="stack-card live-alert-panel resizable-panel" id="main-alert-wrap">
                   <div class="stack-head">Live Alerts</div>
                   <div class="panel-subtitle">High severity alerts across the national dashboard.</div>
                   <div class="alert-log" id="main-alert-log" style="flex: 1;"></div>
-                  
+
                   <style>
                     .system-health-grid {
                       display: flex;
@@ -3501,12 +3638,14 @@
                       margin-top: 8px;
                       border-top: 1px solid rgba(255, 255, 255, 0.08);
                     }
+
                     .health-metric {
                       display: flex;
                       flex-direction: column;
                       align-items: center;
                       gap: 8px;
                     }
+
                     .donut-chart {
                       position: relative;
                       width: 56px;
@@ -3515,12 +3654,14 @@
                       display: flex;
                       align-items: center;
                       justify-content: center;
-                      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
                       transition: transform 0.2s ease;
                     }
+
                     .donut-chart:hover {
                       transform: scale(1.05);
                     }
+
                     .donut-inner {
                       position: absolute;
                       width: 42px;
@@ -3533,8 +3674,9 @@
                       font-size: 11px;
                       font-weight: 700;
                       color: #fff;
-                      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+                      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
                     }
+
                     .health-label {
                       font-size: 10px;
                       color: rgba(255, 255, 255, 0.7);
@@ -3543,15 +3685,28 @@
                       letter-spacing: 0.05em;
                       font-weight: 600;
                     }
-                    
+
                     /* Specific charts */
-                    .chart-gpu { background: conic-gradient(#00e5ff 0% 82%, rgba(255,255,255,0.05) 82% 100%); }
-                    .chart-mem { background: conic-gradient(#ff3b5c 0% 65%, rgba(255,255,255,0.05) 65% 100%); }
-                    .chart-pipe { background: conic-gradient(#00ff88 0% 45%, #ffe08a 45% 75%, #00e5ff 75% 100%); }
+                    .chart-gpu {
+                      background: conic-gradient(#00e5ff 0% 82%, rgba(255, 255, 255, 0.05) 82% 100%);
+                    }
+
+                    .chart-mem {
+                      background: conic-gradient(#ff3b5c 0% 65%, rgba(255, 255, 255, 0.05) 65% 100%);
+                    }
+
+                    .chart-pipe {
+                      background: conic-gradient(#00ff88 0% 45%, #ffe08a 45% 75%, #00e5ff 75% 100%);
+                    }
                   </style>
 
-                  <div style="font-size: 11px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">System Diagnostics</div>
-                  <div class="system-health-grid" style="border-top: none; margin-top: 0; padding-top: 8px;">
+                  <div
+                    style="font-size: 11px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                    System Diagnostics</div>
+                  <div class="system-health-grid"
+                    style="border-top: none; margin-top: 0; padding-top: 8px; cursor: pointer; transition: background 0.2s; border-radius: 8px;"
+                    onclick="openDiagModal()" onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                    onmouseout="this.style.background='transparent'">
                     <div class="health-metric">
                       <div class="donut-chart chart-gpu" title="GPU Utilization">
                         <div class="donut-inner">82%</div>
@@ -3575,7 +3730,8 @@
                 <div class="stack-card resizable-panel" id="overview-metrics-wrap">
                   <div class="stack-head">Key Metrics</div>
                   <div class="panel-subtitle">City-wide surveillance overview.</div>
-                  <div class="overview-stats-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px;">
+                  <div class="overview-stats-grid"
+                    style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px;">
                     <div class="sidebar-metric">
                       <span class="label">Total Accidents</span>
                       <span class="value" id="stat-accidents">142</span>
@@ -4065,15 +4221,29 @@
                   <div class="panel-title">User Management</div>
                   <div class="panel-subtitle" style="margin-bottom:16px;">Create and manage system operators</div>
                   <form id="create-user-form" class="admin-form" onsubmit="handleCreateUser(event)">
-                    <input type="email" id="u-email" placeholder="Email Address" required>
-                    <input type="password" id="u-password" placeholder="Temporary Password" required>
-                    <select id="u-role">
-                      <option value="operator">Operator (Read-Only)</option>
-                      <option value="analyst">Analyst (Write Access)</option>
-                      <option value="superuser">Superuser (Admin)</option>
-                    </select>
-                    <input type="text" id="u-dept" placeholder="Department" required>
-                    <button type="submit" class="send-btn">Create User</button>
+                    <div class="input-group">
+                      <label>Email Address</label>
+                      <input type="email" id="u-email" placeholder="operator@niccc.gov.in" required>
+                    </div>
+                    <div class="input-group">
+                      <label>Temporary Password</label>
+                      <input type="password" id="u-password" placeholder="••••••••" required>
+                    </div>
+                    <div class="input-grid">
+                      <div class="input-group">
+                        <label>Role</label>
+                        <select id="u-role">
+                          <option value="operator">Operator (Read-Only)</option>
+                          <option value="analyst">Analyst (Write Access)</option>
+                          <option value="superuser">Superuser (Admin)</option>
+                        </select>
+                      </div>
+                      <div class="input-group">
+                        <label>Department</label>
+                        <input type="text" id="u-dept" placeholder="e.g. Surveillance" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="admin-submit-btn">Create User</button>
                   </form>
                   <table class="admin-table">
                     <thead>
@@ -4093,8 +4263,11 @@
                   <div class="panel-title">Departments</div>
                   <div class="panel-subtitle" style="margin-bottom:16px;">Organizational hierarchy</div>
                   <form id="create-dept-form" class="admin-form" onsubmit="handleCreateDept(event)">
-                    <input type="text" id="d-name" placeholder="Department Name" required>
-                    <button type="submit" class="send-btn">Create Department</button>
+                    <div class="input-group">
+                      <label>Department Name</label>
+                      <input type="text" id="d-name" placeholder="e.g. Cyber Security" required>
+                    </div>
+                    <button type="submit" class="admin-submit-btn">Create Department</button>
                   </form>
                   <table class="admin-table">
                     <thead>
@@ -4354,16 +4527,16 @@
     }
 
     function setTopbarState() {
-      $('alert-chip').textContent = `${state.alerts} active alerts`;
-      $('camera-chip').textContent = `${state.camerasOnline} camera zones online`;
-      $('node-chip').textContent = `Nodes: ${state.nodes}`;
-      $('map-hint').textContent = `${state.city} selected`;
-      $('city-name-label').textContent = state.city;
-      $('city-area-label').textContent = state.area;
-      $('cam-title').textContent = `${state.city} / ${state.area}`;
-      $('cam-subtitle').textContent = '13 cameras online with live AI overlays and alert tracking.';
-      $('mode-chip').textContent = `${state.mode.toUpperCase()} MODE`;
-      $('stat-alerts').textContent = String(state.alerts);
+      if ($('alert-chip')) $('alert-chip').textContent = `${state.alerts} active alerts`;
+      if ($('camera-chip')) $('camera-chip').textContent = `${state.camerasOnline} camera zones online`;
+      if ($('node-chip')) $('node-chip').textContent = `Nodes: ${state.nodes}`;
+      if ($('map-hint')) $('map-hint').textContent = `${state.city} selected`;
+      if ($('city-name-label')) $('city-name-label').textContent = state.city;
+      if ($('city-area-label')) $('city-area-label').textContent = state.area;
+      if ($('cam-title')) $('cam-title').textContent = `${state.city} / ${state.area}`;
+      if ($('cam-subtitle')) $('cam-subtitle').textContent = '13 cameras online with live AI overlays and alert tracking.';
+      if ($('mode-chip')) $('mode-chip').textContent = `${state.mode.toUpperCase()} MODE`;
+      if ($('stat-alerts')) $('stat-alerts').textContent = String(state.alerts);
     }
 
     function setActiveRail(screenId) {
@@ -4910,54 +5083,50 @@
   `).join('');
     }
 
-    function buildMainAlertFeed() {
-      const now = new Date();
-      const activeCities = CITY_DATA.filter((city) => city.alerts > 0 || city.status === 'Alert');
-      const cities = activeCities.length ? activeCities : [getCurrentCityData()];
+    const TICKER_MESSAGES = [
+      { kind: 'alert', text: 'Critical anomaly detected in sector 7' },
+      { kind: 'watch', text: 'Unusual network latency spiked to 150ms' },
+      { kind: 'ok', text: 'System backup completed successfully' },
+      { kind: 'watch', text: 'Elevated temperature on GPU Node 3' },
+      { kind: 'alert', text: 'Unauthorized access attempt blocked' },
+      { kind: 'info', text: 'All edge nodes synchronized' },
+      { kind: 'watch', text: 'API rate limits approaching threshold' },
+      { kind: 'alert', text: 'Camera feed connection lost (Zone B)' },
+      { kind: 'ok', text: 'Routine maintenance scheduled' },
+      { kind: 'watch', text: 'High memory usage on main database' },
+      { kind: 'alert', text: 'Suspicious object tracked at Main Gate' },
+      { kind: 'info', text: 'Facial recognition model updated' },
+      { kind: 'watch', text: 'Bandwidth throttling active on secondary fiber' },
+      { kind: 'alert', text: 'Intrusion sensor triggered at perimeter' },
+      { kind: 'ok', text: 'Shift handover log recorded' }
+    ];
 
-      return cities.slice(0, 4).map((city, index) => {
-        const areas = getAreasForCity(city.name);
-        const leadArea = areas.find((area) => area.status === 'Alert' || area.status === 'Watch') || areas[0];
-        const count = Math.max(city.alerts, 1);
-        return {
-          kind: 'alert',
-          time: formatAlertTime(now, index * 2 + 1),
-          text: `${city.name} / ${leadArea.name}: high alert with ${count} active signal${count === 1 ? '' : 's'}`
-        };
-      });
+    let liveAlertsStack = [];
+
+    function initLiveAlertsStack() {
+      const now = new Date();
+      liveAlertsStack = TICKER_MESSAGES.map((msg, i) => ({
+        kind: msg.kind,
+        time: formatAlertTime(now, 15 - i),
+        text: msg.text
+      }));
+
+      setInterval(() => {
+        const shifted = liveAlertsStack.shift();
+        shifted.time = formatAlertTime(new Date(), 0);
+        liveAlertsStack.push(shifted);
+        renderLiveAlerts();
+      }, 3500);
+    }
+
+    setTimeout(initLiveAlertsStack, 500);
+
+    function buildMainAlertFeed() {
+      return liveAlertsStack;
     }
 
     function buildCityAlertFeed() {
-      const now = new Date();
-      const city = getCurrentCityData();
-      const areas = getCurrentAreas();
-      const hotArea = areas.find((area) => area.status === 'Alert') || areas.find((area) => area.status === 'Watch') || areas[0];
-      const secondArea = areas.find((area) => area.name !== hotArea.name) || hotArea;
-      const clearCount = areas.filter((area) => area.status === 'OK').length;
-      const watchCount = areas.filter((area) => area.status === 'Watch').length;
-
-      return [
-        {
-          kind: hotArea.status === 'Alert' ? 'alert' : 'info',
-          time: formatAlertTime(now, 1),
-          text: `${city.name} / ${hotArea.name}: live feed under review`
-        },
-        {
-          kind: 'info',
-          time: formatAlertTime(now, 3),
-          text: `${city.name}: ${city.cameras} cameras online across ${city.zones} zones`
-        },
-        {
-          kind: watchCount > 0 ? 'info' : 'ok',
-          time: formatAlertTime(now, 5),
-          text: `${city.name}: ${watchCount} watch zone${watchCount === 1 ? '' : 's'} and ${clearCount} clear zone${clearCount === 1 ? '' : 's'}`
-        },
-        {
-          kind: secondArea.status === 'Alert' ? 'alert' : 'ok',
-          time: formatAlertTime(now, 7),
-          text: `${city.name} / ${secondArea.name}: ${secondArea.status.toLowerCase()} status preserved`
-        }
-      ];
+      return liveAlertsStack;
     }
 
     function renderLiveAlerts() {
@@ -6213,6 +6382,442 @@
         }
       });
     })();
+  </script>
+  <!-- SYSTEM DIAGNOSTICS MODAL -->
+  <style>
+    .diag-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .diag-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .diag-modal-container {
+      width: 90%;
+      max-width: 900px;
+      background: rgba(15, 18, 25, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .diag-modal-overlay.open .diag-modal-container {
+      transform: scale(1);
+    }
+
+    .diag-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .diag-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+
+    .diag-close {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .diag-close:hover {
+      color: #fff;
+    }
+
+    .diag-body {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .diag-resources {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .diag-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gpu-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #00e5ff;
+      box-shadow: 0 0 10px #00e5ff;
+    }
+
+    .mem-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #ff3b5c;
+      box-shadow: 0 0 10px #ff3b5c;
+    }
+
+    .net-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #ffe08a;
+      box-shadow: 0 0 10px #ffe08a;
+    }
+
+    .ai-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: #00ff88;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    .diag-card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .diag-card-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-main {
+      font-size: 42px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-main span {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      margin-top: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-sub {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: right;
+    }
+
+    .stat-sub span {
+      color: #fff;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .diag-pipeline {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .pipeline-graph {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pipe-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .node-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #111;
+      border: 2px solid #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .pipe-node:hover .node-icon {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px currentColor;
+    }
+
+    .node-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e0e0e0;
+      line-height: 1.4;
+    }
+
+    .node-label span {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 400;
+    }
+
+    .pipe-conn {
+      flex: 1;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      position: relative;
+      margin: 0 10px;
+      transform: translateY(-20px);
+      z-index: 1;
+    }
+
+    .active-conn::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 40px;
+      height: 4px;
+      background: #00ff88;
+      box-shadow: 0 0 10px #00ff88;
+      border-radius: 2px;
+      animation: flowData 2s linear infinite;
+    }
+
+    @keyframes flowData {
+      0% {
+        left: 0%;
+        opacity: 1;
+      }
+
+      100% {
+        left: 100%;
+        opacity: 0;
+      }
+    }
+  </style>
+
+  <div class="diag-modal-overlay" id="diag-modal">
+    <div class="diag-modal-container">
+      <div class="diag-header">
+        <div class="diag-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="margin-right:8px; color:#00e5ff;">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          </svg>
+          System Diagnostics & Telemetry
+        </div>
+        <button class="diag-close" onclick="closeDiagModal()">&times;</button>
+      </div>
+
+      <div class="diag-body">
+        <!-- Top Resources -->
+        <div class="diag-resources">
+          <div class="diag-card gpu-card">
+            <div class="diag-card-title">GPU Cluster Status</div>
+            <div class="diag-card-stats">
+              <div class="stat-main">82% <span>Avg Load</span></div>
+              <div class="stat-sub">
+                <div>VRAM: <span>114 GB / 128 GB</span></div>
+                <div>Temp: <span style="color:#ff3b5c;">81°C</span></div>
+                <div>Nodes: <span>4 Active</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diag-card mem-card">
+            <div class="diag-card-title">Memory & Storage</div>
+            <div class="diag-card-stats">
+              <div class="stat-main">65% <span>RAM Usage</span></div>
+              <div class="stat-sub">
+                <div>System RAM: <span>166 GB / 256 GB</span></div>
+                <div>Disk Swap: <span>1.2 GB</span></div>
+                <div>Cache Hits: <span style="color:#00ff88;">94.2%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diag-card net-card">
+            <div class="diag-card-title">Network Telemetry</div>
+            <div class="diag-card-stats">
+              <div class="stat-main">12 <span>Gbps Avg</span></div>
+              <div class="stat-sub">
+                <div>Latency: <span style="color:#00ff88;">12ms</span></div>
+                <div>Packet Loss: <span>0.01%</span></div>
+                <div>Active Streams: <span>1,402</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="diag-card ai-card">
+            <div class="diag-card-title">AI Processing Nodes</div>
+            <div class="diag-card-stats">
+              <div class="stat-main">98% <span>Uptime</span></div>
+              <div class="stat-sub">
+                <div>Infer. Time: <span style="color:#00e5ff;">45ms</span></div>
+                <div>FPS Processed: <span>14,500</span></div>
+                <div>Models: <span>8 Active</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline Flow -->
+        <div class="diag-pipeline" style="margin-bottom: 24px;">
+          <div class="diag-card-title" style="margin-bottom: 24px;">End-to-End Analytics Pipeline</div>
+
+          <div class="pipeline-graph">
+            <!-- Node 1 -->
+            <div class="pipe-node">
+              <div class="node-icon" style="border-color: #a8a8ff; color: #a8a8ff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="node-label">Physical<br><span>Cameras</span></div>
+            </div>
+
+            <div class="pipe-conn active-conn" style="animation-delay: 0s;"></div>
+
+            <!-- Node 2 -->
+            <div class="pipe-node">
+              <div class="node-icon" style="border-color: #a8a8ff; color: #a8a8ff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+                  <rect x="9" y="9" width="6" height="6" />
+                </svg>
+              </div>
+              <div class="node-label">Edge Node<br><span>Pre-process</span></div>
+            </div>
+
+            <div class="pipe-conn active-conn" style="animation-delay: 0.3s;"></div>
+
+            <!-- Node 3 -->
+            <div class="pipe-node">
+              <div class="node-icon" style="border-color: #ffe08a; color: #ffe08a;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16M4 18v.01" />
+                </svg>
+              </div>
+              <div class="node-label">Network<br><span>5G / Fiber</span></div>
+            </div>
+
+            <div class="pipe-conn active-conn" style="animation-delay: 0.6s;"></div>
+
+            <!-- Node 4 -->
+            <div class="pipe-node">
+              <div class="node-icon" style="border-color: #ff3b5c; color: #ff3b5c;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4" />
+                </svg>
+              </div>
+              <div class="node-label">Central DB<br><span>Data Lake</span></div>
+            </div>
+
+            <div class="pipe-conn active-conn" style="animation-delay: 0.9s;"></div>
+
+            <!-- Node 5 -->
+            <div class="pipe-node">
+              <div class="node-icon" style="border-color: #00ff88; color: #00ff88;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+                  <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+                  <line x1="6" y1="6" x2="6" y2="6" />
+                  <line x1="6" y1="18" x2="6" y2="18" />
+                </svg>
+              </div>
+              <div class="node-label">AI Engines<br><span>Vision / NLP</span></div>
+            </div>
+
+            <div class="pipe-conn active-conn" style="animation-delay: 1.2s;"></div>
+
+            <!-- Node 6 -->
+            <div class="pipe-node">
+              <div class="node-icon" style="border-color: #00e5ff; color: #00e5ff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </div>
+              <div class="node-label">Dashboard<br><span>Command UI</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openDiagModal() {
+      document.getElementById('diag-modal').classList.add('open');
+    }
+    function closeDiagModal() {
+      document.getElementById('diag-modal').classList.remove('open');
+    }
   </script>
 </body>
 
