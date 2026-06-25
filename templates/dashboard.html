@@ -11,27 +11,47 @@
     rel="stylesheet" />
   <style>
     :root {
-      --bg: #020b14;
-      --panel: rgba(4, 20, 38, 0.78);
-      --panel-strong: rgba(5, 27, 49, 0.94);
-      --border: rgba(0, 220, 255, 0.16);
-      --border-strong: rgba(0, 220, 255, 0.28);
-      --cyan: #00dcff;
-      --cyan-dim: rgba(0, 220, 255, 0.08);
-      --teal: #00ffc3;
-      --red: #ff3b5c;
-      --amber: #ffb300;
-      --text: #d6edf8;
-      --muted: rgba(214, 237, 248, 0.55);
-      --muted-2: rgba(214, 237, 248, 0.35);
+      --bg: #030811;
+      --panel: rgba(10, 22, 40, 0.6);
+      --panel-strong: rgba(12, 28, 50, 0.85);
+      --border: rgba(0, 195, 255, 0.15);
+      --border-strong: rgba(0, 195, 255, 0.3);
+      --border-inner: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+      --cyan: #00d2ff;
+      --cyan-dim: rgba(0, 210, 255, 0.08);
+      --teal: #00e5ff;
+      --red: #ff4d6d;
+      --amber: #ffb703;
+      --text: #e0f2fe;
+      --muted: rgba(224, 242, 254, 0.6);
+      --muted-2: rgba(224, 242, 254, 0.4);
       --font-hud: 'Rajdhani', sans-serif;
       --font-mono: 'Share Tech Mono', monospace;
       --font-ui: 'Inter', sans-serif;
-      --radius: 14px;
-      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-sm: 12px;
       --radius-xs: 6px;
-      --glow-cyan: 0 0 20px rgba(0, 220, 255, 0.12), 0 0 40px rgba(0, 220, 255, 0.06);
-      --glow-teal: 0 0 16px rgba(0, 255, 195, 0.15);
+      --glow-cyan: 0 0 24px rgba(0, 210, 255, 0.15), 0 0 48px rgba(0, 210, 255, 0.08);
+      --glow-teal: 0 0 18px rgba(0, 229, 255, 0.18);
+      --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-base: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
 
     *,
@@ -54,9 +74,9 @@
       font-family: var(--font-ui);
       color: var(--text);
       background:
-        radial-gradient(circle at 20% 15%, rgba(0, 220, 255, 0.12), transparent 28%),
-        radial-gradient(circle at 80% 18%, rgba(0, 255, 195, 0.08), transparent 24%),
-        linear-gradient(180deg, #02111e 0%, #020b14 100%);
+        radial-gradient(circle at 15% 10%, rgba(0, 210, 255, 0.1), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.08), transparent 25%),
+        linear-gradient(180deg, #050e1d 0%, #030811 100%);
     }
 
     #bg-canvas {
@@ -173,26 +193,28 @@
       border: 1px solid transparent;
       background: transparent;
       color: var(--muted);
-      padding: 8px 13px;
+      padding: 8px 14px;
       border-radius: 999px;
       font-family: var(--font-ui);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.02em;
       cursor: pointer;
-      transition: all 0.16s ease;
+      transition: all var(--transition-fast);
     }
 
     .tab:hover {
       color: var(--text);
-      background: rgba(0, 220, 255, 0.06);
+      background: rgba(0, 210, 255, 0.08);
+      transform: translateY(-1px);
     }
 
     .tab.active {
       color: var(--cyan);
-      background: rgba(0, 220, 255, 0.12);
-      border-color: rgba(0, 220, 255, 0.22);
-      box-shadow: inset 0 0 0 1px rgba(0, 220, 255, 0.06);
+      background: rgba(0, 210, 255, 0.15);
+      border-color: rgba(0, 210, 255, 0.3);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.1), 0 4px 12px rgba(0, 210, 255, 0.15);
+      transform: translateY(-1px);
     }
 
     .top-status {
@@ -325,16 +347,34 @@
 
     .screen.visible {
       display: flex;
+      animation: fadeInUp 0.5s var(--transition-base) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .panel {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      backdrop-filter: blur(18px) saturate(1.2);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28), var(--glow-cyan);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      box-shadow: var(--border-inner), 0 16px 40px rgba(0, 0, 0, 0.4), var(--glow-cyan);
       overflow: hidden;
       position: relative;
+      transition: box-shadow var(--transition-base);
+    }
+    
+    .panel:hover {
+      box-shadow: var(--border-inner), 0 20px 48px rgba(0, 0, 0, 0.5), 0 0 32px rgba(0, 210, 255, 0.2);
     }
 
     .panel::before {
@@ -2500,12 +2540,21 @@
       min-height: 0;
       overflow: auto;
     }
+    
+    .va-layout.idle-mode {
+      grid-template-columns: 1fr;
+      align-content: center;
+    }
 
     .va-col {
       display: flex;
       flex-direction: column;
       gap: 12px;
       min-height: 0;
+    }
+
+    .centered-container {
+      justify-content: center;
     }
 
     .va-panel {
@@ -2547,34 +2596,61 @@
     }
 
     .va-upload-zone {
-      border: 1px dashed rgba(0, 220, 255, 0.25);
+      border: 2px dashed rgba(0, 210, 255, 0.2);
       border-radius: var(--radius-sm);
-      padding: 20px;
+      padding: 24px;
       text-align: center;
-      background: rgba(0, 220, 255, 0.04);
-      transition: all 0.25s ease;
+      background: rgba(0, 210, 255, 0.03);
+      transition: all var(--transition-base);
       cursor: pointer;
       position: relative;
       overflow: hidden;
     }
 
+    .va-upload-zone::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border: 2px dashed var(--cyan);
+      border-radius: var(--radius-sm);
+      opacity: 0;
+      transition: opacity var(--transition-base);
+      pointer-events: none;
+      animation: spin-dash 10s linear infinite;
+    }
+
+    @keyframes spin-dash {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     .va-upload-zone:hover {
-      background: rgba(0, 220, 255, 0.08);
-      border-color: rgba(0, 220, 255, 0.4);
-      box-shadow: 0 0 20px rgba(0, 220, 255, 0.08);
+      background: rgba(0, 210, 255, 0.06);
+      border-color: rgba(0, 210, 255, 0.4);
+      transform: translateY(-2px);
     }
 
     .va-upload-zone.dragover {
-      background: rgba(0, 220, 255, 0.12);
-      border-color: var(--cyan);
-      box-shadow: 0 0 30px rgba(0, 220, 255, 0.15);
+      background: rgba(0, 210, 255, 0.12);
+      border-color: transparent;
+      box-shadow: 0 0 40px rgba(0, 210, 255, 0.2);
+      transform: scale(1.02);
+    }
+
+    .va-upload-zone.dragover::after {
+      opacity: 1;
     }
 
     .va-upload-icon {
-      font-size: 32px;
+      font-size: 36px;
       color: var(--cyan);
-      margin-bottom: 8px;
-      opacity: 0.7;
+      margin-bottom: 12px;
+      opacity: 0.8;
+      transition: transform var(--transition-base);
+    }
+    
+    .va-upload-zone:hover .va-upload-icon {
+      transform: scale(1.1);
     }
 
     .va-upload-text {
@@ -2605,53 +2681,57 @@
     }
 
     .va-btn {
-      border: 1px solid rgba(0, 220, 255, 0.2);
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.14) 0%, rgba(0, 200, 240, 0.08) 100%);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, rgba(0, 180, 220, 0.05) 100%);
       color: var(--cyan);
       font-family: var(--font-ui);
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      letter-spacing: 0.02em;
+      transition: all var(--transition-fast);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .va-btn:hover {
-      background: linear-gradient(135deg, rgba(0, 220, 255, 0.24) 0%, rgba(0, 200, 240, 0.14) 100%);
-      border-color: rgba(0, 220, 255, 0.4);
-      box-shadow: 0 0 18px rgba(0, 220, 255, 0.12);
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 180, 220, 0.1) 100%);
+      border-color: rgba(0, 210, 255, 0.5);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 210, 255, 0.15);
+      transform: translateY(-2px);
     }
 
     .va-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
     }
 
     .va-btn.danger {
-      border-color: rgba(255, 59, 92, 0.24);
-      background: linear-gradient(135deg, rgba(255, 59, 92, 0.12) 0%, rgba(255, 59, 92, 0.06) 100%);
+      border-color: rgba(255, 77, 109, 0.25);
+      background: linear-gradient(135deg, rgba(255, 77, 109, 0.1) 0%, rgba(255, 77, 109, 0.05) 100%);
       color: #ffb8c3;
     }
 
     .va-btn.danger:hover {
-      background: linear-gradient(135deg, rgba(255, 59, 92, 0.2) 0%, rgba(255, 59, 92, 0.12) 100%);
-      border-color: rgba(255, 59, 92, 0.4);
+      background: linear-gradient(135deg, rgba(255, 77, 109, 0.2) 0%, rgba(255, 77, 109, 0.1) 100%);
+      border-color: rgba(255, 77, 109, 0.5);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 77, 109, 0.15);
     }
 
     .va-btn.secondary {
       border-color: rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.03);
       color: var(--text);
     }
 
     .va-btn.secondary:hover {
       background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     }
 
     .va-metrics {
@@ -3434,14 +3514,15 @@
                   analysis.</div>
               </div>
               <div class="panel-actions">
+                <button class="va-btn secondary" style="display:none; padding: 6px 12px; font-size: 11px; margin-right: 8px;" id="va-header-new-btn" onclick="vaClear()">&#8635; New Video</button>
                 <span class="va-status-pill" id="va-status-pill">Idle</span>
                 <span class="mini-chip muted">Powered by NICCC AI</span>
               </div>
             </div>
-            <div class="va-layout">
-              <div class="va-col">
+            <div class="va-layout idle-mode" id="va-layout">
+              <div class="va-col" id="va-left-col">
                 <!-- Upload & Run Card -->
-                <div class="va-panel">
+                <div class="va-panel" id="va-upload-card">
                   <div class="va-panel-title">Upload & Analyze</div>
                   <div class="va-panel-subtitle">Select a video file to run AI-powered incident detection analysis.
                   </div>
@@ -3465,7 +3546,7 @@
                 </div>
 
                 <!-- Run Summary Card -->
-                <div class="va-panel">
+                <div class="va-panel" id="va-summary-card" style="display:none;">
                   <div class="va-panel-title">Run Summary</div>
                   <div class="va-metrics">
                     <div class="va-metric">
@@ -3493,7 +3574,7 @@
                 </div>
 
                 <!-- Original Playback Card -->
-                <div class="va-panel">
+                <div class="va-panel" id="va-playback-card" style="display:none;">
                   <div class="va-panel-title">Original Playback</div>
                   <div class="va-video-wrap">
                     <video id="va-output-video" controls playsinline autoplay muted loop></video>
@@ -3524,8 +3605,8 @@
               </div>
 
               <!-- Right Column: Event Timeline -->
-              <div class="va-col">
-                <div class="va-panel" style="flex: 1; min-height: 0;">
+              <div class="va-col" id="va-right-col" style="display:none;">
+                <div class="va-panel" id="va-timeline-card" style="flex: 1; min-height: 0;">
                   <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                       <div class="va-panel-title">Event Timeline</div>
@@ -3551,15 +3632,18 @@
                 <div class="panel-title">ANPR Engine</div>
                 <div class="panel-subtitle">Automatic Number Plate Recognition</div>
               </div>
-              <div class="va-status-pill" id="anpr-status-pill">
-                <div class="va-status-dot" id="anpr-status-dot"></div>
-                <span id="anpr-status-text">Idle</span>
+              <div class="panel-actions" style="display: flex; align-items: center; gap: 8px;">
+                <button class="va-btn secondary" style="display:none; padding: 6px 12px; font-size: 11px;" id="anpr-header-new-btn" onclick="anprClear()">&#8635; New Video</button>
+                <div class="va-status-pill" id="anpr-status-pill">
+                  <div class="va-status-dot" id="anpr-status-dot"></div>
+                  <span id="anpr-status-text">Idle</span>
+                </div>
               </div>
             </div>
-            <div class="anpr-scroll-body" style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:20px; padding:20px;">
+            <div class="anpr-scroll-body centered-container" id="anpr-scroll-body" style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:20px; padding:20px;">
               <div style="display:flex; gap:20px;">
                 <!-- UPLOAD PANEL -->
-                <div class="panel" style="flex:1; overflow:visible;">
+                <div class="panel" id="anpr-upload-card" style="flex:1; overflow:visible;">
                   <div class="panel-head">
                     <div class="panel-title">Video Input</div>
                   </div>
@@ -3586,7 +3670,7 @@
               </div>
 
               <!-- RESULTS PANEL -->
-              <div class="panel" style="overflow:visible;">
+              <div class="panel" id="anpr-output-panel" style="overflow:visible; display:none;">
                 <div class="panel-head">
                   <div class="panel-title">Processed Output</div>
                 </div>
@@ -5249,6 +5333,20 @@
       $('va-run-btn').disabled = true;
       vaSetStatus('Uploading', 'processing');
       $('va-upload-info').textContent = `Uploading: ${file.name}`;
+      
+      // Reveal extra panels and hide upload card
+      document.getElementById('va-upload-card').style.display = 'none';
+      document.getElementById('va-layout').classList.remove('idle-mode');
+      document.getElementById('va-right-col').style.display = 'flex';
+      $('va-summary-card').style.display = 'block';
+      $('va-playback-card').style.display = 'block';
+      $('va-timeline-card').style.display = 'flex';
+      $('va-summary-card').classList.add('visible');
+      $('va-playback-card').classList.add('visible');
+      $('va-timeline-card').classList.add('visible');
+      
+      document.getElementById('va-header-new-btn').style.display = 'inline-block';
+
       try {
         const response = await fetch('/api/va/upload', { method: 'POST', body: form });
         const payload = await response.json();
@@ -5296,6 +5394,19 @@
       document.getElementById('va-new-btn').style.display = 'none';
       const dp = document.getElementById('va-density-panel');
       if (dp) dp.style.display = 'none';
+      
+      // Hide extra panels
+      $('va-summary-card').style.display = 'none';
+      $('va-playback-card').style.display = 'none';
+      $('va-timeline-card').style.display = 'none';
+      $('va-summary-card').classList.remove('visible');
+      $('va-playback-card').classList.remove('visible');
+      $('va-timeline-card').classList.remove('visible');
+      document.getElementById('va-layout').classList.add('idle-mode');
+      document.getElementById('va-right-col').style.display = 'none';
+      document.getElementById('va-upload-card').style.display = 'flex';
+      document.getElementById('va-header-new-btn').style.display = 'none';
+      
       vaSetStatus('Idle', '');
     }
 
@@ -5400,12 +5511,26 @@
       
       ctx.strokeStyle = "#00e5ff";
       ctx.lineWidth = 3;
+      
+      const gradient = ctx.createLinearGradient(0, chartTop, 0, chartTop + chartHeight);
+      gradient.addColorStop(0, "rgba(0, 229, 255, 0.4)");
+      gradient.addColorStop(1, "rgba(0, 229, 255, 0.0)");
+
       ctx.beginPath();
       points.forEach((pt, i) => {
         if (i === 0) ctx.moveTo(pt.x, pt.y);
         else ctx.lineTo(pt.x, pt.y);
       });
       ctx.stroke();
+      
+      // Fill underneath
+      if (points.length > 0) {
+        ctx.lineTo(points[points.length - 1].x, chartTop + chartHeight);
+        ctx.lineTo(points[0].x, chartTop + chartHeight);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
       
       ctx.strokeStyle = "rgba(255,107,107,0.9)";
       ctx.setLineDash([8, 6]);
@@ -5484,6 +5609,13 @@
       document.getElementById('anpr-run-btn').disabled = true;
       anprSetStatus('Uploading...', 'active');
       document.getElementById('anpr-upload-info').textContent = `Uploading: ${file.name}`;
+      
+      // Reveal extra panels and hide upload card
+      document.getElementById('anpr-upload-card').style.display = 'none';
+      document.getElementById('anpr-scroll-body').classList.remove('centered-container');
+      document.getElementById('anpr-output-panel').style.display = 'block';
+      document.getElementById('anpr-output-panel').classList.add('visible');
+      document.getElementById('anpr-header-new-btn').style.display = 'inline-block';
       
       const form = new FormData();
       form.append('video', file);
@@ -5594,6 +5726,12 @@
       document.getElementById('anpr-sync-header').style.display = 'none';
       document.getElementById('anpr-videos-container').style.display = 'none';
       document.getElementById('anpr-plates-container').style.display = 'none';
+      
+      // Hide extra panels and reveal upload card
+      document.getElementById('anpr-scroll-body').classList.add('centered-container');
+      document.getElementById('anpr-output-panel').style.display = 'none';
+      document.getElementById('anpr-upload-card').style.display = 'block';
+      document.getElementById('anpr-header-new-btn').style.display = 'none';
       
       anprResetSyncPlay();
       
