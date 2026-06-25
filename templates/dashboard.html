@@ -167,9 +167,9 @@
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 0 14px var(--teal);
-      animation: pulse 2s ease-in-out infinite;
+      background: #00ff88;
+      box-shadow: 0 0 14px #00ff88;
+      animation: pulse 1.5s ease-in-out infinite;
     }
 
     @keyframes pulse {
@@ -529,6 +529,20 @@
       flex-direction: column;
     }
 
+    .city-body.chat-active #area-list {
+      display: none;
+    }
+
+    .city-body.chat-active #area-quick-wrap {
+      display: flex !important;
+    }
+
+    .map-layout.chat-active .chatbot-container,
+    .city-body.chat-active .chatbot-container {
+      flex: 1;
+      margin-top: 0;
+    }
+
     /* Resize divider between panels */
     .resize-divider {
       width: 8px;
@@ -710,9 +724,10 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--teal);
-      box-shadow: 0 0 8px var(--teal), 0 0 4px var(--teal);
+      background: #00ff88;
+      box-shadow: 0 0 8px #00ff88, 0 0 4px #00ff88;
       border: 1.5px solid rgba(15, 15, 15, 0.9);
+      animation: pulse 1.5s ease-in-out infinite;
     }
 
     .avatar-text {
@@ -1791,11 +1806,9 @@
     }
 
     #city-alert-wrap {
-      min-height: 0;
-      width: 380px;
-      min-width: 200px;
-      max-width: 60%;
-      flex-shrink: 0;
+      width: 100%;
+      flex: 1;
+      min-height: 180px;
     }
 
     .city-body .city-grid {
@@ -3378,14 +3391,14 @@
                 <div class="panel-subtitle">Click any city to drill down into the city and area views.</div>
               </div>
               <div class="panel-actions">
-                <span class="mini-chip" id="map-hint">Mumbai selected</span>
                 <span class="mini-chip muted">Live telemetry</span>
               </div>
             </div>
             <div class="map-layout" id="map-layout">
               <div class="map-main">
-                <div class="city-grid" id="city-list"></div>
-                <div class="chatbot-container resizable-panel" id="chatbot-wrap" onclick="activateChatMode()">
+
+                <div class="city-grid" id="city-list" style="margin-bottom: 24px;"></div>
+                <div class="chatbot-container resizable-panel" id="chatbot-wrap" onclick="activateChatMode()" style="margin-top: auto; flex: 1; min-height: 450px;">
                   <div class="chatbot-header">
                     <div class="chatbot-avatar">
                       <span class="ai-status-dot"></span>
@@ -3396,8 +3409,9 @@
                       <div class="chatbot-subtitle">Ready to query surveillance telemetry</div>
                     </div>
                     <div class="chatbot-actions" id="chat-header-actions" style="display: none;">
-                      <button class="chat-clear-btn" onclick="deactivateChatMode()">Grid View</button>
-                      <button class="chat-clear-btn" onclick="clearChat()">Clear</button>
+                      <button class="chat-clear-btn" onclick="event.stopPropagation(); deactivateChatMode()">Grid
+                        View</button>
+                      <button class="chat-clear-btn" onclick="event.stopPropagation(); clearChat()">Clear</button>
                     </div>
                   </div>
                   <div class="chat-messages" id="chat-messages">
@@ -3425,10 +3439,176 @@
               </div>
               <div class="resize-divider" data-target="map-side"></div>
               <div class="map-side" id="map-side">
+                <style>
+                  .sidebar-metric {
+                    padding: 12px 14px;
+                    border-radius: var(--radius-sm);
+                    background: rgba(20, 25, 35, 0.95);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+                    transition: all 0.2s ease;
+                  }
+                  .sidebar-metric:hover {
+                    background: rgba(30, 35, 50, 0.95);
+                    transform: translateY(-2px);
+                    border-color: rgba(255, 255, 255, 0.3);
+                  }
+                  .sidebar-metric .label {
+                    display: block;
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.85);
+                    margin-bottom: 4px;
+                    letter-spacing: 0.05em;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                  }
+                  .sidebar-metric .value {
+                    display: block;
+                    font-size: 22px;
+                    line-height: 1.1;
+                    color: #ffffff;
+                    font-weight: 700;
+                    font-family: var(--font-mono);
+                  }
+                  .sidebar-metric.alert-red {
+                    background: rgba(255, 59, 92, 0.15);
+                    border-color: rgba(255, 59, 92, 0.4);
+                  }
+                  .sidebar-metric.alert-red .label { color: #ffb8c3; }
+                  .sidebar-metric.alert-red .value { color: #ffb8c3; text-shadow: 0 0 10px rgba(255,59,92,0.4); }
+                  
+                  .sidebar-metric.alert-amber {
+                    background: rgba(255, 179, 0, 0.15);
+                    border-color: rgba(255, 179, 0, 0.4);
+                  }
+                  .sidebar-metric.alert-amber .label { color: #ffe08a; }
+                  .sidebar-metric.alert-amber .value { color: #ffe08a; text-shadow: 0 0 10px rgba(255,179,0,0.4); }
+                </style>
                 <div class="stack-card live-alert-panel resizable-panel" id="main-alert-wrap">
                   <div class="stack-head">Live Alerts</div>
                   <div class="panel-subtitle">High severity alerts across the national dashboard.</div>
-                  <div class="alert-log" id="main-alert-log"></div>
+                  <div class="alert-log" id="main-alert-log" style="flex: 1;"></div>
+                  
+                  <style>
+                    .system-health-grid {
+                      display: flex;
+                      justify-content: space-around;
+                      align-items: center;
+                      padding: 12px 4px 4px 4px;
+                      margin-top: 8px;
+                      border-top: 1px solid rgba(255, 255, 255, 0.08);
+                    }
+                    .health-metric {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      gap: 8px;
+                    }
+                    .donut-chart {
+                      position: relative;
+                      width: 56px;
+                      height: 56px;
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                      transition: transform 0.2s ease;
+                    }
+                    .donut-chart:hover {
+                      transform: scale(1.05);
+                    }
+                    .donut-inner {
+                      position: absolute;
+                      width: 42px;
+                      height: 42px;
+                      background: rgba(20, 25, 35, 1);
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 11px;
+                      font-weight: 700;
+                      color: #fff;
+                      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+                    }
+                    .health-label {
+                      font-size: 10px;
+                      color: rgba(255, 255, 255, 0.7);
+                      text-transform: uppercase;
+                      text-align: center;
+                      letter-spacing: 0.05em;
+                      font-weight: 600;
+                    }
+                    
+                    /* Specific charts */
+                    .chart-gpu { background: conic-gradient(#00e5ff 0% 82%, rgba(255,255,255,0.05) 82% 100%); }
+                    .chart-mem { background: conic-gradient(#ff3b5c 0% 65%, rgba(255,255,255,0.05) 65% 100%); }
+                    .chart-pipe { background: conic-gradient(#00ff88 0% 45%, #ffe08a 45% 75%, #00e5ff 75% 100%); }
+                  </style>
+
+                  <div style="font-size: 11px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08);">System Diagnostics</div>
+                  <div class="system-health-grid" style="border-top: none; margin-top: 0; padding-top: 8px;">
+                    <div class="health-metric">
+                      <div class="donut-chart chart-gpu" title="GPU Utilization">
+                        <div class="donut-inner">82%</div>
+                      </div>
+                      <span class="health-label">GPU Util</span>
+                    </div>
+                    <div class="health-metric">
+                      <div class="donut-chart chart-mem" title="Memory Management">
+                        <div class="donut-inner">65%</div>
+                      </div>
+                      <span class="health-label">Memory</span>
+                    </div>
+                    <div class="health-metric">
+                      <div class="donut-chart chart-pipe" title="Pipeline Flow: Vision, Audio, Logic">
+                        <div class="donut-inner">MIX</div>
+                      </div>
+                      <span class="health-label">Pipeline</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="stack-card resizable-panel" id="overview-metrics-wrap">
+                  <div class="stack-head">Key Metrics</div>
+                  <div class="panel-subtitle">City-wide surveillance overview.</div>
+                  <div class="overview-stats-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px;">
+                    <div class="sidebar-metric">
+                      <span class="label">Total Accidents</span>
+                      <span class="value" id="stat-accidents">142</span>
+                    </div>
+                    <div class="sidebar-metric">
+                      <span class="label">Congestion Area</span>
+                      <span class="value" id="stat-congestion">24%</span>
+                    </div>
+                    <div class="sidebar-metric alert-red">
+                      <span class="label">Weapons Detected</span>
+                      <span class="value" id="stat-weapons">3</span>
+                    </div>
+                    <div class="sidebar-metric">
+                      <span class="label">Total Cameras</span>
+                      <span class="value" id="stat-cams">8,405</span>
+                    </div>
+                    <div class="sidebar-metric alert-amber">
+                      <span class="label">Over-speeding</span>
+                      <span class="value">84</span>
+                    </div>
+                    <div class="sidebar-metric">
+                      <span class="label">Illegal Parking</span>
+                      <span class="value">21</span>
+                    </div>
+                    <div class="sidebar-metric alert-red">
+                      <span class="label">Red Light Violations</span>
+                      <span class="value">15</span>
+                    </div>
+                    <div class="sidebar-metric">
+                      <span class="label">Wrong-Way Driving</span>
+                      <span class="value">2</span>
+                    </div>
+                  </div>
                 </div>
                 <div class="stack-card resizable-panel" id="city-quick-wrap">
                   <div class="stack-head">Cities</div>
@@ -3453,15 +3633,75 @@
               </div>
               <div class="city-summary" id="city-summary"></div>
             </div>
+
             <div class="city-body" id="city-body">
-              <div class="city-grid" id="area-list"></div>
-              <div class="resize-divider" data-target="city-alert-wrap"></div>
-              <div class="stack-card live-alert-panel resizable-panel" id="city-alert-wrap">
-                <div class="stack-head">Live Alerts</div>
-                <div class="panel-subtitle">City-scoped alerts and status updates.</div>
-                <div class="alert-log" id="city-alert-log"></div>
+              <div class="city-main"
+                style="flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; overflow: auto;">
+                <div class="city-grid" id="area-list"></div>
+
+                <!-- Chatbot Interface for City Screen -->
+                <div class="chatbot-container resizable-panel" id="city-chatbot-wrap" onclick="activateCityChatMode()">
+                  <div class="chatbot-header">
+                    <div class="chatbot-avatar">
+                      <span class="ai-status-dot"></span>
+                      <span class="avatar-text">AI</span>
+                    </div>
+                    <div class="chatbot-header-text">
+                      <div class="chatbot-title">GENIH Command Assistant</div>
+                      <div class="chatbot-subtitle">Ready to query surveillance telemetry</div>
+                    </div>
+                    <div class="chatbot-actions" id="city-chat-header-actions" style="display: none;">
+                      <button class="chat-clear-btn" onclick="event.stopPropagation(); deactivateCityChatMode()">Grid
+                        View</button>
+                      <button class="chat-clear-btn" onclick="event.stopPropagation(); clearCityChat()">Clear</button>
+                    </div>
+                  </div>
+                  <div class="chat-messages" id="city-chat-messages">
+                    <div class="chat-message bot">
+                      <div class="message-bubble">
+                        Hello! I am the GENIH Command Assistant. You can ask me to analyze active alerts, query camera
+                        status, or check live telemetry. How can I help you today?
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chat-quick-suggestions">
+                    <button class="suggest-btn"
+                      onclick="suggestCityPrompt('Summarize all active threats in this city')">Summarize active
+                      threats</button>
+                    <button class="suggest-btn" onclick="suggestCityPrompt('Show camera breakdown by status')">Camera
+                      breakdown</button>
+                    <button class="suggest-btn" onclick="suggestCityPrompt('Check traffic congestion trends')">Traffic
+                      trends</button>
+                  </div>
+                  <div class="chat-input-area">
+                    <input type="text" placeholder="Ask GENIH anything..." id="city-chatbot-input"
+                      onfocus="activateCityChatMode()" onkeydown="if(event.key==='Enter') sendCityChatPrompt()" />
+                    <button class="chatbot-send-btn" onclick="sendCityChatPrompt()">Send</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="resize-divider" data-target="city-side"></div>
+
+              <div class="city-side" id="city-side"
+                style="width: 380px; min-width: 200px; max-width: 60%; display: flex; flex-direction: column; gap: 8px; min-height: 0; flex-shrink: 0;">
+                <div class="stack-card live-alert-panel resizable-panel" id="city-alert-wrap"
+                  style="width: 100%; flex: 1; min-height: 180px;">
+                  <div class="stack-head">Live Alerts</div>
+                  <div class="panel-subtitle">City-scoped alerts and status updates.</div>
+                  <div class="alert-log" id="city-alert-log"></div>
+                </div>
+
+                <div class="stack-card resizable-panel" id="area-quick-wrap"
+                  style="display: none; width: 100%; flex: 1; min-height: 0; overflow: hidden; flex-direction: column;">
+                  <div class="stack-head">Quick Navigation</div>
+                  <div class="panel-subtitle">Access zones quickly.</div>
+                  <div class="city-quick-grid" id="area-quick-list"
+                    style="overflow-y: auto; padding-right: 4px; margin-top: 8px;"></div>
+                </div>
               </div>
             </div>
+
           </div>
         </section>
 
@@ -4810,6 +5050,100 @@
   `;
       deactivateChatMode();
     }
+
+
+    // --- CITY CHATBOT FUNCTIONS ---
+
+    function renderAreaQuickList() {
+      const list = $('area-quick-list');
+      if (!list) return;
+      const areas = getAreasForCity(state.city);
+      list.innerHTML = areas.map((area) => {
+        const isActive = area.name === state.area ? 'active' : '';
+        const tone = getAreaTone(area);
+        const chipText = area.status === 'Alert' ? 'Alert' : area.status;
+        return `
+      <div class="city-quick-card ${isActive} ${tone}" data-area="${area.name}">
+        <div class="city-quick-top">
+          <div class="city-quick-name">${area.name}</div>
+          <span class="city-quick-chip ${tone}">${chipText}</span>
+        </div>
+        <div class="city-quick-meta">${area.cameras} cameras · ${area.alertCriteria}</div>
+      </div>
+        `;
+      }).join('');
+
+      list.querySelectorAll('.city-quick-card').forEach(card => {
+        card.addEventListener('click', () => {
+          openArea(card.dataset.area);
+        });
+      });
+    }
+
+    function activateCityChatMode() {
+      const body = $('city-body');
+      if (body && !body.classList.contains('chat-active')) {
+        body.classList.add('chat-active');
+        $('city-chat-header-actions').style.display = 'flex';
+        renderAreaQuickList();
+      }
+    }
+
+    function deactivateCityChatMode() {
+      const body = $('city-body');
+      if (body && body.classList.contains('chat-active')) {
+        body.classList.remove('chat-active');
+        $('city-chat-header-actions').style.display = 'none';
+        renderAreaQuickList();
+      }
+    }
+
+    function suggestCityPrompt(text) {
+      $('city-chatbot-input').value = text;
+      activateCityChatMode();
+      sendCityChatPrompt();
+    }
+
+    function clearCityChat() {
+      const messages = $('city-chat-messages');
+      messages.innerHTML = `
+    <div class="chat-message bot">
+      <div class="message-bubble">
+        Hello! I am the GENIH Command Assistant. You can ask me to analyze active alerts, query camera status, or check live telemetry. How can I help you today?
+      </div>
+    </div>
+  `;
+      deactivateCityChatMode();
+    }
+
+    function sendCityChatPrompt() {
+      const input = $('city-chatbot-input');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const messages = $('city-chat-messages');
+
+      messages.insertAdjacentHTML('beforeend', `
+        <div class="chat-message user">
+          <div class="message-bubble">${val}</div>
+        </div>
+      `);
+
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+
+      setTimeout(() => {
+        messages.insertAdjacentHTML('beforeend', `
+          <div class="chat-message bot">
+            <div class="message-bubble">${getBotReplyText(val)}</div>
+          </div>
+        `);
+        messages.scrollTop = messages.scrollHeight;
+      }, 600);
+
+      sendPrompt(`GENIH query in City View for ${state.city}: ${val}`);
+    }
+
 
     function getBotReplyText(query) {
       const q = query.toLowerCase();
