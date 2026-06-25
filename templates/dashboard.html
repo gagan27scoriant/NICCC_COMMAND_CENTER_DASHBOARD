@@ -2815,10 +2815,14 @@
 
     .va-video-wrap video {
       width: 100%;
+      height: 320px;
       border-radius: var(--radius-sm);
       background: #000;
       border: 1px solid rgba(0, 220, 255, 0.12);
-      max-height: 320px;
+      resize: both;
+      overflow: hidden;
+      min-height: 200px;
+      min-width: 200px;
     }
 
     .va-video-hint {
@@ -3690,11 +3694,11 @@
                   <div id="anpr-videos-container" style="display:none; grid-template-columns: 1fr 1fr; gap:16px;">
                     <div>
                       <div style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Original Feed</div>
-                      <video id="anpr-video-original" class="va-video-player" playsinline style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;" onclick="anprToggleSyncPlay()"></video>
+                      <video id="anpr-video-original" class="va-video-player" playsinline style="width:100%; height:280px; resize:both; overflow:hidden; min-height:150px; min-width:200px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;" onclick="anprToggleSyncPlay()"></video>
                     </div>
                     <div>
                       <div style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">ANPR AI Annotated Feed</div>
-                      <video id="anpr-video-annotated" class="va-video-player" playsinline style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;" onclick="anprToggleSyncPlay()"></video>
+                      <video id="anpr-video-annotated" class="va-video-player" playsinline style="width:100%; height:280px; resize:both; overflow:hidden; min-height:150px; min-width:200px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;" onclick="anprToggleSyncPlay()"></video>
                     </div>
                   </div>
                   <!-- Plates Table -->
