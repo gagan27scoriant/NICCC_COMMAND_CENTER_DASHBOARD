@@ -1,3 +1,85 @@
+# =====================================
+# Dashboard Main Requirements
+# =====================================
 flask>=3.0.0
+PyJWT
+werkzeug
 
-in the end i even want to add an enlarge button so tht only one video plays in full screen so on an double click on the card in the video where crowd ,ANPr such kind of clip it shud play in full screen and all the respective content of tht particular video ll be prininting in the live alert section. add an enlarge and off enlarge button also for tht
+# =====================================
+# Forensic Intelligence System Requirements
+# =====================================
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128
+torchaudio==2.11.0+cu128
+
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.14.1
+scikit-learn==1.7.2
+
+transformers==4.56.2
+sentence-transformers==5.4.1
+
+neo4j==5.17.0
+pymongo==4.6.0
+motor==3.3.2
+
+opencv-python==4.10.0.84
+opencv-contrib-python==4.10.0.84
+Pillow==11.3.0
+
+ultralytics==8.4.51
+filterpy==1.4.5
+lap==0.5.12
+torchreid==0.2.5
+
+python-doctr[torch]
+onnxruntime-gpu==1.23.2
+
+insightface==0.7.3
+retina-face==0.0.17
+
+pytorchvideo==0.1.5
+av==11.0.0
+
+pypdf==4.2.0
+
+python-dotenv==1.0.0
+python-multipart==0.0.20
+aiofiles==23.2.1
+
+httpx==0.25.2
+orjson==3.9.10
+tenacity==8.2.3
+
+networkx==3.2.1
+matplotlib==3.8.2
+plotly==5.18.0
+
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+pytest==7.4.3
+ffmpeg-python==0.2.0
+
+# =====================================
+# Video Intelligence Requirements
+# =====================================
+flask-cors==4.0.1
+requests==2.32.3
+opencv-python-headless==4.10.0.84
+easyocr==1.7.1
+faiss-cpu==1.8.0.post1
+pydantic==2.7.4
+pydantic-settings==2.3.4
+boxmot==10.0.84
+python-json-logger==3.2.1
+
+# =====================================
+# User Notes
+# =====================================
+# in the end i even want to add an enlarge button so tht only one video plays in full screen so on an double click on the card in the video where crowd ,ANPr such kind of clip it shud play in full screen and all the respective content of tht particular video ll be prininting in the live alert section. add an enlarge and off enlarge button also for tht

@@ -3214,6 +3214,7 @@
       <div class="top-tabs">
         <button class="tab active" onclick="switchTab('map', this)">National map</button>
         <button class="tab" onclick="switchTab('video-analytics', this)">Video Analytics</button>
+        <button class="tab" onclick="switchTab('anpr', this)">ANPR Engine</button>
       </div>
       <div class="top-status">
         <span class="status-chip danger" id="alert-chip">3 active alerts</span>
@@ -3504,6 +3505,87 @@
                   <div class="va-events-list" id="va-events-list">
                     <div style="color: var(--muted); font-size: 12px; text-align: center; padding: 40px 0;">No events
                       yet. Upload a video to start analysis.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ANPR SCREEN -->
+        <section class="screen anpr-screen" id="anpr-screen">
+          <div class="panel map-shell">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">ANPR Engine</div>
+                <div class="panel-subtitle">Automatic Number Plate Recognition</div>
+              </div>
+              <div class="va-status-pill" id="anpr-status-pill">
+                <div class="va-status-dot" id="anpr-status-dot"></div>
+                <span id="anpr-status-text">Idle</span>
+              </div>
+            </div>
+            <div class="panel-content" style="display:flex; flex-direction:column; gap:20px; padding:20px; overflow-y:auto;">
+              <div style="display:flex; gap:20px;">
+                <!-- UPLOAD PANEL -->
+                <div class="panel" style="flex:1;">
+                  <div class="panel-head">
+                    <div class="panel-title">Video Input</div>
+                  </div>
+                  <div class="panel-content" style="padding:16px;">
+                    <div class="va-upload-zone" id="anpr-upload-zone">
+                      <input type="file" id="anpr-video-input" accept="video/mp4,video/x-m4v,video/*" hidden />
+                      <div class="va-upload-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                        </svg>
+                      </div>
+                      <div style="font-weight:700; color:var(--text); margin-bottom:4px;">Drag & Drop Video</div>
+                      <div style="color:var(--muted); margin-bottom:12px;">MP4 format • Max 50MB</div>
+                      <button class="va-btn secondary" onclick="document.getElementById('anpr-video-input').click()">Browse Files</button>
+                      <div id="anpr-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                    </div>
+                    <div class="va-btn-row" style="margin-top:16px; justify-content:center;">
+                      <button class="va-btn" id="anpr-run-btn" onclick="anprUpload()">&#9654; Analyze Plates</button>
+                      <button class="va-btn danger" onclick="anprClear()">Clear</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- RESULTS PANEL -->
+              <div class="panel">
+                <div class="panel-head">
+                  <div class="panel-title">Processed Output</div>
+                </div>
+                <div class="panel-content" style="padding:16px; display:flex; flex-direction:column; gap:20px;">
+                  <div id="anpr-job-status" style="font-family:var(--font-hud); color:var(--cyan);"></div>
+                  <!-- Video Row -->
+                  <div id="anpr-videos-container" style="display:none; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div>
+                      <div style="font-weight:700; margin-bottom:8px; color:var(--cyan);">Original Clip</div>
+                      <video id="anpr-video-original" class="va-video-player" controls style="width:100%; border-radius:8px; border:1px solid var(--border); background:#000;"></video>
+                    </div>
+                    <div>
+                      <div style="font-weight:700; margin-bottom:8px; color:var(--cyan);">Annotated Clip</div>
+                      <video id="anpr-video-annotated" class="va-video-player" controls style="width:100%; border-radius:8px; border:1px solid var(--border); background:#000;"></video>
+                    </div>
+                  </div>
+                  <!-- Plates Table -->
+                  <div id="anpr-plates-container" style="display:none;">
+                    <div style="font-weight:700; margin-bottom:8px; color:var(--cyan);">Extracted Number Plates</div>
+                    <table style="width:100%; text-align:left; border-collapse:collapse; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px;">
+                      <thead>
+                        <tr style="border-bottom:1px solid var(--border); background:rgba(0, 220, 255, 0.05);">
+                          <th style="padding:10px;">Plate Number</th>
+                          <th style="padding:10px;">Vehicle Type</th>
+                          <th style="padding:10px;">First Seen Frame</th>
+                        </tr>
+                      </thead>
+                      <tbody id="anpr-plates-tbody">
+                        <tr><td colspan="3" style="padding:10px; text-align:center; color:var(--muted);">No plates detected yet.</td></tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -3884,6 +3966,12 @@
       if (tab === 'video-analytics') {
         state.mode = 'video-analytics';
         goToScreen('va-screen');
+        return;
+      }
+
+      if (tab === 'anpr') {
+        state.mode = 'anpr';
+        goToScreen('anpr-screen');
         return;
       }
 
@@ -5177,6 +5265,163 @@
       $('va-video-input').addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
           $('va-upload-info').textContent = `Selected: ${e.target.files[0].name}`;
+        }
+      });
+    })();
+
+    // ═══════════════════════════════════════════════════════════════
+    // ANPR ENGINE JS
+    // ═══════════════════════════════════════════════════════════════
+
+    let anprJobId = null;
+    let anprAutoRefreshId = null;
+
+    function anprSetStatus(text, statusClass) {
+      const dot = document.getElementById('anpr-status-dot');
+      const txt = document.getElementById('anpr-status-text');
+      if (dot && txt) {
+        dot.className = 'va-status-dot ' + statusClass;
+        txt.textContent = text;
+      }
+    }
+
+    async function anprUpload() {
+      const fileInput = document.getElementById('anpr-video-input');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Please select a video file first.");
+        return;
+      }
+
+      document.getElementById('anpr-run-btn').disabled = true;
+      anprSetStatus('Uploading...', 'active');
+      document.getElementById('anpr-upload-info').textContent = `Uploading: ${file.name}`;
+      
+      const form = new FormData();
+      form.append('video', file);
+
+      try {
+        const response = await fetch('/api/anpr/upload', { method: 'POST', body: form });
+        const data = await response.json();
+        
+        if (response.ok) {
+          anprJobId = data.job_id;
+          anprSetStatus('Processing...', 'active');
+          document.getElementById('anpr-job-status').textContent = `Job ID: ${anprJobId} (Processing...)`;
+          
+          if (anprAutoRefreshId) clearInterval(anprAutoRefreshId);
+          anprAutoRefreshId = setInterval(anprCheckStatus, 2000);
+        } else {
+          alert('Upload failed: ' + data.detail);
+          anprSetStatus('Error', 'error');
+        }
+      } catch (err) {
+        console.error('Upload error:', err);
+        anprSetStatus('Error', 'error');
+      } finally {
+        document.getElementById('anpr-run-btn').disabled = false;
+      }
+    }
+
+    async function anprCheckStatus() {
+      if (!anprJobId) return;
+      try {
+        const res = await fetch(`/api/anpr/job/${anprJobId}`);
+        const data = await res.json();
+        
+        if (data.status === 'COMPLETED') {
+          clearInterval(anprAutoRefreshId);
+          anprSetStatus('Completed', 'idle');
+          document.getElementById('anpr-job-status').textContent = `Job ID: ${anprJobId} (Completed)`;
+          
+          document.getElementById('anpr-videos-container').style.display = 'grid';
+          document.getElementById('anpr-plates-container').style.display = 'block';
+          
+          const videoPlayerOriginal = document.getElementById('anpr-video-original');
+          const videoPlayerAnnotated = document.getElementById('anpr-video-annotated');
+          videoPlayerOriginal.src = `/api/anpr/uploads/${anprJobId}.mp4`;
+          videoPlayerAnnotated.src = `/api/anpr/outputs/${anprJobId}_annotated.mp4`;
+          videoPlayerOriginal.load();
+          videoPlayerAnnotated.load();
+          
+          // Fetch evidence
+          try {
+            const evRes = await fetch(`/api/anpr/evidence/video/${anprJobId}`);
+            if (evRes.ok) {
+              const evidences = await evRes.json();
+              const tbody = document.getElementById('anpr-plates-tbody');
+              if (evidences && evidences.length > 0) {
+                tbody.innerHTML = evidences.map(ev => {
+                  return `<tr>
+                    <td style="padding:10px; font-family:var(--font-hud); font-weight:700; color:#fff;">${ev.plate_number || 'UNKNOWN'}</td>
+                    <td style="padding:10px;">${ev.vehicle_type || '—'}</td>
+                    <td style="padding:10px;">${ev.first_seen_frame || '—'}</td>
+                  </tr>`;
+                }).join('');
+              } else {
+                tbody.innerHTML = `<tr><td colspan="3" style="padding:10px; text-align:center; color:var(--muted);">No plates extracted.</td></tr>`;
+              }
+            }
+          } catch(e) {
+            console.error('Error fetching evidence:', e);
+          }
+        } else if (data.status === 'FAILED') {
+          clearInterval(anprAutoRefreshId);
+          anprSetStatus('Failed', 'error');
+          document.getElementById('anpr-job-status').textContent = `Job ID: ${anprJobId} (Failed: ${data.error})`;
+        } else {
+          document.getElementById('anpr-job-status').textContent = `Job ID: ${anprJobId} (${data.status})`;
+        }
+      } catch (err) {
+        console.error('Status check error:', err);
+      }
+    }
+
+    async function anprClear() {
+      try {
+        await fetch('/api/anpr/reset', { method: 'POST' });
+      } catch (err) {
+        console.error('Clear error:', err);
+      }
+      if (anprAutoRefreshId) clearInterval(anprAutoRefreshId);
+      anprJobId = null;
+      document.getElementById('anpr-video-input').value = '';
+      document.getElementById('anpr-upload-info').textContent = '';
+      document.getElementById('anpr-job-status').textContent = '';
+      
+      document.getElementById('anpr-videos-container').style.display = 'none';
+      document.getElementById('anpr-plates-container').style.display = 'none';
+      
+      const videoPlayerOriginal = document.getElementById('anpr-video-original');
+      const videoPlayerAnnotated = document.getElementById('anpr-video-annotated');
+      videoPlayerOriginal.src = '';
+      videoPlayerAnnotated.src = '';
+      
+      const tbody = document.getElementById('anpr-plates-tbody');
+      if(tbody) tbody.innerHTML = `<tr><td colspan="3" style="padding:10px; text-align:center; color:var(--muted);">No plates detected yet.</td></tr>`;
+      
+      anprSetStatus('Idle', '');
+    }
+
+    (function initAnprDragDrop() {
+      const zone = document.getElementById('anpr-upload-zone');
+      if (!zone) return;
+      ['dragenter', 'dragover'].forEach(evt => {
+        zone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); zone.classList.add('dragover'); });
+      });
+      ['dragleave', 'drop'].forEach(evt => {
+        zone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); zone.classList.remove('dragover'); });
+      });
+      zone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          document.getElementById('anpr-video-input').files = files;
+          document.getElementById('anpr-upload-info').textContent = `Selected: ${files[0].name}`;
+        }
+      });
+      document.getElementById('anpr-video-input').addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          document.getElementById('anpr-upload-info').textContent = `Selected: ${e.target.files[0].name}`;
         }
       });
     })();
