@@ -1,0 +1,125 @@
+{
+  "events": [
+    {
+      "event_type": "fight",
+      "frame_index": 3969,
+      "timestamp": "2026-06-26T06:48:17.994553+00:00",
+      "confidence": 0.84,
+      "person_count": 7,
+      "camera_id": "CAM-VA-06",
+      "track_ids": [
+        22
+      ],
+      "roi_zone": "Corridor",
+      "snapshot_path": null,
+      "metadata": {
+        "mean_velocity": 4.1,
+        "elapsed_seconds": 17.1,
+        "importance": 0.81
+      }
+    },
+    {
+      "event_type": "crowd_surge",
+      "frame_index": 6590,
+      "timestamp": "2026-06-26T06:48:17.994553+00:00",
+      "confidence": 0.74,
+      "person_count": 6,
+      "camera_id": "CAM-VA-04",
+      "track_ids": [
+        43,
+        10,
+        31
+      ],
+      "roi_zone": "Platform",
+      "snapshot_path": null,
+      "metadata": {
+        "mean_velocity": 3.6,
+        "elapsed_seconds": 15.8,
+        "importance": 0.48
+      }
+    },
+    {
+      "event_type": "crowd_count",
+      "frame_index": 8929,
+      "timestamp": "2026-06-26T06:48:17.994553+00:00",
+      "confidence": 0.68,
+      "person_count": 11,
+      "camera_id": "CAM-VA-02",
+      "track_ids": [
+        16
+      ],
+      "roi_zone": "Platform",
+      "snapshot_path": null,
+      "metadata": {
+        "mean_velocity": 6.7,
+        "elapsed_seconds": 54.8,
+        "importance": 0.75
+      }
+    },
+    {
+      "event_type": "crowd_count",
+      "frame_index": 9299,
+      "timestamp": "2026-06-26T06:48:17.995562+00:00",
+      "confidence": 0.96,
+      "person_count": 22,
+      "camera_id": "CAM-VA-05",
+      "track_ids": [
+        21,
+        44,
+        15
+      ],
+      "roi_zone": "Corridor",
+      "snapshot_path": null,
+      "metadata": {
+        "mean_velocity": 7.0,
+        "elapsed_seconds": 13.3,
+        "importance": 0.44
+      }
+    },
+    {
+      "event_type": "crowd_surge",
+      "frame_index": 10485,
+      "timestamp": "2026-06-26T06:48:17.994553+00:00",
+      "confidence": 0.67,
+      "person_count": 15,
+      "camera_id": "CAM-VA-07",
+      "track_ids": [
+        11,
+        21
+      ],
+      "roi_zone": "Zone-B",
+      "snapshot_path": null,
+      "metadata": {
+        "mean_velocity": 3.4,
+        "elapsed_seconds": 13.7,
+        "importance": 0.35
+      }
+    }
+  ],
+  "status": "completed",
+  "frames_processed": 12173,
+  "output_video": "C:\\Users\\Admin\\Documents\\SCORIANT\\NICCC\\dashboard\\Data\\va_uploads\\VIRAT_AND_ROHIT_INTERVIEW.mp4",
+  "output_video_ready": true,
+  "highlight_clip": null,
+  "highlight_clip_ready": false,
+  "event_counts": {
+    "fight": 1,
+    "crowd_surge": 2,
+    "crowd_count": 2
+  },
+  "narrative": {
+    "title": "Possible fight / aggression / Crowd surge",
+    "dominant_event": "fight",
+    "importance": 4.84,
+    "counts": {
+      "fight": 1,
+      "crowd_surge": 2,
+      "crowd_count": 2
+    },
+    "top_events": [
+      "fight",
+      "crowd_surge",
+      "crowd_count"
+    ]
+  }
+}

@@ -1105,26 +1105,6 @@ def frs_similar_persons():
         })
     return jsonify(linked)
 
-@app.route('/api/frs/identities', methods=['GET'])
-def frs_list_identities():
-    """List all named identities from MongoDB."""
-    if FrsMongoStore is None:
-        return jsonify([])
-    store = _frs_store()
-    identities = store.list_identities(limit=500)
-    subject_groups = {str(g.get('subject_id')): g for g in store.list_subject_groups(limit=500)}
-    enriched = []
-    for ident in identities:
-        sid = str(ident.get('subject_id', ''))
-        grp = subject_groups.get(sid, {})
-        enriched.append({
-            **_serialize_document(ident),
-            'video_count': grp.get('video_count', 0),
-            'observation_count': grp.get('observations', 0),
-            'best_face_crop_path': grp.get('sample_face_crop_path'),
-        })
-    return jsonify(enriched)
-
 @app.route('/api/frs/identities', methods=['POST'])
 def frs_upsert_identity():
     """Create or update a named identity label."""

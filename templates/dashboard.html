@@ -4121,7 +4121,15 @@
                     <button class="va-btn secondary" type="button"
                       onclick="event.stopPropagation(); document.getElementById('va-video-input').click()">Browse
                       Files</button>
-                    <div id="va-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);">
+                    <div id="va-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                    <div id="va-upload-progress-container" style="display:none; margin-top: 15px; width: 100%; text-align: left;">
+                      <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; color:var(--muted); font-family:var(--font-ui);">
+                        <span>Uploading file...</span>
+                        <span id="va-upload-progress-text">0%</span>
+                      </div>
+                      <div style="width:100%; background:rgba(255,255,255,0.1); height:8px; border-radius:4px; overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);">
+                        <div id="va-upload-progress-bar" style="width:0%; height:100%; background: linear-gradient(90deg, var(--cyan), #00ff88); box-shadow: var(--glow-cyan); transition: width 0.2s ease;"></div>
+                      </div>
                     </div>
                   </div>
                   <div class="va-btn-row" style="margin-top:16px; justify-content:center;">
@@ -4255,8 +4263,16 @@
                       <div style="color:var(--muted); margin-bottom:12px;">MP4 format • Max 50MB</div>
                       <button class="va-btn secondary"
                         onclick="document.getElementById('anpr-video-input').click()">Browse Files</button>
-                      <div id="anpr-upload-info"
-                        style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                      <div id="anpr-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                      <div id="anpr-upload-progress-container" style="display:none; margin-top: 15px; width: 100%; text-align: left;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; color:var(--muted); font-family:var(--font-ui);">
+                          <span>Uploading file...</span>
+                          <span id="anpr-upload-progress-text">0%</span>
+                        </div>
+                        <div style="width:100%; background:rgba(255,255,255,0.1); height:8px; border-radius:4px; overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);">
+                          <div id="anpr-upload-progress-bar" style="width:0%; height:100%; background: linear-gradient(90deg, var(--cyan), #00ff88); box-shadow: var(--glow-cyan); transition: width 0.2s ease;"></div>
+                        </div>
+                      </div>
                     </div>
                     <div class="va-btn-row" style="margin-top:16px; justify-content:center;">
                       <button class="va-btn" id="anpr-run-btn" onclick="anprUpload()">&#9654; Analyze Plates</button>
@@ -4293,7 +4309,7 @@
                       <div
                         style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">
                         Original Feed</div>
-                      <video id="anpr-video-original" class="va-video-player" playsinline
+                      <video id="anpr-video-original" class="va-video-player" playsinline autoplay muted loop controls
                         style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;"
                         onclick="anprToggleSyncPlay()"></video>
                     </div>
@@ -4301,7 +4317,7 @@
                       <div
                         style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">
                         ANPR AI Annotated Feed</div>
-                      <video id="anpr-video-annotated" class="va-video-player" playsinline
+                      <video id="anpr-video-annotated" class="va-video-player" playsinline autoplay muted loop controls
                         style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;"
                         onclick="anprToggleSyncPlay()"></video>
                     </div>
@@ -4359,7 +4375,6 @@
             <div style="flex-shrink:0; display:flex; border-bottom:1px solid var(--border); background:rgba(0,0,0,0.25);">
               <button class="frs-subtab frs-subtab-active" id="frs-tab-upload" onclick="frsSwitchTab('upload',this)">&#128249; Upload &amp; Results</button>
               <button class="frs-subtab" id="frs-tab-similar" onclick="frsSwitchTab('similar',this)">&#128100; Similar Persons</button>
-              <button class="frs-subtab" id="frs-tab-identities" onclick="frsSwitchTab('identities',this)">&#127993; Identity Management</button>
               <button class="frs-subtab" id="frs-tab-search" onclick="frsSwitchTab('search',this)">&#128269; Person Search</button>
             </div>
 
@@ -4386,6 +4401,15 @@
                       <div style="color:var(--muted); margin-bottom:12px;">MP4 format &bull; Surveillance Feed</div>
                       <button class="va-btn secondary" onclick="document.getElementById('frs-video-input').click()">Browse Files</button>
                       <div id="frs-upload-info" style="margin-top:10px; color:var(--cyan); font-family:var(--font-hud);"></div>
+                      <div id="frs-upload-progress-container" style="display:none; margin-top: 15px; width: 100%; text-align: left;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; color:var(--muted); font-family:var(--font-ui);">
+                          <span>Uploading file...</span>
+                          <span id="frs-upload-progress-text">0%</span>
+                        </div>
+                        <div style="width:100%; background:rgba(255,255,255,0.1); height:8px; border-radius:4px; overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);">
+                          <div id="frs-upload-progress-bar" style="width:0%; height:100%; background: linear-gradient(90deg, var(--cyan), #00ff88); box-shadow: var(--glow-cyan); transition: width 0.2s ease;"></div>
+                        </div>
+                      </div>
                     </div>
                     <div class="va-btn-row" style="margin-top:16px; justify-content:center;">
                       <button class="va-btn" id="frs-run-btn" onclick="frsUpload()">&#9654; Analyze Faces</button>
@@ -4419,14 +4443,14 @@
                     <div>
                       <div style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">
                         Original Feed</div>
-                      <video id="frs-video-original" class="va-video-player" playsinline
+                      <video id="frs-video-original" class="va-video-player" playsinline autoplay muted loop controls
                         style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;"
                         onclick="frsToggleSyncPlay()"></video>
                     </div>
                     <div>
                       <div style="font-size:12px; font-weight:700; margin-bottom:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">
                         FRS AI Annotated Feed</div>
-                      <video id="frs-video-annotated" class="va-video-player" playsinline
+                      <video id="frs-video-annotated" class="va-video-player" playsinline autoplay muted loop controls
                         style="width:100%; max-height:220px; object-fit:contain; border-radius:8px; border:1px solid var(--border); background:#000; cursor:pointer;"
                         onclick="frsToggleSyncPlay()"></video>
                     </div>
@@ -4473,36 +4497,6 @@
               <div id="frs-similar-content"><div class="frs-empty-state">Click Refresh to load cross-video linked persons.</div></div>
             </div>
 
-            <!-- PANEL: IDENTITY MANAGEMENT -->
-            <div class="anpr-scroll-body" id="frs-panel-identities" style="display:none; padding:20px 24px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <div>
-                  <div class="panel-title" style="font-size:15px;">&#127993; Identity Management</div>
-                  <div class="panel-subtitle">Assign display names and case notes to detected biometric subjects</div>
-                </div>
-                <button class="va-btn va-btn-secondary" onclick="frsLoadIdentities()">&#8635; Refresh</button>
-              </div>
-              <div class="frs-form-card">
-                <div class="frs-form-label">&#10010; Assign Identity Label</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
-                  <div><label class="frs-input-label">Subject ID</label><input type="text" id="frs-ident-subject-id" placeholder="e.g. subject_abc123" class="frs-input" /></div>
-                  <div><label class="frs-input-label">Display Name</label><input type="text" id="frs-ident-display-name" placeholder="e.g. John Doe" class="frs-input" /></div>
-                </div>
-                <div style="margin-bottom:12px;">
-                  <label class="frs-input-label">Notes (optional)</label>
-                  <input type="text" id="frs-ident-notes" placeholder="e.g. Suspect case #2024-001" class="frs-input" />
-                </div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                  <button class="va-btn va-btn-primary" onclick="frsSaveIdentity()">&#10003; Save Identity</button>
-                  <span id="frs-ident-save-status" style="font-size:12px; color:var(--muted);"></span>
-                </div>
-              </div>
-              <div id="frs-identities-content" style="margin-top:20px;"><div class="frs-empty-state">Click Refresh to load registered identities.</div></div>
-              <div style="margin-top:20px;">
-                <div class="frs-form-label" style="margin-bottom:10px;">All Detected Subjects (click to pre-fill form)</div>
-                <div id="frs-subjects-pills" style="display:flex; flex-wrap:wrap; gap:8px;"><span style="color:var(--muted); font-size:12px;">Click Refresh to load subjects.</span></div>
-              </div>
-            </div>
 
             <!-- PANEL: PERSON SEARCH -->
             <div class="anpr-scroll-body" id="frs-panel-search" style="display:none; padding:20px 24px;">
@@ -6241,22 +6235,46 @@
       vaSetStatus('Uploading', 'processing');
       $('va-upload-info').textContent = `Uploading: ${file.name}`;
 
-      // Reveal extra panels and hide upload card
-      document.getElementById('va-upload-card').style.display = 'none';
-      document.getElementById('va-layout').classList.remove('idle-mode');
-      document.getElementById('va-right-col').style.display = 'flex';
-      $('va-summary-card').style.display = 'block';
-      $('va-playback-card').style.display = 'block';
-      $('va-timeline-card').style.display = 'flex';
-      $('va-summary-card').classList.add('visible');
-      $('va-playback-card').classList.add('visible');
-      $('va-timeline-card').classList.add('visible');
-
-      document.getElementById('va-header-new-btn').style.display = 'inline-block';
+      const progContainer = document.getElementById('va-upload-progress-container');
+      const progBar = document.getElementById('va-upload-progress-bar');
+      const progText = document.getElementById('va-upload-progress-text');
+      if (progContainer) progContainer.style.display = 'block';
+      if (progBar) progBar.style.width = '0%';
+      if (progText) progText.textContent = '0%';
 
       try {
-        const response = await fetch('/api/va/upload', { method: 'POST', body: form });
-        const payload = await response.json();
+        const payload = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/va/upload');
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const percent = Math.round((e.loaded / e.total) * 100);
+              if (progBar) progBar.style.width = percent + '%';
+              if (progText) progText.textContent = percent + '%';
+            }
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve(JSON.parse(xhr.responseText));
+            else reject(new Error(xhr.statusText));
+          };
+          xhr.onerror = () => reject(new Error("Network Error"));
+          xhr.send(form);
+        });
+
+        if (progContainer) progContainer.style.display = 'none';
+
+        // Reveal extra panels and hide upload card
+        document.getElementById('va-upload-card').style.display = 'none';
+        document.getElementById('va-layout').classList.remove('idle-mode');
+        document.getElementById('va-right-col').style.display = 'flex';
+        $('va-summary-card').style.display = 'block';
+        $('va-playback-card').style.display = 'block';
+        $('va-timeline-card').style.display = 'flex';
+        $('va-summary-card').classList.add('visible');
+        $('va-playback-card').classList.add('visible');
+        $('va-timeline-card').classList.add('visible');
+
+        document.getElementById('va-header-new-btn').style.display = 'inline-block';
         $('va-run-btn').disabled = false;
         $('va-upload-info').textContent = payload.status === 'processing'
           ? 'Processing started. Results will appear automatically.'
@@ -6517,19 +6535,48 @@
       anprSetStatus('Uploading...', 'active');
       document.getElementById('anpr-upload-info').textContent = `Uploading: ${file.name}`;
 
-      // Reveal extra panels and hide upload card
-      document.getElementById('anpr-upload-card').style.display = 'none';
-      document.getElementById('anpr-scroll-body').classList.remove('centered-container');
-      document.getElementById('anpr-output-panel').style.display = 'block';
-      document.getElementById('anpr-output-panel').classList.add('visible');
-      document.getElementById('anpr-header-new-btn').style.display = 'inline-block';
-
       const form = new FormData();
       form.append('video', file);
 
+      const progContainer = document.getElementById('anpr-upload-progress-container');
+      const progBar = document.getElementById('anpr-upload-progress-bar');
+      const progText = document.getElementById('anpr-upload-progress-text');
+      if (progContainer) progContainer.style.display = 'block';
+      if (progBar) progBar.style.width = '0%';
+      if (progText) progText.textContent = '0%';
+
       try {
-        const response = await fetch('/api/anpr/upload', { method: 'POST', body: form });
-        const data = await response.json();
+        const res = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/anpr/upload');
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const percent = Math.round((e.loaded / e.total) * 100);
+              if (progBar) progBar.style.width = percent + '%';
+              if (progText) progText.textContent = percent + '%';
+            }
+          };
+          xhr.onload = () => {
+            let resData;
+            try { resData = JSON.parse(xhr.responseText); } catch(e) { resData = {}; }
+            if (xhr.status >= 200 && xhr.status < 300) resolve({ ok: true, data: resData });
+            else resolve({ ok: false, data: resData });
+          };
+          xhr.onerror = () => reject(new Error("Network Error"));
+          xhr.send(form);
+        });
+
+        if (progContainer) progContainer.style.display = 'none';
+
+        // Reveal extra panels and hide upload card
+        document.getElementById('anpr-upload-card').style.display = 'none';
+        document.getElementById('anpr-scroll-body').classList.remove('centered-container');
+        document.getElementById('anpr-output-panel').style.display = 'block';
+        document.getElementById('anpr-output-panel').classList.add('visible');
+        document.getElementById('anpr-header-new-btn').style.display = 'inline-block';
+
+        const response = { ok: res.ok };
+        const data = res.data;
 
         if (response.ok) {
           anprJobId = data.job_id;
@@ -6737,16 +6784,45 @@
       frsSetStatus('Uploading...', 'active');
       document.getElementById('frs-upload-info').textContent = `Uploading: ${file.name}`;
 
-      document.getElementById('frs-upload-card').style.display = 'none';
-      document.getElementById('frs-output-panel').style.display = 'block';
-      document.getElementById('frs-header-new-btn').style.display = 'inline-block';
-
       const form = new FormData();
       form.append('video', file);
 
+      const progContainer = document.getElementById('frs-upload-progress-container');
+      const progBar = document.getElementById('frs-upload-progress-bar');
+      const progText = document.getElementById('frs-upload-progress-text');
+      if (progContainer) progContainer.style.display = 'block';
+      if (progBar) progBar.style.width = '0%';
+      if (progText) progText.textContent = '0%';
+
       try {
-        const response = await fetch('/api/frs/upload', { method: 'POST', body: form });
-        const data = await response.json();
+        const res = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/frs/upload');
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const percent = Math.round((e.loaded / e.total) * 100);
+              if (progBar) progBar.style.width = percent + '%';
+              if (progText) progText.textContent = percent + '%';
+            }
+          };
+          xhr.onload = () => {
+            let resData;
+            try { resData = JSON.parse(xhr.responseText); } catch(e) { resData = {}; }
+            if (xhr.status >= 200 && xhr.status < 300) resolve({ ok: true, data: resData });
+            else resolve({ ok: false, data: resData });
+          };
+          xhr.onerror = () => reject(new Error("Network Error"));
+          xhr.send(form);
+        });
+
+        if (progContainer) progContainer.style.display = 'none';
+
+        document.getElementById('frs-upload-card').style.display = 'none';
+        document.getElementById('frs-output-panel').style.display = 'block';
+        document.getElementById('frs-header-new-btn').style.display = 'inline-block';
+
+        const response = { ok: res.ok };
+        const data = res.data;
 
         if (response.ok) {
           frsJobId = data.job_id;
@@ -6989,116 +7065,14 @@
                 <span class="frs-badge">${obsCount} obs</span>
               </div>
               <div style="margin-top:8px; font-size:11px; color:var(--muted); font-family:var(--font-hud);" title="Videos: ${vids}">&#127760; ${vids.length > 40 ? vids.slice(0,40)+'…' : vids}</div>
-              <button onclick="document.getElementById('frs-ident-subject-id').value='${sid}'; frsSwitchTab('identities', document.getElementById('frs-tab-identities'));" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">&#9998; Name this person</button>
+              <button onclick="frsInlineRename('${sid}', '${label === sid ? '' : label.replace(/'/g, "\\'")}')" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">
+                ${label !== sid ? '&#9998; Edit Name' : '&#10010; Add Name'}
+              </button>
             </div>
           </div>`;
         }).join('')}</div>`;
       } catch (err) {
         container.innerHTML = `<div class="frs-empty-state">Error loading data: ${err.message}</div>`;
-      }
-    }
-
-    // ── FRS Identity Management ───────────────────────────────────────────────
-    async function frsLoadIdentities() {
-      const container = document.getElementById('frs-identities-content');
-      const pillsContainer = document.getElementById('frs-subjects-pills');
-      container.innerHTML = '<div class="frs-empty-state">Loading identities...</div>';
-
-      const [identRes, subjectRes] = await Promise.all([
-        fetch('/api/frs/identities').then(r => r.json()).catch(() => []),
-        fetch('/api/frs/subjects').then(r => r.json()).catch(() => []),
-      ]);
-
-      // Render subject pills
-      if (subjectRes.length > 0) {
-        pillsContainer.innerHTML = subjectRes.slice(0, 80).map(s => {
-          const sid = s.subject_id || '';
-          return `<button class="frs-pill" onclick="document.getElementById('frs-ident-subject-id').value='${sid}'">${sid.slice(0,20)}</button>`;
-        }).join('');
-      } else {
-        pillsContainer.innerHTML = '<span style="color:var(--muted); font-size:12px;">No subjects detected yet — run FRS engine first.</span>';
-      }
-
-      // Render identities table
-      if (!identRes || identRes.length === 0) {
-        container.innerHTML = '<div class="frs-empty-state">No named identities registered yet. Use the form above to assign a name to a Subject ID.</div>';
-        return;
-      }
-      container.innerHTML = `
-        <div class="table-header-bar" style="margin-bottom:10px;">
-          <h4>&#127993; Registered Identities (${identRes.length})</h4>
-        </div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%; border-collapse:collapse; font-size:13px;">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border); color:var(--muted); font-family:var(--font-hud); font-size:11px; text-transform:uppercase;">
-                <th style="padding:10px 14px;">Photo</th>
-                <th style="padding:10px 14px;">Subject ID</th>
-                <th style="padding:10px 14px;">Display Name</th>
-                <th style="padding:10px 14px;">Notes</th>
-                <th style="padding:10px 14px;">Videos</th>
-                <th style="padding:10px 14px;">Obs</th>
-                <th style="padding:10px 14px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody>${identRes.map(ident => {
-              const sid = ident.subject_id || '';
-              const facePath = ident.best_face_crop_path;
-              const avatar = facePath
-                ? `<img src="/api/frs/media/${facePath}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--border);" onerror="this.outerHTML='&#128100;'">`
-                : `<span style="font-size:22px;">&#128100;</span>`;
-              return `<tr style="border-bottom:1px solid var(--border);">
-                <td style="padding:10px 14px;">${avatar}</td>
-                <td style="padding:10px 14px; font-family:var(--font-hud); font-size:12px; color:var(--cyan);">${sid.slice(0,20)}</td>
-                <td style="padding:10px 14px; font-weight:600; color:var(--text);">${ident.display_name || '—'}</td>
-                <td style="padding:10px 14px; color:var(--muted); font-size:12px;">${ident.notes || '—'}</td>
-                <td style="padding:10px 14px;">${ident.video_count || 0}</td>
-                <td style="padding:10px 14px;">${ident.observation_count || 0}</td>
-                <td style="padding:10px 14px;">
-                  <button class="va-btn va-btn-secondary" style="font-size:11px; padding:4px 10px;"
-                    onclick="document.getElementById('frs-ident-subject-id').value='${sid}'; document.getElementById('frs-ident-display-name').value='${(ident.display_name||'').replace(/'/g,"&apos;")}'; document.getElementById('frs-ident-notes').value='${(ident.notes||'').replace(/'/g,"&apos;")}';">
-                    &#9998; Edit
-                  </button>
-                </td>
-              </tr>`;
-            }).join('')}</tbody>
-          </table>
-        </div>`;
-    }
-
-    async function frsSaveIdentity() {
-      const subjectId = document.getElementById('frs-ident-subject-id').value.trim();
-      const displayName = document.getElementById('frs-ident-display-name').value.trim();
-      const notes = document.getElementById('frs-ident-notes').value.trim();
-      const status = document.getElementById('frs-ident-save-status');
-      if (!subjectId || !displayName) {
-        status.textContent = 'Subject ID and Display Name are required.';
-        status.style.color = 'var(--red, #f44)';
-        return;
-      }
-      status.textContent = 'Saving...';
-      status.style.color = 'var(--muted)';
-      try {
-        const res = await fetch('/api/frs/identities', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subject_id: subjectId, display_name: displayName, notes }),
-        });
-        if (res.ok) {
-          status.textContent = '&#10003; Saved successfully!';
-          status.style.color = '#4caf50';
-          document.getElementById('frs-ident-subject-id').value = '';
-          document.getElementById('frs-ident-display-name').value = '';
-          document.getElementById('frs-ident-notes').value = '';
-          setTimeout(() => { status.textContent = ''; frsLoadIdentities(); }, 1500);
-        } else {
-          const err = await res.json();
-          status.textContent = err.detail || 'Save failed.';
-          status.style.color = 'var(--red, #f44)';
-        }
-      } catch (err) {
-        status.textContent = `Error: ${err.message}`;
-        status.style.color = 'var(--red, #f44)';
       }
     }
 
@@ -7138,12 +7112,38 @@
                   <span class="frs-badge frs-badge-cyan">&#127910; ${videoCount} video${videoCount !== 1 ? 's' : ''}</span>
                   <span class="frs-badge">${obsCount} obs</span>
                 </div>
-                <button onclick="document.getElementById('frs-ident-subject-id').value='${sid}'; frsSwitchTab('identities', document.getElementById('frs-tab-identities'));" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">&#9998; Name / Edit</button>
+                <button onclick="frsInlineRename('${sid}', '${label === sid ? '' : label.replace(/'/g, "\\'")}')" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">
+                  ${label !== sid ? '&#9998; Edit Name' : '&#10010; Add Name'}
+                </button>
               </div>
             </div>`;
           }).join('')}</div>`;
       } catch (err) {
         container.innerHTML = `<div class="frs-empty-state">Error: ${err.message}</div>`;
+      }
+    }
+
+    async function frsInlineRename(subjectId, currentName) {
+      const newName = prompt("Enter new name for " + subjectId + ":", currentName);
+      if (newName === null) return; // cancelled
+      if (!newName.trim() && currentName) {
+        if (!confirm("Are you sure you want to remove the name?")) return;
+      }
+      try {
+        const res = await fetch('/api/frs/identities', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subject_id: subjectId, display_name: newName.trim(), notes: '' }),
+        });
+        if (res.ok) {
+          if (document.getElementById('frs-panel-similar').style.display !== 'none') frsLoadSimilar();
+          if (document.getElementById('frs-panel-search').style.display !== 'none') frsRunSearch();
+        } else {
+          const err = await res.json();
+          alert("Failed to save name: " + (err.detail || 'Unknown error'));
+        }
+      } catch (err) {
+        alert("Error saving name: " + err.message);
       }
     }
   </script>
