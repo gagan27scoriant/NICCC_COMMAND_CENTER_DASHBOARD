@@ -50,11 +50,13 @@ VA_OUTPUTS_DIR = DATA_DIR / 'va_outputs'
 VA_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 VA_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Forensic Intelligence System (ANPR) ──────────────────────────────────────
+# ── Forensic Intelligence System (ANPR & FRS) ────────────────────────────────
 FIS_DIR = Path(__file__).resolve().parent / "Forensic_Intelligence_System"
 VT_DIR = FIS_DIR / "vehicle-tracking"
+FRS_DIR = FIS_DIR / "FRS"
 sys.path.insert(0, str(VT_DIR))
 sys.path.insert(0, str(FIS_DIR / "parseq"))
+sys.path.insert(0, str(FRS_DIR))
 
 # ── Video Intelligence (real VA pipeline) ────────────────────────────────────
 VI_PROJECT_DIR = Path(__file__).resolve().parent / "video_inttelligence" / "project"
@@ -90,10 +92,23 @@ except ImportError as e:
     MongoManager = None
     ANPRService = None
 
+try:
+    from core import FrsConfig, FRSPipeline, MongoEvidenceStore as FrsMongoStore
+except ImportError as e:
+    print(f"Failed to import FRS modules: {e}")
+    FrsConfig = None
+    FRSPipeline = None
+    FrsMongoStore = None
+
 ANPR_UPLOADS_DIR = DATA_DIR / 'anpr_uploads'
 ANPR_OUTPUTS_DIR = DATA_DIR / 'anpr_outputs'
 ANPR_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 ANPR_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+
+FRS_UPLOADS_DIR = DATA_DIR / 'frs_uploads'
+FRS_OUTPUTS_DIR = DATA_DIR / 'frs_outputs'
+FRS_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+FRS_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
 DENSITY_UPLOADS_DIR = DATA_DIR / 'density_uploads'
 DENSITY_OUTPUTS_DIR = DATA_DIR / 'density_outputs'
@@ -156,6 +171,54 @@ def _process_anpr_job(job_id: str, video_path: Path) -> None:
         _update_anpr_job(job_id, status="COMPLETED", result=result, error=None)
     except Exception as exc:
         _update_anpr_job(job_id, status="FAILED", error=str(exc))
+
+frs_jobs = {}
+frs_jobs_lock = threading.Lock()
+
+def _frs_store():
+    """Return a FrsMongoStore connected to the configured MongoDB instance."""
+    cfg = FrsConfig()
+    return FrsMongoStore(cfg.mongo_uri, cfg.mongo_db, cfg.mongo_collection)
+
+def _update_frs_job(job_id: str, **updates: Any) -> None:
+    with frs_jobs_lock:
+        frs_jobs.setdefault(job_id, {}).update(updates)
+
+def _frs_job_snapshot(job_id: str) -> Dict[str, Any] | None:
+    with frs_jobs_lock:
+        job = frs_jobs.get(job_id)
+        return dict(job) if job is not None else None
+
+def _run_frs(video_path: Path, output_video_path: Path | None = None) -> dict:
+    if FRSPipeline is None:
+        raise RuntimeError("FRS service unavailable.")
+    if not torch.cuda.is_available():
+        print("CUDA is required for this app, but no GPU is available in the active environment.")
+    config = FrsConfig()
+    pipeline = FRSPipeline(config)
+    res = pipeline.process_video(video_path, output_path=output_video_path)
+    return {
+        "video_id": res.video_id,
+        "frame_count": res.frame_count,
+        "subject_count": res.subject_count,
+        "track_count": res.track_count,
+        "face_detections": res.face_detections,
+        "observations": res.observations,
+    }
+
+def _process_frs_job(job_id: str, video_path: Path) -> None:
+    _update_frs_job(job_id, status="RUNNING")
+    try:
+        annotated_path = FRS_OUTPUTS_DIR / f"{job_id}_annotated.mp4"
+        summary = _run_frs(video_path, output_video_path=annotated_path)
+        result = {
+            **summary,
+            "original_video_path": str(video_path),
+            "annotated_video_path": str(annotated_path),
+        }
+        _update_frs_job(job_id, status="COMPLETED", result=result, error=None)
+    except Exception as exc:
+        _update_frs_job(job_id, status="FAILED", error=str(exc))
 
 def _serialize_document(document):
     serialized = dict(document)
@@ -877,5 +940,228 @@ def anpr_reset():
         anpr_jobs.clear()
     return jsonify({'status': 'cleared'})
 
+# ═══════════════════════════════════════════════════════════════
+#  FRS API Routes
+# ═══════════════════════════════════════════════════════════════
+
+@app.route('/api/frs/upload', methods=['POST'])
+def frs_upload_video():
+    uploaded_file = request.files.get("video")
+    if uploaded_file is None or not uploaded_file.filename:
+        return jsonify({"detail": "No video file uploaded."}), 400
+
+    filename = secure_filename(uploaded_file.filename.lower())
+    if not (
+        filename.endswith(".mp4")
+        or uploaded_file.mimetype in {"video/mp4", "application/octet-stream"}
+    ):
+        return jsonify({"detail": "Only MP4 video files are accepted."}), 400
+
+    job_id = uuid.uuid4().hex
+    destination_path = FRS_UPLOADS_DIR / f"{job_id}.mp4"
+    uploaded_file.save(str(destination_path))
+
+    _update_frs_job(job_id, status="PENDING", result=None, error=None)
+    worker = threading.Thread(
+        target=_process_frs_job,
+        args=(job_id, destination_path),
+        daemon=True,
+    )
+    worker.start()
+
+    return jsonify(
+        {
+            "job_id": job_id,
+            "status_url": url_for("frs_get_job_status", job_id=job_id),
+            "evidence_url": url_for("frs_get_evidence_by_video", video_id=job_id),
+            "video_url": url_for("frs_serve_upload", filename=f"{job_id}.mp4"),
+            "annotated_video_url": url_for(
+                "frs_serve_output", filename=f"{job_id}_annotated.mp4"
+            ),
+        }
+    )
+
+@app.route('/api/frs/job/<job_id>')
+def frs_get_job_status(job_id):
+    job = _frs_job_snapshot(job_id)
+    if job is None:
+        return jsonify({"detail": "Job not found."}), 404
+
+    response = {"job_id": job_id, "status": job.get("status")}
+    if job.get("status") == "COMPLETED":
+        response["result"] = job.get("result", {})
+    elif job.get("status") == "FAILED":
+        response["error"] = job.get("error", "Unknown error")
+    return jsonify(response)
+
+@app.route('/api/frs/evidence/video/<video_id>')
+def frs_get_evidence_by_video(video_id):
+    if FrsMongoStore is None:
+        return jsonify({"detail": "MongoDB FRS store not available."}), 500
+    store = _frs_store()
+    raw_obs = store.list_observations(video_id=video_id, limit=5000)
+    if not raw_obs:
+        return jsonify([])
+
+    grouped = {}
+    for obs in raw_obs:
+        tid = obs.get("track_id")
+        sid = obs.get("subject_id", f"track_{tid}")
+        key = (sid, tid)
+        if key not in grouped:
+            grouped[key] = {
+                "subject_id": sid,
+                "subject_label": obs.get("subject_label", sid),
+                "track_id": tid,
+                "first_seen_frame": obs.get("frame_index"),
+                "last_seen_frame": obs.get("frame_index"),
+                "best_face_score": obs.get("face_score"),
+                "best_person_score": obs.get("person_score"),
+                "face_crop_path": obs.get("face_crop_path"),
+                "person_crop_path": obs.get("person_crop_path"),
+                "observations_count": 1,
+            }
+        else:
+            g = grouped[key]
+            g["observations_count"] += 1
+            fidx = obs.get("frame_index")
+            if fidx is not None:
+                if g["first_seen_frame"] is None or fidx < g["first_seen_frame"]:
+                    g["first_seen_frame"] = fidx
+                if g["last_seen_frame"] is None or fidx > g["last_seen_frame"]:
+                    g["last_seen_frame"] = fidx
+
+            fscore = obs.get("face_score")
+            if fscore is not None and (g["best_face_score"] is None or fscore > g["best_face_score"]):
+                g["best_face_score"] = fscore
+                if obs.get("face_crop_path"):
+                    g["face_crop_path"] = obs.get("face_crop_path")
+
+            pscore = obs.get("person_score")
+            if pscore is not None and (g["best_person_score"] is None or pscore > g["best_person_score"]):
+                g["best_person_score"] = pscore
+                if obs.get("person_crop_path"):
+                    g["person_crop_path"] = obs.get("person_crop_path")
+
+    results = list(grouped.values())
+    results.sort(key=lambda x: x["track_id"] if x["track_id"] is not None else 0)
+    return jsonify([_serialize_document(r) for r in results])
+
+@app.route('/api/frs/uploads/<path:filename>')
+def frs_serve_upload(filename):
+    return send_from_directory(FRS_UPLOADS_DIR, filename)
+
+@app.route('/api/frs/outputs/<path:filename>')
+def frs_serve_output(filename):
+    return send_from_directory(FRS_OUTPUTS_DIR, filename)
+
+@app.route('/api/frs/media/<path:filename>')
+def frs_serve_media(filename):
+    clean = filename
+    while clean.startswith("media/"):
+        clean = clean[len("media/"):]
+    return send_from_directory(FRS_DIR / "runtime" / "media", clean)
+
+@app.route('/api/frs/reset', methods=['POST'])
+def frs_reset():
+    with frs_jobs_lock:
+        frs_jobs.clear()
+    return jsonify({'status': 'cleared'})
+
+@app.route('/api/frs/similar-persons')
+def frs_similar_persons():
+    """Return cross-video linked identity groups."""
+    if FrsMongoStore is None:
+        return jsonify([])
+    store = _frs_store()
+    groups = store.list_subject_groups(limit=200)
+    linked = []
+    for idx, grp in enumerate(groups, start=1):
+        if not grp.get('linked'):
+            continue
+        observations = store.get_subject_observations(str(grp.get('subject_id', '')), limit=8)
+        observations.sort(
+            key=lambda o: (float(o.get('face_score') or 0), float(o.get('person_score') or 0)),
+            reverse=True,
+        )
+        best_face = next((o.get('face_crop_path') for o in observations if o.get('face_crop_path')), None)
+        best_person = next((o.get('person_crop_path') for o in observations if o.get('person_crop_path')), None)
+        videos_seen = [str(v) for v in grp.get('videos', []) if v]
+        best_score = 0.0
+        for o in observations:
+            for k in ('face_score', 'person_score'):
+                try:
+                    best_score = max(best_score, float(o.get(k) or 0))
+                except (TypeError, ValueError):
+                    pass
+        linked.append({
+            **_serialize_document(grp),
+            'person_display_id': f'person_{idx:04d}',
+            'videos_seen': videos_seen,
+            'videos_seen_label': ', '.join(videos_seen) if videos_seen else '—',
+            'best_similarity': round(best_score, 4) if best_score else None,
+            'best_face_crop_path': best_face,
+            'best_person_crop_path': best_person,
+        })
+    return jsonify(linked)
+
+@app.route('/api/frs/identities', methods=['GET'])
+def frs_list_identities():
+    """List all named identities from MongoDB."""
+    if FrsMongoStore is None:
+        return jsonify([])
+    store = _frs_store()
+    identities = store.list_identities(limit=500)
+    subject_groups = {str(g.get('subject_id')): g for g in store.list_subject_groups(limit=500)}
+    enriched = []
+    for ident in identities:
+        sid = str(ident.get('subject_id', ''))
+        grp = subject_groups.get(sid, {})
+        enriched.append({
+            **_serialize_document(ident),
+            'video_count': grp.get('video_count', 0),
+            'observation_count': grp.get('observations', 0),
+            'best_face_crop_path': grp.get('sample_face_crop_path'),
+        })
+    return jsonify(enriched)
+
+@app.route('/api/frs/identities', methods=['POST'])
+def frs_upsert_identity():
+    """Create or update a named identity label."""
+    if FrsMongoStore is None:
+        return jsonify({'detail': 'MongoDB FRS store not available.'}), 500
+    payload = request.get_json(silent=True) or request.form.to_dict() or {}
+    subject_id = str(payload.get('subject_id', '')).strip()
+    display_name = str(payload.get('display_name', '')).strip()
+    notes = payload.get('notes')
+    assigned_by = payload.get('assigned_by')
+    if not subject_id or not display_name:
+        return jsonify({'detail': 'subject_id and display_name are required.'}), 400
+    store = _frs_store()
+    record = store.upsert_identity(subject_id, display_name, notes=notes, assigned_by=assigned_by)
+    return jsonify(record or {'subject_id': subject_id, 'display_name': display_name})
+
+@app.route('/api/frs/search')
+def frs_person_search():
+    """Full-text search across subject groups in MongoDB."""
+    if FrsMongoStore is None:
+        return jsonify([])
+    query = request.args.get('q', '').strip()
+    if not query:
+        return jsonify([])
+    store = _frs_store()
+    results = store.search_people(query, limit=100)
+    return jsonify([_serialize_document(r) for r in results])
+
+@app.route('/api/frs/subjects')
+def frs_list_subjects():
+    """Return all subject groups (named or unnamed) for the identity editor."""
+    if FrsMongoStore is None:
+        return jsonify([])
+    store = _frs_store()
+    groups = store.list_subject_groups(limit=500)
+    return jsonify([_serialize_document(g) for g in groups])
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
