@@ -4492,7 +4492,16 @@
                   <div class="panel-title" style="font-size:15px;">&#128100; Cross-Video Linked Persons</div>
                   <div class="panel-subtitle">Subjects confirmed across multiple camera feeds via ReID &amp; face embedding</div>
                 </div>
-                <button class="va-btn va-btn-secondary" onclick="frsLoadSimilar()">&#8635; Refresh</button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <select id="frs-similar-confidence" class="frs-input" style="width:auto; padding:6px 12px; font-size:12px; height:auto; cursor:pointer;" onchange="frsLoadSimilar()">
+                    <option value="0">All Confidences</option>
+                    <option value="0.5">Confidence &gt; 50%</option>
+                    <option value="0.7">Confidence &gt; 70%</option>
+                    <option value="0.85">Confidence &gt; 85%</option>
+                    <option value="0.95">Confidence &gt; 95%</option>
+                  </select>
+                  <button class="va-btn va-btn-secondary" onclick="frsLoadSimilar()">&#8635; Refresh</button>
+                </div>
               </div>
               <div id="frs-similar-content"><div class="frs-empty-state">Click Refresh to load cross-video linked persons.</div></div>
             </div>
@@ -6732,8 +6741,13 @@
       const v1 = document.getElementById('anpr-video-original');
       const v2 = document.getElementById('anpr-video-annotated');
       if (v1 && v2) {
+        v1.addEventListener('play', () => { v2.currentTime = v1.currentTime; v2.play().catch(e => console.log(e)); });
+        v1.addEventListener('pause', () => v2.pause());
+        v1.addEventListener('seeked', () => { v2.currentTime = v1.currentTime; });
+        v1.addEventListener('ratechange', () => { v2.playbackRate = v1.playbackRate; });
+        v1.addEventListener('waiting', () => v2.pause());
+        v1.addEventListener('playing', () => { v2.currentTime = v1.currentTime; v2.play().catch(e => console.log(e)); });
         v1.addEventListener('ended', () => { v2.pause(); const b = document.getElementById('anpr-sync-play-btn'); if (b) b.innerHTML = '&#9654; Play Both'; });
-        v2.addEventListener('ended', () => { v1.pause(); const b = document.getElementById('anpr-sync-play-btn'); if (b) b.innerHTML = '&#9654; Play Both'; });
       }
     })();
 
@@ -6976,8 +6990,13 @@
       const v1 = document.getElementById('frs-video-original');
       const v2 = document.getElementById('frs-video-annotated');
       if (v1 && v2) {
+        v1.addEventListener('play', () => { v2.currentTime = v1.currentTime; v2.play().catch(e => console.log(e)); });
+        v1.addEventListener('pause', () => v2.pause());
+        v1.addEventListener('seeked', () => { v2.currentTime = v1.currentTime; });
+        v1.addEventListener('ratechange', () => { v2.playbackRate = v1.playbackRate; });
+        v1.addEventListener('waiting', () => v2.pause());
+        v1.addEventListener('playing', () => { v2.currentTime = v1.currentTime; v2.play().catch(e => console.log(e)); });
         v1.addEventListener('ended', () => { v2.pause(); const b = document.getElementById('frs-sync-play-btn'); if (b) b.innerHTML = '&#9654; Play Both'; });
-        v2.addEventListener('ended', () => { v1.pause(); const b = document.getElementById('frs-sync-play-btn'); if (b) b.innerHTML = '&#9654; Play Both'; });
       }
     })();
 
@@ -7038,7 +7057,16 @@
       container.innerHTML = '<div class="frs-empty-state">Loading cross-video matches...</div>';
       try {
         const res = await fetch('/api/frs/similar-persons');
-        const groups = await res.json();
+        let groups = await res.json();
+        
+        const confFilter = document.getElementById('frs-similar-confidence');
+        if (confFilter && groups && groups.length > 0) {
+          const minConf = parseFloat(confFilter.value);
+          if (minConf > 0) {
+            groups = groups.filter(g => (g.best_similarity || 0) >= minConf);
+          }
+        }
+
         if (!groups || groups.length === 0) {
           container.innerHTML = '<div class="frs-empty-state">No cross-video linked persons found. Run the FRS engine on multiple videos to generate identity links.</div>';
           return;
@@ -7065,10 +7093,12 @@
                 <span class="frs-badge">${obsCount} obs</span>
               </div>
               <div style="margin-top:8px; font-size:11px; color:var(--muted); font-family:var(--font-hud);" title="Videos: ${vids}">&#127760; ${vids.length > 40 ? vids.slice(0,40)+'…' : vids}</div>
-              <button onclick="frsInlineRename('${sid}', '${label === sid ? '' : label.replace(/'/g, "\\'")}')" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">
-                ${label !== sid ? '&#9998; Edit Name' : '&#10010; Add Name'}
-              </button>
-            </div>
+              <div style="display:flex; gap:8px;">
+                <button onclick="frsInlineRename('${sid}', '${label === sid ? '' : label.replace(/'/g, "\\'")}')" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">
+                  ${label !== sid ? '&#9998; Edit Name' : '&#10010; Add Name'}
+                </button>
+                ${videoCount > 1 ? `<button onclick="frsOpenCompareModal('${sid}', '${label.replace(/'/g, "\\'")}')" class="va-btn va-btn-primary" style="margin-top:10px; font-size:11px; padding:5px 10px;">&#128065; Compare Videos</button>` : ''}
+              </div>
           </div>`;
         }).join('')}</div>`;
       } catch (err) {
@@ -7112,9 +7142,12 @@
                   <span class="frs-badge frs-badge-cyan">&#127910; ${videoCount} video${videoCount !== 1 ? 's' : ''}</span>
                   <span class="frs-badge">${obsCount} obs</span>
                 </div>
-                <button onclick="frsInlineRename('${sid}', '${label === sid ? '' : label.replace(/'/g, "\\'")}')" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">
-                  ${label !== sid ? '&#9998; Edit Name' : '&#10010; Add Name'}
-                </button>
+                <div style="display:flex; gap:8px;">
+                  <button onclick="frsInlineRename('${sid}', '${label === sid ? '' : label.replace(/'/g, "\\'")}')" class="va-btn va-btn-secondary" style="margin-top:10px; font-size:11px; padding:5px 10px;">
+                    ${label !== sid ? '&#9998; Edit Name' : '&#10010; Add Name'}
+                  </button>
+                  ${videoCount > 1 ? `<button onclick="frsOpenCompareModal('${sid}', '${label.replace(/'/g, "\\'")}')" class="va-btn va-btn-primary" style="margin-top:10px; font-size:11px; padding:5px 10px;">&#128065; Compare Videos</button>` : ''}
+                </div>
               </div>
             </div>`;
           }).join('')}</div>`;
@@ -7581,6 +7614,171 @@
     }
     function closeDiagModal() {
       document.getElementById('diag-modal').classList.remove('open');
+    }
+  </script>
+
+  <!-- FRS COMPARISON MODAL -->
+  <style>
+    .frs-compare-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .frs-compare-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .frs-compare-container {
+      width: 90%;
+      max-width: 1400px;
+      max-height: 90vh;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+    .frs-compare-modal-overlay.open .frs-compare-container {
+      transform: scale(1);
+    }
+    .frs-compare-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel);
+    }
+    .frs-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 16px;
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .frs-compare-video-wrapper {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .frs-compare-video-title {
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: var(--font-hud);
+      color: var(--cyan);
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.5);
+    }
+    .frs-compare-video {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+    }
+  </style>
+
+  <div class="frs-compare-modal-overlay" id="frs-compare-modal">
+    <div class="frs-compare-container">
+      <div class="frs-compare-header">
+        <div>
+          <h3 style="margin:0; color:var(--text); font-size:18px;">Compare Subject Observations</h3>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px;" id="frs-compare-subtitle"></div>
+        </div>
+        <div style="display:flex; gap:12px;">
+          <button class="va-btn va-btn-primary" id="frs-compare-sync-btn" onclick="frsCompareSyncPlay()">&#9654; Play All</button>
+          <button class="va-btn va-btn-secondary" onclick="closeFrsCompareModal()">&#10005; Close</button>
+        </div>
+      </div>
+      <div class="frs-compare-grid" id="frs-compare-grid">
+        <!-- Videos go here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let frsCompareIsPlaying = false;
+    
+    async function frsOpenCompareModal(subjectId, displayId) {
+      document.getElementById('frs-compare-subtitle').textContent = `Subject: ${displayId || subjectId} | Loading videos...`;
+      const grid = document.getElementById('frs-compare-grid');
+      grid.innerHTML = '<div style="color:var(--muted); padding:20px;">Fetching observation videos...</div>';
+      document.getElementById('frs-compare-modal').classList.add('open');
+      document.getElementById('frs-compare-sync-btn').innerHTML = '&#9654; Play All';
+      frsCompareIsPlaying = false;
+
+      try {
+        const res = await fetch(`/api/frs/subject/${subjectId}/videos`);
+        const vids = await res.json();
+        if (!vids || vids.length === 0) {
+          grid.innerHTML = '<div style="color:var(--red, #f44); padding:20px;">No videos found for this subject.</div>';
+          return;
+        }
+
+        const maxVideos = 4;
+        const videosToShow = vids.slice(0, maxVideos);
+        document.getElementById('frs-compare-subtitle').textContent = `Subject: ${displayId || subjectId} | Showing ${videosToShow.length} of ${vids.length} video(s)`;
+
+        grid.innerHTML = videosToShow.map((vid, idx) => `
+          <div class="frs-compare-video-wrapper">
+            <div class="frs-compare-video-title">Video ID: ${vid}</div>
+            <video class="frs-compare-video" src="/api/frs/outputs/${vid}_annotated.mp4" playsinline muted loop></video>
+          </div>
+        `).join('');
+
+        // Sync logic for modal
+        const videoEls = document.querySelectorAll('.frs-compare-video');
+        videoEls.forEach(v => {
+          v.addEventListener('play', () => {
+             frsCompareIsPlaying = true;
+             document.getElementById('frs-compare-sync-btn').innerHTML = '&#10074;&#10074; Pause All';
+             videoEls.forEach(other => { if(other !== v && other.paused) other.play().catch(e=>console.log(e)); });
+          });
+          v.addEventListener('pause', () => {
+             frsCompareIsPlaying = false;
+             document.getElementById('frs-compare-sync-btn').innerHTML = '&#9654; Play All';
+             videoEls.forEach(other => { if(other !== v && !other.paused) other.pause(); });
+          });
+          v.addEventListener('seeked', () => {
+             videoEls.forEach(other => { if(other !== v) other.currentTime = v.currentTime; });
+          });
+          v.controls = true; 
+        });
+
+      } catch (err) {
+        grid.innerHTML = `<div style="color:var(--red, #f44); padding:20px;">Error: ${err.message}</div>`;
+      }
+    }
+
+    function closeFrsCompareModal() {
+      document.getElementById('frs-compare-modal').classList.remove('open');
+      const videoEls = document.querySelectorAll('.frs-compare-video');
+      videoEls.forEach(v => { v.pause(); v.src = ''; });
+      document.getElementById('frs-compare-grid').innerHTML = '';
+    }
+
+    function frsCompareSyncPlay() {
+      const videoEls = document.querySelectorAll('.frs-compare-video');
+      if (videoEls.length === 0) return;
+      if (frsCompareIsPlaying) {
+        videoEls.forEach(v => v.pause());
+      } else {
+        videoEls.forEach(v => v.play().catch(e=>console.log(e)));
+      }
     }
   </script>
 </body>

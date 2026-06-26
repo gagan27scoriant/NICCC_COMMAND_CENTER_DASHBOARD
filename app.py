@@ -22,7 +22,7 @@ app.config['SECRET_KEY'] = os.environ.get('JWT_SECRET', os.urandom(24).hex())
 # MongoDB Setup
 try:
     client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
-    db = client['niccc_db']
+    db = client['NICCC']
     users_collection = db['users']
     departments_collection = db['departments']
     permissions_collection = db['permissions']
@@ -178,7 +178,7 @@ frs_jobs_lock = threading.Lock()
 def _frs_store():
     """Return a FrsMongoStore connected to the configured MongoDB instance."""
     cfg = FrsConfig()
-    return FrsMongoStore(cfg.mongo_uri, cfg.mongo_db, cfg.mongo_collection)
+    return FrsMongoStore(cfg.mongo_uri, 'NICCC', cfg.mongo_collection)
 
 def _update_frs_job(job_id: str, **updates: Any) -> None:
     with frs_jobs_lock:
@@ -1141,6 +1141,26 @@ def frs_list_subjects():
     store = _frs_store()
     groups = store.list_subject_groups(limit=500)
     return jsonify([_serialize_document(g) for g in groups])
+
+@app.route('/api/frs/subject/<subject_id>/videos')
+def frs_subject_videos(subject_id):
+    """Return a list of unique video IDs where the subject was seen."""
+    if FrsMongoStore is None:
+        return jsonify([])
+    store = _frs_store()
+    try:
+        groups = store.list_subject_groups(limit=5000)
+        for g in groups:
+            if str(g.get('subject_id')) == subject_id:
+                if 'videos_seen' in g:
+                    return jsonify(list(g['videos_seen']))
+        
+        obs = store.list_observations(subject_id=subject_id, limit=1000)
+        vids = list(set([o.get('video_id') for o in obs if o.get('video_id')]))
+        return jsonify(vids)
+    except Exception as e:
+        print(f"Error fetching subject videos: {e}")
+        return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
